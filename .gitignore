@@ -1,0 +1,10 @@
+.idea
+MASTER
+CATALOGS
+Schedules
+venv
+upload_scheduler.txt
+__pycache__
+/VieSchedpp_AUTO.zip
+BKG_pw.txt
+OHG_plan.txt

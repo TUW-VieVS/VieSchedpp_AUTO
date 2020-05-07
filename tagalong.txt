@@ -1,0 +1,8 @@
+# enter tagalong time
+# format: station start end (optional comment)
+# datetime format according to ISO 8601
+#
+# TAGALONG TIME IS APPLIED TO INTENSIVE SESSIONS
+#
+# example: tagalong for WETTZELL between noon and 2pm on January 5th with optional comment:
+# WETTZELL 2020-01-05T12:00 2020-01-05T14:00 antenna maintenance
