@@ -56,6 +56,7 @@ Notes:
 - downtimes are automatically taken from IVS intensive master for non-intensive sessions
 - if you need to manually enter additional downtimes or add station in tagalong mode use the `./downtimes.txt` and `./tagalong.txt` file
 - an easy trick to add more complex parameter changes is to add them via multi-schedling parameters
+- if you want to automatically upload files to the IVS BKG server, you have to provide your password to the program. Please save password in a file called `BKG_pw.txt` or insert password in source code (see file `Transfer.py`, line with comment `*** INSERT PASSWORD HERE (replace pw) ***` 
 
 # Template restrictions
 
