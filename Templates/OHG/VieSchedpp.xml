@@ -260,6 +260,22 @@
 			</bandPolicy>
 		</bandPolicies>
 	</mode>
+	<rules>
+		<calibration>
+			<block>
+				<startTime>600</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>84600</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+		</calibration>
+	</rules>
 	<simulator>
 		<number_of_simulations>1000</number_of_simulations>
 		<station name="__all__">
