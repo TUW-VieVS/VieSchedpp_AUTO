@@ -223,7 +223,7 @@ def selectBest_intensives(df):
         return r
 
     nobs = df["n_observations"]
-    sky_cov = df["sky_coverage_average_37_areas_60_min"]
+    sky_cov = df["sky-coverage_average_37_areas_60_min"]
     dut1_mfe = df["sim_mean_formal_error_dUT1_[mus]"]
     dut1_rep = df["sim_repeatability_dUT1_[mus]"]
     # data = pd.concat([nobs, sky_cov, dut1_mfe, dut1_rep], axis=1)
@@ -260,7 +260,7 @@ def selectBest_ohg(df):
         return r
 
     nobs = df["n_observations"]
-    sky_cov = df["sky_coverage_average_25_areas_60_min"]
+    sky_cov = df["sky-coverage_average_25_areas_60_min"]
     avg_rep = df["sim_repeatability_average_3d_coordinates_[mm]"]
     ohg_rep = df["sim_repeatability_OHIGGINS"]
     avg_mfe = df["sim_mean_formal_error_average_3d_coordinates_[mm]"]
