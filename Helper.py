@@ -148,34 +148,60 @@ def antennaLookupTable():
     return dict
 
 
-def addStatistics(stats, bestIdx, code, summary_file):
+def field2name(field):
+    name = field
+    if name.startswith("n_"):
+        name = "#" + name[2:]
+    if name.startswith("sky-coverage_average"):
+        name = name.replace("sky_coverage_average", "sky-coverage")
+        name = name.replace("average_", "")
+        name = name.replace("_areas_", "@")
+        name = name[:-4]
+    if name.startswith("time_average"):
+        name = name.replace("average_", "")
+        name = name + " [%]"
+    if name.startswith("sim"):
+        name = name[4:]
+        name = name.replace("repeatability", "rep")
+        name = name.replace("mean_formal_error", "mfe")
+    name = name.replace("_", " ")
+    return name
+
+
+def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     """
     list statistics for best schedule
 
     :param stats: DataFrame for statistics.csv file
-    :param bestIdx: version number of selected schedule
+    :param best_idx: version number of selected schedule
+    :param code: session code
+    :param statistic_field: field names for summary file
+    :param summary_file: path to summary file
     :return: summary DataFrame
     """
-    nobs = stats.loc[bestIdx, "n_observations"]
-    Message.addMessage("\nnumber of observations: {}".format(nobs))
-    nscans = stats.loc[bestIdx, "n_scans"]
-    Message.addMessage("number of scans: {}".format(nscans))
-    skyCovScore = stats.loc[bestIdx, "sky_coverage_average_37_areas_60_min"]
-    Message.addMessage("sky-coverage score: {}".format(skyCovScore))
+
+    Message.addMessage("\n")
+    stats_dict = dict()
+    for field in statistic_field:
+        if field in stats:
+            val = stats.loc[best_idx, field]
+            name = field2name(field)
+            stats_dict[name] = val
+            Message.addMessage("{}: {}".format(name, val))
 
     # number of scans per station
     nscans_sta = {}
     filter_col = [col for col in stats if col.startswith('n_sta_scans_')]
     for col in filter_col:
         name = col.split("_")[-1]
-        nscans_sta[name] = stats.loc[bestIdx, col]
+        nscans_sta[name] = stats.loc[best_idx, col]
 
     # number of observations per station
     nobs_sta = {}
     filter_col = [col for col in stats if col.startswith('n_sta_obs_')]
     for col in filter_col:
         name = col.split("_")[-1]
-        nobs_sta[name] = stats.loc[bestIdx, col]
+        nobs_sta[name] = stats.loc[best_idx, col]
 
     # output station dependent statistics
     nsta = len(nscans_sta)
@@ -189,7 +215,7 @@ def addStatistics(stats, bestIdx, code, summary_file):
     for col in filter_col:
         name = col.split("_")[-1]
         name = (name[0:2], name[3:5])
-        nobs_bl[name] = stats.loc[bestIdx, col]
+        nobs_bl[name] = stats.loc[best_idx, col]
 
     # output baseline dependend statistics
     tlcs = [i for n in nobs_bl.keys() for i in n]
@@ -207,7 +233,7 @@ def addStatistics(stats, bestIdx, code, summary_file):
     nscans_src = {}
     filter_col = [col for col in stats if col.startswith('n_src_scans_')]
     for col in filter_col:
-        scans = stats.loc[bestIdx, col]
+        scans = stats.loc[best_idx, col]
         if scans in nscans_src:
             nscans_src[scans] += 1
         else:
@@ -223,17 +249,17 @@ def addStatistics(stats, bestIdx, code, summary_file):
         Message.addMessage("    {} source(s) observed in {} scans ".format(e, k))
 
     tlcs = "".join(tlcs)
+    stats_dict["stations"] = tlcs
     with open(summary_file, "r") as f:
         summary = pd.read_csv(summary_file, index_col=0)
-    new = pd.DataFrame(index=[code], data={"nsta": [nsta], "nsrc": [nsrc], "nobs": [nobs], "nscans": [nscans],
-                                           "skycov": [skyCovScore], "stations": [tlcs]})
+    new = pd.DataFrame(index=[code], data=stats_dict)
     if code in summary.index:
         summary = summary.drop(code)
     summary = summary.append(new)
     summary.to_csv(summary_file)
 
     # reverse and output
-    Message.addMessage("\ncomparison with previous schedules:\n{}".format(summary[::-1].head(10)))
+    Message.addMessage("\ncomparison with previous schedules:\n{}".format(summary[::-1].head(10).to_string()))
     return summary.tail(10)
 
 

@@ -63,6 +63,7 @@ def start_scheduling(args):
         delta_days = s_program.getint("schedule", 10)
         delta_days_upload = s_program.getint("upload", 7)
         intensive = s_program.getboolean("intensive", False)
+        statistic_field = s_program.get("statistics").split(",")
 
         # read master files
         target_day = today + datetime.timedelta(days=delta_days)
@@ -78,28 +79,31 @@ def start_scheduling(args):
             fun = s_program["function"]
             f = globals()[fun]
 
-            start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, intensive)
+            start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
+                  intensive)
         except BaseException as err:
             SendMail().writeErrorMail(emails)
 
 
-def start(master, path_scheduler, code, codeRegex, selectBest, emails, delta_days, delta_days_upload, intensive=False):
+def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
+          intensive=False):
     """
     start auto processing for one observing program
 
     :param master: list of dictionaries with session specific fields read from session master
     :param path_scheduler: path to VieSched++ executable
     :param code: observing program code
-    :param codeRegex: regular expression to match session name
-    :param selectBest: function to select best schedule from statistics dataframe
+    :param code_regex: regular expression to match session name
+    :param select_best: function to select best schedule from statistics dataframe
     :param emails: list of email addresses
     :param delta_days: time offset in days from where schedule should be generated
     :param delta_days_upload: time offset in days when schedule should be updated
+    :param intensive: flag for intensive session
     :return: None
     """
 
     Message.clearMessage("program")
-    pattern = re.compile(codeRegex)
+    pattern = re.compile(code_regex)
 
     Message.addMessage("=== {} observing program ===".format(code), dump="program")
     Message.addMessage("contact:", dump="program")
@@ -166,12 +170,12 @@ def start(master, path_scheduler, code, codeRegex, selectBest, emails, delta_day
         stats = stats.drop_duplicates()
 
         # find best schedule based on statistics
-        best_idx = selectBest(stats)
+        best_idx = select_best(stats)
         Message.addMessage("best version: v{:03d}".format(best_idx))
         Message.addMessage("this session will be uploaded on: {:%B %d, %Y}".format(
             today + datetime.timedelta(days=delta_days - delta_days_upload)))
         summary_file = os.path.join(os.path.dirname(xml_dir), "summary.txt")
-        summary_df = addStatistics(stats, best_idx, session["code"].upper(), summary_file)
+        summary_df = addStatistics(stats, best_idx, statistic_field, session["code"].upper(), summary_file)
 
         # copy best schedule to selected folder
         version_pattern = "_v{:03d}".format(best_idx)

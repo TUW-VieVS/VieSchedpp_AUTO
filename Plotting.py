@@ -1,3 +1,4 @@
+import itertools
 import math
 import os
 
@@ -16,25 +17,34 @@ def summary(df, output):
     codes = df.index.tolist()
     n = len(codes)
     networks = df["stations"].tolist()
+    df = df.drop(columns=["stations"])
+
     unique_networks = set(networks)
     cat = []
     for net in unique_networks:
         cat.append([i for i, x in enumerate(networks) if x == net])
 
-    fig, axes = plt.subplots(2, 2, figsize=(8, 6), sharex='all')
+    n_col = df.columns.size
+    fig_r = math.floor(math.sqrt(n_col))
+    fig_c = math.ceil(n_col / fig_r)
 
-    nobs = df["nobs"].to_numpy()
-    nscans = df["nscans"].to_numpy()
-    nsrc = df["nsrc"].to_numpy()
-    skycov = df["skycov"].to_numpy()
-    titles = ["#obs", "#scans", "#sources", "sky-coverage score"]
+    fig, axes = plt.subplots(fig_r, fig_c, figsize=(fig_c * 3, fig_r * 3), sharex='all')
 
     plt.xticks(range(n), codes)
     hs = []
-    for i, d in enumerate([nobs, nscans, nsrc, skycov]):
-        hs.append(plot_summary(axes.flat[i], d, cat, titles[i]))
+    first_empty = 0;
+    for i, field in itertools.zip_longest(range(0, fig_r * fig_c), df):
+        if field is None:
+            hs.append(plot_summary(axes.flat[i], None, cat, field))
+            axes.flat[i].get_yaxis().set_visible(False)
+
+            if first_empty == 0:
+                first_empty = i
+        else:
+            hs.append(plot_summary(axes.flat[i], df[field], cat, field))
         for tick in axes.flat[i].get_xticklabels():
             tick.set_rotation(90)
+
     labels = []
     for net in unique_networks:
         n = len(net) / 2
@@ -43,7 +53,7 @@ def summary(df, output):
         else:
             labels.append("({:.0f}) {}".format(n, net))
 
-    axes.flat[2].legend(hs[0], labels, loc='lower left')
+    axes.flat[first_empty].legend(hs[first_empty], labels, loc='lower left')
     fig.subplots_adjust(left=0.1, right=0.975, bottom=0.15, top=0.95, wspace=0.2, hspace=0.15)
     plt.savefig(os.path.join(output, "summary.png"), dpi=150)
 
@@ -71,7 +81,10 @@ def plot_summary(ax, data, cat, title):
 
     hs = []
     for x, c in zip(cat, colors):
-        d = data[x]
+        if data is None:
+            d = np.full(len(x), np.nan)
+        else:
+            d = data[x]
         hs.append(ax.bar(x, d, color=c))
     ax.set_title(title)
     return hs
