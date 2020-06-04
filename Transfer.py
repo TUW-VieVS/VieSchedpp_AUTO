@@ -37,6 +37,7 @@ def download_ftp():
         ftp = FTP("cddis.gsfc.nasa.gov")
         ftp.login()
         ftp.cwd("pub/vlbi/ivscontrol")
+        ftp.set_pasv(False)
 
         # get a list of all files at FTP server
         ftp_files = ftp.nlst()
