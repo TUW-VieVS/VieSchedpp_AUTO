@@ -251,7 +251,11 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     tlcs = "".join(tlcs)
     stats_dict["stations"] = tlcs
     with open(summary_file, "r") as f:
-        summary = pd.read_csv(summary_file, index_col=0)
+        if f.read():
+            summary = pd.read_csv(summary_file, index_col=0)
+        else:
+            summary = pd.DataFrame()
+
     new = pd.DataFrame(index=[code], data=stats_dict)
     if code in summary.index:
         summary = summary.drop(code)

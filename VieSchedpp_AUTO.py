@@ -274,7 +274,7 @@ def adjust_template(session, templates):
         with open(os.path.join(folder, ".gitignore."), "w") as f:
             f.write("*\n!summary.txt\n!.gitignore")
         with open(os.path.join(folder, "summary.txt"), "w") as f:
-            pass
+            f.write("")
 
     out = []
     for template in templates:
