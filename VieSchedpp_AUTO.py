@@ -15,15 +15,12 @@ import pandas as pd
 import Plotting
 import Transfer
 import skd_parser.skd as skd_parser
-from Helper import Message
-from Helper import addStatistics
-from Helper import readMaster
-from Helper import update_uploadScheduler
+from Helper import Message, addStatistics, readMaster, update_uploadScheduler, scale
 from SendMail import SendMail
 from XML_manipulation import adjust_xml
 
 
-def start_scheduling(args):
+def start_scheduling():
     """
     start VieSched++ AUTO processing
 
@@ -44,7 +41,8 @@ def start_scheduling(args):
     Message.addMessage("computer: {}, Python {}".format(platform.node(), platform.python_version()), dump="header")
     if args.institution:
         Message.addMessage("institution: {}".format(args.institution), dump="header")
-
+    Message.addMessage("This is an automatically generated message. Do NOT reply to this email directly!",
+                       dump="header")
     # download files
     if not args.no_download:
         Transfer.download_ftp()
@@ -54,14 +52,16 @@ def start_scheduling(args):
 
     # start processing all programs
     for program in settings.sections():
+        if program == "general":
+            continue
         if program not in args.observing_programs:
             Message.addMessage("skipping scheduling observing program: {}".format(program), dump="header")
             continue
 
         s_program = settings[program]
         emails = s_program.get("contact", args.fallback_email).split(",")
-        delta_days = s_program.getint("schedule", 10)
-        delta_days_upload = s_program.getint("upload", 7)
+        delta_days = s_program.getint("schedule_date", 10)
+        delta_days_upload = s_program.getint("upload_date", 7)
         intensive = s_program.getboolean("intensive", False)
         statistic_field = s_program.get("statistics").split(",")
 
@@ -133,7 +133,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         Message.clearMessage("log")
         Message.addMessage("##### {} #####".format(session["code"].upper()))
         Message.addMessage("{name} ({code}) start {date} duration {duration}h stations {stations}".format(**session))
-        xmls = adjustTemplate(session, templates)
+        xmls = adjust_template(session, templates)
         xml_dir = os.path.dirname(xmls[0])
         df_list = []
 
@@ -206,25 +206,13 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         SendMail().writeMail(xml_dir_selected, emails)
 
 
-def selectBest_intensives(df):
+def select_best_intensives(df):
     """
     logic to select best schedule for intensive sessions
 
     :param df: DataFrame of statistics.csv file
     :return: version number of best schedule
     """
-
-    def scale(s, minIsGood=True):
-        if minIsGood:
-            q = s.quantile(.75)
-            r = (s - s.min()) / (q - s.min())
-            r.loc[r > 1] = 1
-            r = 1 - r
-        else:
-            q = s.quantile(.25)
-            r = (s - q) / (s.max() - q)
-            r.loc[r < 0] = 0
-        return r
 
     nobs = df["n_observations"]
     sky_cov = df["sky-coverage_average_37_areas_60_min"]
@@ -243,25 +231,13 @@ def selectBest_intensives(df):
     return best
 
 
-def selectBest_ohg(df):
+def select_best_ohg(df):
     """
     logic to select best schedule for OHG sessions
 
     :param df: DataFrame of statistics.csv file
     :return: version number of best schedule
     """
-
-    def scale(s, minIsGood=True):
-        if minIsGood:
-            q = s.quantile(.75)
-            r = (s - s.min()) / (q - s.min())
-            r.loc[r > 1] = 1
-            r = 1 - r
-        else:
-            q = s.quantile(.25)
-            r = (s - q) / (s.max() - q)
-            r.loc[r < 0] = 0
-        return r
 
     nobs = df["n_observations"]
     sky_cov = df["sky-coverage_average_25_areas_60_min"]
@@ -284,7 +260,7 @@ def selectBest_ohg(df):
     return best
 
 
-def adjustTemplate(session, templates):
+def adjust_template(session, templates):
     """
     adjustes the template XML file with session specific fields
 
@@ -321,6 +297,8 @@ def start_uploading():
     :return: None
     """
     today = datetime.date.today()
+    settings = configparser.ConfigParser()
+    settings.read("settings.ini")
 
     with open("upload_scheduler.txt", "r") as f:
         lines = [l for l in f if l.strip()]
@@ -341,9 +319,19 @@ def start_uploading():
                 Message.clearMessage("download")
                 Message.clearMessage("log")
 
-                code = os.path.basename(os.path.dirname(path))
-                Transfer.upload(path)
-                SendMail().writeMail_upload(code, ["matthias.schartner@geo.tuwien.ac.at"])
+                upload = settings[program].get("upload", "no").lower()
+                if upload == "ivs":
+                    code = os.path.basename(os.path.dirname(path))
+                    Transfer.upload(path)
+                    SendMail().writeMail_upload(code, ["matthias.schartner@geo.tuwien.ac.at"])
+                elif upload == "no":
+                    pass
+                else:
+                    emails = upload.split(",")
+                    with open(os.path.join(path, "selected", "email.txt"), "r") as f:
+                        body = f.read()
+                    SendMail().writeMail(path, emails, body)
+
                 lines[i] = lin.replace("pending", "uploaded")
 
     with open("upload_scheduler.txt", "w") as f:
@@ -404,7 +392,7 @@ if __name__ == "__main__":
     try:
         if not args.no_scheduling:
             print("===== START SCHEDULING =====")
-            start_scheduling(args)
+            start_scheduling()
         if not args.no_upload:
             print("===== START UPLOADING =====")
             start_uploading()

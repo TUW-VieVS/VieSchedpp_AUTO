@@ -53,34 +53,35 @@ class SendMail:
             self.send(msg)
 
     @classmethod
-    def writeMail(self, path, emails):
+    def writeMail(self, path, emails, body=None):
         """
         write an email
 
         :param path: path to "selected" folder
         :param emails: list of email addresses
+        :param body: email body text. If None text will be taken from Message object
         :return: None
         """
         skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
         operationNotesFile = skdFile.replace(".skd", ".txt")
 
         figures = glob.glob(os.path.join(path, "*.png"))
-        body = Message.msg_header + "\n" + \
-               Message.msg_program + "\n" + \
-               Message.msg_session + "\n" + \
-               Message.msg_download + "\n" + \
-               Message.msg_log
+        if body is None:
+            body = Message.msg_header + "\n" + \
+                   Message.msg_program + "\n" + \
+                   Message.msg_session + "\n" + \
+                   Message.msg_download + "\n" + \
+                   Message.msg_log
 
-        with open(os.path.join(path, "email.txt"), "w") as f:
-            f.write(body)
+            with open(os.path.join(path, "email.txt"), "w") as f:
+                f.write(body)
 
         if SendMail._flag_sendMail:
             msg = MIMEMultipart()
             msg['From'] = "VieSched++ AUTO"
             msg['To'] = ", ".join(emails)
             sessionCode = os.path.basename(os.path.dirname(path))
-            today = datetime.date.today()
-            msg['Subject'] = "[VieSched++ AUTO] {} ({:%B %d, %Y})".format(sessionCode, today)
+            msg['Subject'] = "[VieSched++ AUTO] {}".format(sessionCode)
 
             msg.attach(MIMEText(body))
 

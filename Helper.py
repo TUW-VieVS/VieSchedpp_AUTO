@@ -281,3 +281,16 @@ def update_uploadScheduler(path, delta_days):
 
     with open("upload_scheduler.txt", "w") as f:
         f.write(txt)
+
+
+def scale(s, minIsGood=True):
+    if minIsGood:
+        q = s.quantile(.75)
+        r = (s - s.min()) / (q - s.min())
+        r.loc[r > 1] = 1
+        r = 1 - r
+    else:
+        q = s.quantile(.25)
+        r = (s - q) / (s.max() - q)
+        r.loc[r < 0] = 0
+    return r
