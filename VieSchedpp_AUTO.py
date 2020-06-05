@@ -274,7 +274,7 @@ def adjust_template(session, templates):
         with open(os.path.join(folder, ".gitignore."), "w") as f:
             f.write("*\n!summary.txt\n!.gitignore")
         with open(os.path.join(folder, "summary.txt"), "w") as f:
-            f.write(",nsta,nsrc,nobs,nscans,skycov,stations\n")
+            pass
 
     out = []
     for template in templates:
@@ -352,7 +352,7 @@ if __name__ == "__main__":
           "Processing parameters of the sessions is taken from the settings.ini file. "
 
     parser = argparse.ArgumentParser(description=doc)
-    parser.add_argument("-s", "--scheduler", default="./VieSchedpp.exe",
+    parser.add_argument("-s", "--scheduler", default="~/VieSchedpp/VieSchedpp/Release/VieSchedpp",
                         metavar="path_to_executable",
                         help="full path to the VieSched++ executable. Default: \"./VieSchedpp.exe\"")
     parser.add_argument("-e", "--fallback_email", default="matthias.schartner@geo.tuwien.ac.at", nargs='+',
