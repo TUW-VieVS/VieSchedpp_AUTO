@@ -134,8 +134,9 @@ def send_gmail(message):
     :param message: email message
     :return: None
     """
+    message['From'] = "VieSched++ AUTO"
     if SendMail.flag_sendMail:
-        print("Send email to: " + message['To'], end="... ")
+        print("Send email (Gmail) to: " + message['To'], end="... ")
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login("vieschedpp.auto@gmail.com", "vlbi2000")
@@ -151,8 +152,9 @@ def send_bkg(message):
     :param message: email message
     :return: None
     """
+    message['From'] = "vieschedpp.auto@wettzell.de"
     if SendMail.flag_sendMail:
-        print("Send email to: " + message['To'], end="... ")
+        print("Send email (BKG) to: " + message['To'], end="... ")
         server = smtplib.SMTP('localhost', 25)
         server.ehlo()
         server.send_message(message)
@@ -160,6 +162,9 @@ def send_bkg(message):
         print("finished!")
 
 
+def undefined():
+    print("ERROR: email is undefined!")
+
 class SendMail:
     flag_sendMail = True
-    send = None
+    send = undefined
