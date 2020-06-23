@@ -135,11 +135,13 @@ def send_gmail(message):
     :return: None
     """
     if SendMail.flag_sendMail:
+        print("Send email to: " + message['To'], end="... ")
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login("vieschedpp.auto@gmail.com", "vlbi2000")
         server.send_message(message)
         server.quit()
+        print("finished!")
 
 
 def send_bkg(message):
@@ -150,10 +152,12 @@ def send_bkg(message):
     :return: None
     """
     if SendMail.flag_sendMail:
+        print("Send email to: " + message['To'], end="... ")
         server = smtplib.SMTP('localhost', 25)
         server.ehlo()
         server.send_message(message)
         server.quit()
+        print("finished!")
 
 
 class SendMail:
