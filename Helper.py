@@ -214,7 +214,8 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     nsta = len(nscans_sta)
     Message.addMessage("\nparticipating stations: {}".format(nsta))
     for stas in nscans_sta.keys():
-        Message.addMessage("    {:8} ({:d} scans, {:d} obs)".format(stas, nscans_sta[stas], nobs_sta[stas]))
+        Message.addMessage(
+            "    {:8} ({:d} scans, {:d} obs)".format(stas, int(round(nscans_sta[stas])), int(round(nobs_sta[stas]))))
 
     # number of observations per baseline
     nobs_bl = {}
