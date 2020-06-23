@@ -36,6 +36,11 @@ def start_scheduling():
             with open('email_function.txt') as f:
                 c = f.read().strip().lower()
                 SendMail.delegate_send(c)
+    prefix = settings["general"].get("prefix_output_folder", "Schedules")
+    if os.sep == "\\":
+        prefix = prefix.replace("/", "\\")
+    else:
+        prefix = prefix.replace("\\", "/")
 
     path_scheduler = args.scheduler
 
@@ -63,7 +68,7 @@ def start_scheduling():
         if program == "general":
             continue
         if program not in args.observing_programs:
-            Message.addMessage("skipping scheduling observing program: {}".format(program), dump="header")
+            print("skipping scheduling observing program: {}".format(program))
             continue
 
         s_program = settings[program]
@@ -91,13 +96,13 @@ def start_scheduling():
             f = globals()[fun]
 
             start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
-                  intensive, upload)
+                  prefix, intensive, upload)
         except BaseException as err:
             SendMail.writeErrorMail(emails)
 
 
 def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
-          intensive=False, upload=False):
+          output_path="./Schedules/", intensive=False, upload=False):
     """
     start auto processing for one observing program
 
@@ -107,8 +112,10 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
     :param code_regex: regular expression to match session name
     :param select_best: function to select best schedule from statistics dataframe
     :param emails: list of email addresses
+    :param statistic_field: fields to be stored in statistics file
     :param delta_days: time offset in days from where schedule should be generated
     :param delta_days_upload: time offset in days when schedule should be updated
+    :param output_path: prefix for output path
     :param intensive: flag for intensive session
     :param upload: flag if session needs to be uploaded
     :return: None
@@ -145,7 +152,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         Message.clearMessage("log")
         Message.addMessage("##### {} #####".format(session["code"].upper()))
         Message.addMessage("{name} ({code}) start {date} duration {duration}h stations {stations}".format(**session))
-        xmls = adjust_template(session, templates)
+        xmls = adjust_template(output_path, session, templates)
         xml_dir = os.path.dirname(xmls[0])
         df_list = []
 
@@ -272,15 +279,16 @@ def select_best_ohg(df):
     return best
 
 
-def adjust_template(session, templates):
+def adjust_template(output_path, session, templates):
     """
     adjustes the template XML file with session specific fields
 
+    :param output_path: fields to be stored in statistics file
     :param session: dictionary with session specific fields
     :param templates: list of templates for this session type
     :return: list of all generated XML files
     """
-    folder = os.path.join("Schedules", os.path.basename(os.path.dirname(templates[0])))
+    folder = os.path.join(output_path, os.path.basename(os.path.dirname(templates[0])))
     if not os.path.exists(folder):
         os.makedirs(folder)
         with open(os.path.join(folder, ".gitignore."), "w") as f:
