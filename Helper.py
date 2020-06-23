@@ -97,7 +97,14 @@ def readMaster(path):
                 date = date + datetime.timedelta(days=doy - 1)
                 dur = int(tmp[6])
                 stations_tlc = tmp[7].strip().split()[0]
-                stations_tlc = [stations_tlc[i:i + 2] for i in range(0, len(stations_tlc), 2)]
+                stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
+
+                for tlc in stations_tlc:
+                    if tlc == "VA":
+                        stations_tlc.remove("VA")
+                        stations_tlc += ["BR", "FD", "HN", "KP", "LA", "MK", "NL", "OV", "PT", "SC"]
+                        break
+
                 if all(tlc in tlc2name for tlc in stations_tlc):
                     stations_name = [tlc2name[tlc] for tlc in stations_tlc]
                 else:
@@ -143,7 +150,7 @@ def antennaLookupTable():
                 continue
 
             # add to dictonary
-            dict[tmp[13]] = tmp[1]
+            dict[tmp[13].upper()] = tmp[1]
 
     return dict
 

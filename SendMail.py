@@ -16,7 +16,7 @@ def changeSendMailsFlag(flag):
     :param flag: boolean flag
     :return: None
     """
-    SendMail._flag_sendMail = flag
+    SendMail.flag_sendMail = flag
 
 
 def delegate_send(slot):
