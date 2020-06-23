@@ -32,6 +32,25 @@ def adjust_xml(template, session):
     tree.find("./output/scheduler").text = session["scheduler"]
     tree.find("./output/correlator").text = session["correlator"]
 
+    # catalogs to absolut path
+    cwd = os.getcwd()
+    folder = os.path.dirname(template)
+    os.chdir(folder)
+    tree.find("./catalogs/antenna").text = os.path.abspath(tree.find("./catalogs/antenna").text)
+    tree.find("./catalogs/equip").text = os.path.abspath(tree.find("./catalogs/equip").text)
+    tree.find("./catalogs/flux").text = os.path.abspath(tree.find("./catalogs/flux").text)
+    tree.find("./catalogs/freq").text = os.path.abspath(tree.find("./catalogs/freq").text)
+    tree.find("./catalogs/hdpos").text = os.path.abspath(tree.find("./catalogs/hdpos").text)
+    tree.find("./catalogs/loif").text = os.path.abspath(tree.find("./catalogs/loif").text)
+    tree.find("./catalogs/mask").text = os.path.abspath(tree.find("./catalogs/mask").text)
+    tree.find("./catalogs/modes").text = os.path.abspath(tree.find("./catalogs/modes").text)
+    tree.find("./catalogs/position").text = os.path.abspath(tree.find("./catalogs/position").text)
+    tree.find("./catalogs/rec").text = os.path.abspath(tree.find("./catalogs/rec").text)
+    tree.find("./catalogs/rx").text = os.path.abspath(tree.find("./catalogs/rx").text)
+    tree.find("./catalogs/source").text = os.path.abspath(tree.find("./catalogs/source").text)
+    tree.find("./catalogs/tracks").text = os.path.abspath(tree.find("./catalogs/tracks").text)
+    os.chdir(cwd)
+
     settings = configparser.ConfigParser()
     settings.read("settings.ini")
 

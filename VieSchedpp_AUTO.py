@@ -39,8 +39,6 @@ def start_scheduling():
     prefix = settings["general"].get("prefix_output_folder", "Schedules")
     if os.sep == "\\":
         prefix = prefix.replace("/", "\\")
-    else:
-        prefix = prefix.replace("\\", "/")
 
     path_scheduler = args.scheduler
 

@@ -27,6 +27,7 @@
 		<logSeverityConsole>info</logSeverityConsole>
 		<logSeverityFile>info</logSeverityFile>
 		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+        <versionOffset>200</versionOffset>
 	</general>
 	<output>
 		<experimentDescription>IN120-176</experimentDescription>
