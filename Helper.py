@@ -267,11 +267,15 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     return summary.tail(10)
 
 
-def update_uploadScheduler(path, delta_days):
+def update_uploadScheduler(path, delta_days, upload=False):
     path = os.path.dirname(path)
 
     today = datetime.date.today()
     target_day = today + datetime.timedelta(days=delta_days)
+
+    flag = "pending"
+    if not upload:
+        flag = "uploaded"
 
     txt = ""
     with open("upload_scheduler.txt", "r") as f:
@@ -281,7 +285,7 @@ def update_uploadScheduler(path, delta_days):
             if not l.startswith(path):
                 txt += l
 
-    txt += "{} {} {}\n".format(path, target_day, "pending")
+    txt += "{} {} {}\n".format(path, target_day, flag)
 
     with open("upload_scheduler.txt", "w") as f:
         f.write(txt)

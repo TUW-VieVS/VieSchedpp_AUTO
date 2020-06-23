@@ -28,6 +28,14 @@ def start_scheduling():
     """
     settings = configparser.ConfigParser()
     settings.read("settings.ini")
+    email_slot = settings["general"].get("email_server", "gmail").lower()
+    if email_slot != "fromfile":
+        SendMail.delegate_send(email_slot)
+    else:
+        if os.path.exists("email_function.txt"):
+            with open('email_function.txt') as f:
+                c = f.read().strip().lower()
+                SendMail.delegate_send(c)
 
     path_scheduler = args.scheduler
 
@@ -64,6 +72,9 @@ def start_scheduling():
         delta_days_upload = s_program.getint("upload_date", 7)
         intensive = s_program.getboolean("intensive", False)
         statistic_field = s_program.get("statistics").split(",")
+        upload = True
+        if s_program.get("upload", "no").lower() == "no":
+            upload = False
 
         # read master files
         target_day = today + datetime.timedelta(days=delta_days)
@@ -80,13 +91,13 @@ def start_scheduling():
             f = globals()[fun]
 
             start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
-                  intensive)
+                  intensive, upload)
         except BaseException as err:
             SendMail().writeErrorMail(emails)
 
 
 def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
-          intensive=False):
+          intensive=False, upload=False):
     """
     start auto processing for one observing program
 
@@ -99,6 +110,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
     :param delta_days: time offset in days from where schedule should be generated
     :param delta_days_upload: time offset in days when schedule should be updated
     :param intensive: flag for intensive session
+    :param upload: flag if session needs to be uploaded
     :return: None
     """
 
@@ -191,7 +203,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             destination = os.path.join(xml_dir_selected, fname)
             shutil.copy(f, destination)
 
-        update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload)
+        update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload, upload)
 
         try:
             skdFile = os.path.join(xml_dir_selected, "{}.skd".format(session["code"].lower()))

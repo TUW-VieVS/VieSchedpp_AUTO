@@ -11,25 +11,41 @@ from Helper import Message
 
 class SendMail:
     _flag_sendMail = True
+    send = None
 
     def __init__(self):
         """
-        initialize flags
+        initialize class
         """
-        pass
+        SendMail.send = SendMail.send_gmail
 
-    @classmethod
-    def changeSendMailsFlag(cls, flag):
+    @staticmethod
+    def changeSendMailsFlag(flag):
         """
         change sendMail flag
 
         :param flag: boolean flag
         :return: None
         """
-        cls._flag_sendMail = flag
+        SendMail._flag_sendMail = flag
 
-    @classmethod
-    def writeMail_upload(self, code, emails):
+    @staticmethod
+    def delegate_send(slot):
+        """
+        change delegate send() function to different function (e.g.: send via gmail-server or bkg-server)
+
+        :param slot: name ("Gmail", "BKG")
+        :return: None
+        """
+        if slot.lower() == "gmail":
+            SendMail.send = SendMail.send_gmail
+        elif slot.lower() == "bkg":
+            SendMail.send = SendMail.send_bkg
+        else:
+            Message.addMessage("ERROR: SMTP server slot \"{:}\" not found".format(slot))
+
+    @staticmethod
+    def writeMail_upload(code, emails):
         """
         write email with upload message
 
@@ -50,10 +66,10 @@ class SendMail:
             today = datetime.date.today()
             msg['Subject'] = "[upload] [VieSched++ AUTO] {} ({:%B %d, %Y})".format(code, today)
             msg.attach(MIMEText(body))
-            self.send(msg)
+            SendMail.send(msg)
 
-    @classmethod
-    def writeMail(self, path, emails, body=None):
+    @staticmethod
+    def writeMail(path, emails, body=None):
         """
         write an email
 
@@ -92,10 +108,10 @@ class SendMail:
                 part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
                 msg.attach(part)
 
-            self.send(msg)
+            SendMail.send(msg)
 
-    @classmethod
-    def writeErrorMail(self, to):
+    @staticmethod
+    def writeErrorMail(to):
         """
         write an email in case an error raised
 
@@ -119,12 +135,12 @@ class SendMail:
                    Message.msg_log
             msg.attach(MIMEText(body))
 
-            self.send(msg)
+            SendMail.send(msg)
 
-    @classmethod
-    def send(self, message):
+    @staticmethod
+    def send_gmail(message):
         """
-        send an email message
+        send an email message via default gmail server
 
         :param message: email message
         :return: None
@@ -134,3 +150,18 @@ class SendMail:
             server.ehlo()
             server.login("vieschedpp.auto@gmail.com", "vlbi2000")
             server.send_message(message)
+            server.quit()
+
+    @staticmethod
+    def send_bkg(message):
+        """
+        send an email message via bkg server (for Wettzell)
+
+        :param message: email message
+        :return: None
+        """
+        if SendMail._flag_sendMail:
+            server = smtplib.SMTP('localhost', 25)
+            server.ehlo()
+            server.send_message(message)
+            server.quit()

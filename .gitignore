@@ -3,8 +3,9 @@ MASTER
 CATALOGS
 Schedules
 venv
-upload_scheduler.txt
 __pycache__
+/upload_scheduler.txt
 /VieSchedpp_AUTO.zip
-BKG_pw.txt
-OHG_plan.txt
+/BKG_pw.txt
+/OHG_plan.txt
+/email_function.txt
