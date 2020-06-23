@@ -63,19 +63,19 @@
 		<createSkyCoverage>false</createSkyCoverage>
 	</output>
 	<catalogs>
-		<antenna>../../../CATALOGS/antenna.cat</antenna>
-		<equip>../../../CATALOGS/equip.cat</equip>
-		<flux>../../../CATALOGS/flux.cat</flux>
-		<freq>../../../CATALOGS/freq.cat</freq>
-		<hdpos>../../../CATALOGS/hdpos.cat</hdpos>
-		<loif>../../../CATALOGS/loif.cat</loif>
-		<mask>../../../CATALOGS/mask.cat</mask>
-		<modes>../../../CATALOGS/modes.cat</modes>
-		<position>../../../CATALOGS/position.cat</position>
-		<rec>../../../CATALOGS/rec.cat</rec>
-		<rx>../../../CATALOGS/rx.cat</rx>
-		<source>../../../CATALOGS/source.cat.geodetic.good</source>
-		<tracks>../../../CATALOGS/tracks.cat</tracks>
+		<antenna>../../CATALOGS/antenna.cat</antenna>
+		<equip>../../CATALOGS/equip.cat</equip>
+		<flux>../../CATALOGS/flux.cat</flux>
+		<freq>../../CATALOGS/freq.cat</freq>
+		<hdpos>../../CATALOGS/hdpos.cat</hdpos>
+		<loif>../../CATALOGS/loif.cat</loif>
+		<mask>../../CATALOGS/mask.cat</mask>
+		<modes>../../CATALOGS/modes.cat</modes>
+		<position>../../CATALOGS/position.cat</position>
+		<rec>../../CATALOGS/rec.cat</rec>
+		<rx>../../CATALOGS/rx.cat</rx>
+		<source>../../CATALOGS/source.cat.geodetic.good</source>
+		<tracks>../../CATALOGS/tracks.cat</tracks>
 	</catalogs>
 	<station>
 		<setup>
