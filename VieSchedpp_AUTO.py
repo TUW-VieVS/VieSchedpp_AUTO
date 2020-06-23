@@ -13,10 +13,10 @@ import traceback
 import pandas as pd
 
 import Plotting
+import SendMail
 import Transfer
 import skd_parser.skd as skd_parser
 from Helper import Message, addStatistics, readMaster, update_uploadScheduler, scale
-from SendMail import SendMail
 from XML_manipulation import adjust_xml
 
 
@@ -93,7 +93,7 @@ def start_scheduling():
             start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
                   intensive, upload)
         except BaseException as err:
-            SendMail().writeErrorMail(emails)
+            SendMail.writeErrorMail(emails)
 
 
 def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
@@ -215,7 +215,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         except BaseException as err:
             Message.addMessage("ERROR during plotting: {}".format(err))
 
-        SendMail().writeMail(xml_dir_selected, emails)
+        SendMail.writeMail(xml_dir_selected, emails)
 
 
 def select_best_intensives(df):
@@ -335,14 +335,14 @@ def start_uploading():
                 if upload == "ivs":
                     code = os.path.basename(os.path.dirname(path))
                     Transfer.upload(path)
-                    SendMail().writeMail_upload(code, ["matthias.schartner@geo.tuwien.ac.at"])
+                    SendMail.writeMail_upload(code, ["matthias.schartner@geo.tuwien.ac.at"])
                 elif upload == "no":
                     pass
                 else:
                     emails = upload.split(",")
                     with open(os.path.join(path, "selected", "email.txt"), "r") as f:
                         body = f.read()
-                    SendMail().writeMail(path, emails, body)
+                    SendMail.writeMail(path, emails, body)
 
                 lines[i] = lin.replace("pending", "uploaded")
 
@@ -393,7 +393,7 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if args.no_email:
-        SendMail().changeSendMailsFlag(False)
+        SendMail.changeSendMailsFlag(False)
 
     if args.observing_programs is None:
         print("No observing program selected!")
@@ -413,4 +413,4 @@ if __name__ == "__main__":
     except BaseException as err:
         print(err)
         print(traceback.print_exc())
-        SendMail().writeErrorMail(args.fallback_email)
+        SendMail.writeErrorMail(args.fallback_email)

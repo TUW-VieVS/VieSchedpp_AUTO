@@ -9,159 +9,153 @@ from email.mime.text import MIMEText
 from Helper import Message
 
 
-class SendMail:
-    _flag_sendMail = True
-    send = None
+def changeSendMailsFlag(flag):
+    """
+    change sendMail flag
 
-    def __init__(self):
-        """
-        initialize class
-        """
-        SendMail.send = SendMail.send_gmail
+    :param flag: boolean flag
+    :return: None
+    """
+    SendMail._flag_sendMail = flag
 
-    @staticmethod
-    def changeSendMailsFlag(flag):
-        """
-        change sendMail flag
 
-        :param flag: boolean flag
-        :return: None
-        """
-        SendMail._flag_sendMail = flag
+def delegate_send(slot):
+    """
+    change delegate send() function to different function (e.g.: send via gmail-server or bkg-server)
 
-    @staticmethod
-    def delegate_send(slot):
-        """
-        change delegate send() function to different function (e.g.: send via gmail-server or bkg-server)
+    :param slot: name ("Gmail", "BKG")
+    :return: None
+    """
+    if slot.lower() == "gmail":
+        SendMail.send = send_gmail
+    elif slot.lower() == "bkg":
+        SendMail.send = send_bkg
+    else:
+        Message.addMessage("ERROR: SMTP server slot \"{:}\" not found".format(slot))
 
-        :param slot: name ("Gmail", "BKG")
-        :return: None
-        """
-        if slot.lower() == "gmail":
-            SendMail.send = SendMail.send_gmail
-        elif slot.lower() == "bkg":
-            SendMail.send = SendMail.send_bkg
-        else:
-            Message.addMessage("ERROR: SMTP server slot \"{:}\" not found".format(slot))
 
-    @staticmethod
-    def writeMail_upload(code, emails):
-        """
-        write email with upload message
+def writeMail_upload(code, emails):
+    """
+    write email with upload message
 
-        :param code: session code
-        :param emails: list of email addresses
-        :return:
-        """
+    :param code: session code
+    :param emails: list of email addresses
+    :return:
+    """
+    body = Message.msg_header + "\n" + \
+           Message.msg_program + "\n" + \
+           Message.msg_session + "\n" + \
+           Message.msg_download + "\n" + \
+           Message.msg_log
+
+    if SendMail.flag_sendMail:
+        msg = MIMEMultipart()
+        msg['From'] = "VieSched++ AUTO"
+        msg['To'] = ", ".join(emails)
+        today = datetime.date.today()
+        msg['Subject'] = "[upload] [VieSched++ AUTO] {} ({:%B %d, %Y})".format(code, today)
+        msg.attach(MIMEText(body))
+        SendMail.send(msg)
+
+
+def writeMail(path, emails, body=None):
+    """
+    write an email
+
+    :param path: path to "selected" folder
+    :param emails: list of email addresses
+    :param body: email body text. If None text will be taken from Message object
+    :return: None
+    """
+    skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
+    operationNotesFile = skdFile.replace(".skd", ".txt")
+
+    figures = glob.glob(os.path.join(path, "*.png"))
+    if body is None:
         body = Message.msg_header + "\n" + \
                Message.msg_program + "\n" + \
                Message.msg_session + "\n" + \
                Message.msg_download + "\n" + \
                Message.msg_log
 
-        if SendMail._flag_sendMail:
-            msg = MIMEMultipart()
-            msg['From'] = "VieSched++ AUTO"
-            msg['To'] = ", ".join(emails)
-            today = datetime.date.today()
-            msg['Subject'] = "[upload] [VieSched++ AUTO] {} ({:%B %d, %Y})".format(code, today)
-            msg.attach(MIMEText(body))
-            SendMail.send(msg)
+        with open(os.path.join(path, "email.txt"), "w") as f:
+            f.write(body)
 
-    @staticmethod
-    def writeMail(path, emails, body=None):
-        """
-        write an email
+    if SendMail.flag_sendMail:
+        msg = MIMEMultipart()
+        msg['From'] = "VieSched++ AUTO"
+        msg['To'] = ", ".join(emails)
+        sessionCode = os.path.basename(os.path.dirname(path))
+        msg['Subject'] = "[VieSched++ AUTO] {}".format(sessionCode)
 
-        :param path: path to "selected" folder
-        :param emails: list of email addresses
-        :param body: email body text. If None text will be taken from Message object
-        :return: None
-        """
-        skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
-        operationNotesFile = skdFile.replace(".skd", ".txt")
+        msg.attach(MIMEText(body))
 
-        figures = glob.glob(os.path.join(path, "*.png"))
-        if body is None:
-            body = Message.msg_header + "\n" + \
-                   Message.msg_program + "\n" + \
-                   Message.msg_session + "\n" + \
-                   Message.msg_download + "\n" + \
-                   Message.msg_log
+        for f in [skdFile, operationNotesFile, *figures]:
+            with open(f, "rb") as fil:
+                part = MIMEApplication(fil.read(), Name=os.path.basename(f))
+            # After the file is closed
+            part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
+            msg.attach(part)
 
-            with open(os.path.join(path, "email.txt"), "w") as f:
-                f.write(body)
+        SendMail.send(msg)
 
-        if SendMail._flag_sendMail:
-            msg = MIMEMultipart()
-            msg['From'] = "VieSched++ AUTO"
-            msg['To'] = ", ".join(emails)
-            sessionCode = os.path.basename(os.path.dirname(path))
-            msg['Subject'] = "[VieSched++ AUTO] {}".format(sessionCode)
 
-            msg.attach(MIMEText(body))
+def writeErrorMail(to):
+    """
+    write an email in case an error raised
 
-            for f in [skdFile, operationNotesFile, *figures]:
-                with open(f, "rb") as fil:
-                    part = MIMEApplication(fil.read(), Name=os.path.basename(f))
-                # After the file is closed
-                part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
-                msg.attach(part)
+    :param to: list of email addresses
+    :return: None
+    """
+    if SendMail.flag_sendMail:
+        msg = MIMEMultipart()
+        msg['From'] = "VieSched++ AUTO"
+        try:
+            msg['To'] = ", ".join(to)
+        except:
+            msg['To'] = to
 
-            SendMail.send(msg)
+        today = datetime.date.today()
+        msg['Subject'] = "[ERROR] [VieSched++ AUTO] {:%B %d, %Y}".format(today)
+        body = Message.msg_header + "\n" + \
+               Message.msg_program + "\n" + \
+               Message.msg_session + "\n" + \
+               Message.msg_download + "\n" + \
+               Message.msg_log
+        msg.attach(MIMEText(body))
 
-    @staticmethod
-    def writeErrorMail(to):
-        """
-        write an email in case an error raised
+        SendMail.send(msg)
 
-        :param to: list of email addresses
-        :return: None
-        """
-        if SendMail._flag_sendMail:
-            msg = MIMEMultipart()
-            msg['From'] = "VieSched++ AUTO"
-            try:
-                msg['To'] = ", ".join(to)
-            except:
-                msg['To'] = to
 
-            today = datetime.date.today()
-            msg['Subject'] = "[ERROR] [VieSched++ AUTO] {:%B %d, %Y}".format(today)
-            body = Message.msg_header + "\n" + \
-                   Message.msg_program + "\n" + \
-                   Message.msg_session + "\n" + \
-                   Message.msg_download + "\n" + \
-                   Message.msg_log
-            msg.attach(MIMEText(body))
+def send_gmail(message):
+    """
+    send an email message via default gmail server
 
-            SendMail.send(msg)
+    :param message: email message
+    :return: None
+    """
+    if SendMail.flag_sendMail:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login("vieschedpp.auto@gmail.com", "vlbi2000")
+        server.send_message(message)
+        server.quit()
 
-    @staticmethod
-    def send_gmail(message):
-        """
-        send an email message via default gmail server
 
-        :param message: email message
-        :return: None
-        """
-        if SendMail._flag_sendMail:
-            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-            server.ehlo()
-            server.login("vieschedpp.auto@gmail.com", "vlbi2000")
-            server.send_message(message)
-            server.quit()
+def send_bkg(message):
+    """
+    send an email message via bkg server (for Wettzell)
 
-    @staticmethod
-    def send_bkg(message):
-        """
-        send an email message via bkg server (for Wettzell)
+    :param message: email message
+    :return: None
+    """
+    if SendMail.flag_sendMail:
+        server = smtplib.SMTP('localhost', 25)
+        server.ehlo()
+        server.send_message(message)
+        server.quit()
 
-        :param message: email message
-        :return: None
-        """
-        if SendMail._flag_sendMail:
-            server = smtplib.SMTP('localhost', 25)
-            server.ehlo()
-            server.send_message(message)
-            server.quit()
+
+class SendMail:
+    flag_sendMail = True
+    send = None
