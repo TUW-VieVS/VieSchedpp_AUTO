@@ -69,6 +69,7 @@ def writeMail(path, emails, body=None):
     """
     skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
     operationNotesFile = skdFile.replace(".skd", ".txt")
+    vexFile = skdFile.replace(".skd", ".vex")
 
     figures = glob.glob(os.path.join(path, "*.png"))
     if body is None:
@@ -90,7 +91,7 @@ def writeMail(path, emails, body=None):
 
         msg.attach(MIMEText(body))
 
-        for f in [skdFile, operationNotesFile, *figures]:
+        for f in [skdFile, operationNotesFile, vexFile, *figures]:
             with open(f, "rb") as fil:
                 part = MIMEApplication(fil.read(), Name=os.path.basename(f))
             # After the file is closed

@@ -354,7 +354,7 @@ def start_uploading():
                     emails = upload.split(",")
                     with open(os.path.join(path, "selected", "email.txt"), "r") as f:
                         body = f.read()
-                    SendMail.writeMail(path, emails, body)
+                    SendMail.writeMail(os.path.join(path, "selected"), emails, body)
 
                 lines[i] = lin.replace("pending", "uploaded")
 
