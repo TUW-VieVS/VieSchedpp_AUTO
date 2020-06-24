@@ -28,8 +28,10 @@ def delegate_send(slot):
     """
     if slot.lower() == "gmail":
         SendMail.send = send_gmail
+        print("Send mails via [GMAIL]")
     elif slot.lower() == "bkg":
         SendMail.send = send_bkg
+        print("Send mails via [BKG]")
     else:
         Message.addMessage("ERROR: SMTP server slot \"{:}\" not found".format(slot))
 

@@ -1,8 +1,10 @@
 import datetime
 import os
 import re
+import configparser
 
 import pandas as pd
+from SendMail import delegate_send
 
 
 class Message:
@@ -310,3 +312,16 @@ def scale(s, minIsGood=True):
         r = (s - q) / (s.max() - q)
         r.loc[r < 0] = 0
     return r
+
+
+def setup_email():
+    settings = configparser.ConfigParser()
+    settings.read("settings.ini")
+    email_slot = settings["general"].get("email_server", "gmail").lower()
+    if email_slot != "fromfile":
+        delegate_send(email_slot)
+    else:
+        if os.path.exists("email_function.txt"):
+            with open('email_function.txt') as f:
+                c = f.read().strip().lower()
+                delegate_send(c)
