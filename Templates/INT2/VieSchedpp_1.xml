@@ -166,7 +166,7 @@
         <cadence>900</cadence>
     </focusCorners>
     <multisched>
-        <weight_factor_sky_coverage>
+        <weight_factor_sky-coverage>
             <value>0.29999999999999999</value>
             <value>0.25</value>
             <value>0</value>
@@ -178,7 +178,7 @@
             <value>0.12</value>
             <value>0.16</value>
             <value>0.20000000000000001</value>
-        </weight_factor_sky_coverage>
+        </weight_factor_sky-coverage>
     </multisched>
     <multiCore>
         <threads>auto</threads>

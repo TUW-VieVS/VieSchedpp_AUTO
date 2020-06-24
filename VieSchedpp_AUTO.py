@@ -185,12 +185,17 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         # concatenate all statistics.csv files
         stats = pd.concat(df_list)
         stats = stats.drop_duplicates()
+        stats.sort_index(inplace=True)
 
         # find best schedule based on statistics
         best_idx = select_best(stats)
         Message.addMessage("best version: v{:03d}".format(best_idx))
-        Message.addMessage("this session will be uploaded on: {:%B %d, %Y}".format(
-            today + datetime.timedelta(days=delta_days - delta_days_upload)))
+        if upload:
+            Message.addMessage("this session will be uploaded on: {:%B %d, %Y}".format(
+                today + datetime.timedelta(days=delta_days - delta_days_upload)))
+        else:
+            Message.addMessage("this session will NOT be uploaded!")
+
         summary_file = os.path.join(os.path.dirname(xml_dir), "summary.txt")
         summary_df = addStatistics(stats, best_idx, statistic_field, session["code"].upper(), summary_file)
 
@@ -207,8 +212,10 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             fname = os.path.basename(f).replace(version_pattern, "")
             destination = os.path.join(xml_dir_selected, fname)
             shutil.copy(f, destination)
+        stats.to_csv(os.path.join(xml_dir_selected, "merged_statistics.csv"))
 
-        update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload, upload)
+        if upload:
+            update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload, upload)
 
         try:
             skdFile = os.path.join(xml_dir_selected, "{}.skd".format(session["code"].lower()))
@@ -243,7 +250,7 @@ def select_best_intensives(df):
     s_dut1_rep = scale(dut1_rep)
     # scores = pd.concat([s_nobs, s_sky_cov, s_dut1_mfe, s_dut1_rep], axis=1)
 
-    score = 1 * s_nobs + 1 * s_sky_cov + .5 * s_dut1_mfe + .5 * s_dut1_rep
+    score = 1 * s_nobs + .25 * s_sky_cov + .8 * s_dut1_mfe + .8 * s_dut1_rep
     best = score.idxmax()
     return best
 

@@ -171,14 +171,14 @@
         <duration>1</duration>
     </weightFactor>
     <multisched>
-        <weight_factor_sky_coverage>
+        <weight_factor_sky-coverage>
             <value>0</value>
             <value>0.20000000000000001</value>
             <value>0.40000000000000002</value>
             <value>0.59999999999999998</value>
             <value>0.80000000000000004</value>
             <value>1</value>
-        </weight_factor_sky_coverage>
+        </weight_factor_sky-coverage>
         <weight_factor_duration>
             <value>0</value>
             <value>0.20000000000000001</value>
