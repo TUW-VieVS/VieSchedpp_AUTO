@@ -63,70 +63,70 @@ class Message:
             Message.msg_log = ""
 
 
-def readMaster(path):
+def readMaster(paths):
     """
     read session master
 
-    :param path: path to session master file
+    :param paths: list of paths to session master files
     :return: list of all sessions
     """
-
-    if not os.path.exists(path):
-        Message.addMessage("Error reading session master file: {}".format(path), dump="header")
-
     sessions = []
-    # extract year
-    year = [int(s) for s in re.findall(r'\d{2}', os.path.basename(path))]
-    if len(year) is not 1:
-        return
-    else:
-        year = year[0] + 2000
+    for path in paths:
+        if not os.path.exists(path):
+            Message.addMessage("Error reading session master file: {}".format(path), dump="header")
 
-    tlc2name = antennaLookupTable()
+        # extract year
+        year = [int(s) for s in re.findall(r'\d{2}', os.path.basename(path))]
+        if len(year) is not 1:
+            return
+        else:
+            year = year[0] + 2000
 
-    with open(path) as f:
-        for line in f:
-            if not line.startswith("|"):
-                continue
-            try:
-                tmp = line.split('|')
+        tlc2name = antennaLookupTable()
 
-                doy = int(tmp[4])
-                hour, min = [int(s) for s in tmp[5].split(":")]
-                date = datetime.datetime(year, 1, 1, hour, min, 0)
-                date = date + datetime.timedelta(days=doy - 1)
-                dur = int(tmp[6])
-                stations_tlc = tmp[7].strip().split()[0]
-                stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
-
-                for tlc in stations_tlc:
-                    if tlc == "VA":
-                        stations_tlc.remove("VA")
-                        stations_tlc += ["BR", "FD", "HN", "KP", "LA", "MK", "NL", "OV", "PT", "SC"]
-                        break
-
-                if all(tlc in tlc2name for tlc in stations_tlc):
-                    stations_name = [tlc2name[tlc] for tlc in stations_tlc]
-                else:
-                    missing = [tlc not in tlc2name for tlc in stations_tlc]
-                    for i, flag in enumerate(missing):
-                        if flag:
-                            Message.addMessage("Antenna {} not found in antenna.cat file".format(stations_tlc[i]),
-                                               dump="header")
+        with open(path) as f:
+            for line in f:
+                if not line.startswith("|"):
                     continue
+                try:
+                    tmp = line.split('|')
 
-                sessions.append({"name": tmp[1].strip(),
-                                 "code": tmp[2].strip(),
-                                 "date": date,
-                                 "duration": dur,
-                                 "stations_tlc": stations_tlc,
-                                 "stations": stations_name,
-                                 "scheduler": tmp[8].strip(),
-                                 "correlator": tmp[9].strip()})
+                    doy = int(tmp[4])
+                    hour, min = [int(s) for s in tmp[5].split(":")]
+                    date = datetime.datetime(year, 1, 1, hour, min, 0)
+                    date = date + datetime.timedelta(days=doy - 1)
+                    dur = int(tmp[6])
+                    stations_tlc = tmp[7].strip().split()[0]
+                    stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
 
-            except BaseException as err:
-                Message.addMessage("ERROR reading session: {} from file: {}".format(line, path), dump="header")
-                Message.addMessage(err, dump="header")
+                    for tlc in stations_tlc:
+                        if tlc == "VA":
+                            stations_tlc.remove("VA")
+                            stations_tlc += ["BR", "FD", "HN", "KP", "LA", "MK", "NL", "OV", "PT", "SC"]
+                            break
+
+                    if all(tlc in tlc2name for tlc in stations_tlc):
+                        stations_name = [tlc2name[tlc] for tlc in stations_tlc]
+                    else:
+                        missing = [tlc not in tlc2name for tlc in stations_tlc]
+                        for i, flag in enumerate(missing):
+                            if flag:
+                                Message.addMessage("Antenna {} not found in antenna.cat file".format(stations_tlc[i]),
+                                                   dump="header")
+                        continue
+
+                    sessions.append({"name": tmp[1].strip(),
+                                     "code": tmp[2].strip(),
+                                     "date": date,
+                                     "duration": dur,
+                                     "stations_tlc": stations_tlc,
+                                     "stations": stations_name,
+                                     "scheduler": tmp[8].strip(),
+                                     "correlator": tmp[9].strip()})
+
+                except BaseException as err:
+                    Message.addMessage("ERROR reading session: {} from file: {}".format(line, path), dump="header")
+                    Message.addMessage(err, dump="header")
     return sessions
 
 

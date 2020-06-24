@@ -62,6 +62,17 @@ def download_http():
 
     :return: None
     """
+    path = "MASTER"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    now = datetime.datetime.now()
+    year = now.year % 100
+    masters = [(os.path.join(path, "master{:02d}-int-SI.txt".format(year)),
+                "https://www.vlbi.at/wp-content/uploads/2020/06/master20-int-SI.txt")]
+
+    for cat in masters:
+        url_response(cat)
+
     path = "CATALOGS"
     if not os.path.exists(path):
         os.makedirs(path)
@@ -99,8 +110,8 @@ def url_response(cat):
     path, url = cat
 
     # only download file if current file was last modified longer than 23 hours ago
+    Message.addMessage("HTTPS download: {}... ".format(os.path.basename(path)), dump="download", endLine=False)
     if os.path.exists(path):
-        Message.addMessage("HTTPS download: {}... ".format(os.path.basename(path)), dump="download", endLine=False)
         last_update = os.path.getmtime(path)
         now = datetime.datetime.now()
         new_update = time.mktime(now.timetuple())

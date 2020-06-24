@@ -223,11 +223,11 @@
 			<value>0.66000000000000003</value>
 			<value>0.98999999999999999</value>
 		</weight_factor_idle_time>
-		<weight_factor_sky_coverage>
+		<weight_factor_sky-coverage>
 			<value>0.33000000000000002</value>
 			<value>0.66000000000000003</value>
 			<value>0.98999999999999999</value>
-		</weight_factor_sky_coverage>
+		</weight_factor_sky-coverage>
 	</multisched>
 	<multiCore>
 		<threads>auto</threads>

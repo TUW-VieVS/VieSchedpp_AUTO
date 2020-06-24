@@ -82,11 +82,10 @@ def start_scheduling():
         # read master files
         target_day = today + datetime.timedelta(days=delta_days)
         year = target_day.year % 100
+        masters = glob.glob(os.path.join("MASTER", "master{:02d}*".format(year)))
         if intensive:
-            master = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
-        else:
-            master = os.path.join("MASTER", "master{:02d}.txt".format(year))
-        sessions = readMaster(master)
+            masters = [m for m in masters if "int" in m.lower()]
+        sessions = readMaster(masters)
 
         try:
             pattern = s_program["pattern"]
