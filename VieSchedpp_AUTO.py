@@ -16,7 +16,7 @@ import Plotting
 import SendMail
 import Transfer
 import skd_parser.skd as skd_parser
-from Helper import Message, addStatistics, readMaster, update_uploadScheduler, scale, setup_email
+from Helper import Message, addStatistics, readMaster, update_uploadScheduler, scale
 from XML_manipulation import adjust_xml
 
 
@@ -358,6 +358,19 @@ def start_uploading():
                 f.write(lout)
 
 
+def setup_mail():
+    settings = configparser.ConfigParser()
+    settings.read("settings.ini")
+    email_slot = settings["general"].get("email_server", "gmail").lower()
+    if email_slot != "fromfile":
+        SendMail.delegate_send(email_slot)
+    else:
+        if os.path.exists("email_function.txt"):
+            with open('email_function.txt') as f:
+                c = f.read().strip().lower()
+                SendMail.delegate_send(c)
+
+
 if __name__ == "__main__":
 
     doc = "This program automatically generates VLBI schedules and uploads them to the IVS servers." \
@@ -404,7 +417,7 @@ if __name__ == "__main__":
         print("e.g.: python VieSchedpp_AUTO.py -p INT1 INT2 INT3")
         sys.exit(0)
 
-    setup_email()
+    setup_mail()
     try:
         if not args.no_scheduling:
             print("===== START SCHEDULING =====")
