@@ -27,6 +27,7 @@ def start_scheduling():
     :return: None
     """
     settings = configparser.ConfigParser()
+    settings.read("settings.ini")
     prefix = settings["general"].get("prefix_output_folder", "Schedules")
     if os.sep == "\\":
         prefix = prefix.replace("/", "\\")
