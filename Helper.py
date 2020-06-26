@@ -194,7 +194,7 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
             val = stats.loc[best_idx, field]
             name = field2name(field)
             stats_dict[name] = val
-            Message.addMessage("{}: {}".format(name, val))
+            Message.addMessage("{}: {:.2f}".format(name, val))
 
     # number of scans per station
     nscans_sta = {}
