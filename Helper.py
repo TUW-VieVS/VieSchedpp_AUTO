@@ -3,7 +3,7 @@ import os
 import re
 
 import pandas as pd
-
+from collections import defaultdict
 
 class Message:
     msg_program = ""
@@ -238,23 +238,16 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     Message.addMessage("\nnumber of observations per baseline:\n{}".format(nobs_perBaseline))
 
     # number of scans per source
-    nscans_src = {}
+    nscans_src = defaultdict(int)
     filter_col = [col for col in stats if col.startswith('n_src_scans_')]
     for col in filter_col:
         scans = stats.loc[best_idx, col]
-        if scans in nscans_src:
-            nscans_src[scans] += 1
-        else:
-            nscans_src[scans] = 0
+        nscans_src[scans] += 1
 
     # output source dependent statistics
     Message.addMessage("\nnumber of scans per source")
-    nsrc = 0
-    for k, e in nscans_src.items():
-        if k == 0:
-            continue
-        nsrc += e
-        Message.addMessage("    {} source(s) observed in {} scans ".format(e, k))
+    for i in range(1, max(nscans_src.keys()) + 1):
+        Message.addMessage("    {} source(s) observed in {} scans ".format(nscans_src[i], i))
 
     tlcs = "".join(tlcs)
     stats_dict["stations"] = tlcs
