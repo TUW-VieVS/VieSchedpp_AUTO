@@ -86,7 +86,9 @@ def start_scheduling():
 
             start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
                   prefix, intensive, upload)
-        except BaseException as err:
+        except:
+            Message.addMessage("#### ERROR ####")
+            Message.addMessage(traceback.format_exc())
             SendMail.writeErrorMail(emails)
 
 
@@ -215,8 +217,9 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Plotting.summary(summary_df, xml_dir_selected)
             Plotting.polar_plots(skd, xml_dir_selected, "duration")
             Plotting.polar_plots(skd, xml_dir_selected, "start_time")
-        except BaseException as err:
-            Message.addMessage("ERROR during plotting: {}".format(err))
+        except:
+            Message.addMessage("#### ERROR ####")
+            Message.addMessage(traceback.format_exc())
 
         SendMail.writeMail(xml_dir_selected, emails)
 
@@ -429,6 +432,6 @@ if __name__ == "__main__":
         print("VieSched++ AUTO finished")
 
     except BaseException as err:
-        print(err)
-        print(traceback.print_exc())
+        Message.addMessage("#### ERROR ####")
+        Message.addMessage(traceback.format_exc())
         SendMail.writeErrorMail(args.fallback_email)

@@ -1,6 +1,7 @@
 import datetime
 import os
 import re
+import traceback
 
 import pandas as pd
 from collections import defaultdict
@@ -124,9 +125,11 @@ def readMaster(paths):
                                      "scheduler": tmp[8].strip(),
                                      "correlator": tmp[9].strip()})
 
-                except BaseException as err:
-                    Message.addMessage("ERROR reading session: {} from file: {}".format(line, path), dump="header")
-                    Message.addMessage(err, dump="header")
+                except:
+                    Message.addMessage("#### ERROR reading session: {} from file: {} ####".format(line, path),
+                                       dump="header")
+                    Message.addMessage(traceback.format_exc(), dump="header")
+
     return sessions
 
 

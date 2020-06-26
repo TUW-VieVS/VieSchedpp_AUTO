@@ -4,6 +4,7 @@ import os
 import time
 from ftplib import FTP
 from ftplib import all_errors as ftp_errors
+import traceback
 
 import requests
 
@@ -53,7 +54,11 @@ def download_ftp():
             Message.addMessage("msg: {}".format(msg), dump="download")
 
     except ftp_errors as err:
-        Message.addMessage("ERROR {}".format(err), dump="download")
+        Message.addMessage("#### ERROR {} ####".format(err), dump="download")
+        Message.addMessage(traceback.format_exc(), dump="download")
+    except:
+        Message.addMessage("#### ERROR ####", dump="download")
+        Message.addMessage(traceback.format_exc(), dump="download")
 
 
 def download_http():
@@ -133,7 +138,8 @@ def url_response(cat):
             Message.addMessage("ERROR", dump="download")
 
     except requests.exceptions.RequestException as err:
-        Message.addMessage("ERROR {}".format(err), dump="download")
+        Message.addMessage("#### ERROR {} ####".format(err), dump="download")
+        Message.addMessage(traceback.format_exc(), dump="download")
 
 
 def upload(path):
