@@ -434,4 +434,7 @@ if __name__ == "__main__":
     except BaseException as err:
         Message.addMessage("#### ERROR ####")
         Message.addMessage(traceback.format_exc())
-        SendMail.writeErrorMail(args.fallback_email)
+        email = args.fallback_email
+        if (email.count("@") == 1):
+            email = [email]
+        SendMail.writeErrorMail(email)
