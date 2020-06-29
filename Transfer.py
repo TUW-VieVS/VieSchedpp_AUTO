@@ -198,6 +198,6 @@ def upload(path):
 def read_bkg_pw_from_file():
     if os.path.exists("BKG_pw.txt"):
         with open('BKG_pw.txt') as f:
-            return f.read()
+            return f.read().strip()
     else:
         return None
