@@ -9,11 +9,15 @@ Oh_down_extra_min = 5
 email_server = Gmail
 # define output folder
 prefix_output_folder = Schedules
+# path to scheduler
+path_to_scheduler = ~/VieSchedpp/VieSchedpp/Release/VieSchedpp
+# institute
+institute = TU Wien
 
 [SI]
-# is it an intensive session 
+# is it an intensive session
 intensive = True
-# regular expression to match session name	
+# regular expression to match session name
 pattern = SI\d{2}-\d{3}
 # days prior to session start when scheduling should be started
 schedule_date = 10
@@ -23,7 +27,7 @@ upload_date = 7
 contact = matthias.schartner@geo.tuwien.ac.at
 # define function that should be used to select best schedule
 function = select_best_intensives
-# key attributes to store and compare 
+# key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
@@ -47,7 +51,7 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 upload = No
 
 [INT2]
-# is it an intensive session 
+# is it an intensive session
 intensive = True
 # regular expression to match session name
 pattern = IN2\d{2}-\d{3}
@@ -59,7 +63,7 @@ upload_date = 9
 contact = matthias.schartner@geo.tuwien.ac.at
 # define function that should be used to select best schedule
 function = select_best_intensives
-# key attributes to store and compare 
+# key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
@@ -93,7 +97,7 @@ upload_date = 9
 contact = matthias.schartner@geo.tuwien.ac.at
 # define function that should be used to select best schedule
 function = select_best_ohg
-# key attributes to store and compare 
+# key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
