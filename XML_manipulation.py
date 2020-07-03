@@ -102,8 +102,9 @@ def include_down_time_ivs(session, tree, settings):
         pad = 10
 
     year = session["date"].year % 100
-    master = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
-    intensives = readMaster(master)
+    master_ivs = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
+    master_si = os.path.join("MASTER", "master{:02d}-int-SI.txt".format(year))
+    intensives = readMaster([master_ivs, master_si])
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
     for int in intensives:
