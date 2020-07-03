@@ -16,23 +16,22 @@ import Plotting
 import SendMail
 import Transfer
 import skd_parser.skd as skd_parser
-from Helper import Message, addStatistics, readMaster, update_uploadScheduler, scale
+import Helper
+from Helper import Message
 from XML_manipulation import adjust_xml
 
 
-def start_scheduling():
+def start_scheduling(settings):
     """
     start VieSched++ AUTO processing
 
     :return: None
     """
-    settings = configparser.ConfigParser()
-    settings.read("settings.ini")
     prefix = settings["general"].get("prefix_output_folder", "Schedules")
     if os.sep == "\\":
         prefix = prefix.replace("/", "\\")
 
-    path_scheduler = args.scheduler
+    path_scheduler = settings["general"].get("path_to_scheduler")
 
     if not os.path.exists("upload_scheduler.txt"):
         with open("upload_scheduler.txt", "w"):
@@ -42,8 +41,8 @@ def start_scheduling():
     today = datetime.date.today()
     Message.addMessage("date: {:%B %d, %Y}".format(today), dump="header")
     Message.addMessage("computer: {}, Python {}".format(platform.node(), platform.python_version()), dump="header")
-    if args.institution:
-        Message.addMessage("institution: {}".format(args.institution), dump="header")
+    if settings["general"].get("institute") is not None:
+        Message.addMessage("institution: {}".format(settings["general"].get("institute")), dump="header")
     Message.addMessage("This is an automatically generated message. Do NOT reply to this email directly!",
                        dump="header")
     # download files
@@ -62,7 +61,12 @@ def start_scheduling():
             continue
 
         s_program = settings[program]
-        emails = s_program.get("contact", args.fallback_email).split(",")
+        Helper.read_emails(s_program, args.fallback_email)
+        emails = s_program.get("contact", "")
+        if not emails:
+            emails = args.fallback_email
+        else:
+            emails = emails.split(",")
         delta_days = s_program.getint("schedule_date", 10)
         delta_days_upload = s_program.getint("upload_date", 7)
         intensive = s_program.getboolean("intensive", False)
@@ -77,7 +81,7 @@ def start_scheduling():
         masters = glob.glob(os.path.join("MASTER", "master{:02d}*".format(year)))
         if intensive:
             masters = [m for m in masters if "int" in m.lower()]
-        sessions = readMaster(masters)
+        sessions = Helper.readMaster(masters)
 
         try:
             pattern = s_program["pattern"]
@@ -154,7 +158,11 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             p = subprocess.run([path_scheduler, xml], cwd=xml_dir, capture_output=True, text=True)
             p.check_returncode()
             log = p.stdout
-            Message.addMessage(log, dump="log")
+            if log:
+                Message.addMessage(log, dump="log")
+            errlog = p.stderr
+            if errlog:
+                Message.addMessage(errlog, dump="log")
 
             # rename statistics.csv and simulation_summary file to avoid name clashes
             statistic_in = os.path.join(xml_dir, "statistics.csv")
@@ -190,7 +198,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage("this session will NOT be uploaded!")
 
         summary_file = os.path.join(os.path.dirname(xml_dir), "summary.txt")
-        summary_df = addStatistics(stats, best_idx, statistic_field, session["code"].upper(), summary_file)
+        summary_df = Helper.addStatistics(stats, best_idx, statistic_field, session["code"].upper(), summary_file)
 
         # copy best schedule to selected folder
         version_pattern = "_v{:03d}".format(best_idx)
@@ -208,7 +216,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         stats.to_csv(os.path.join(xml_dir_selected, "merged_statistics.csv"))
 
         if upload:
-            update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload, upload)
+            Helper.update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload, upload)
 
         try:
             skdFile = os.path.join(xml_dir_selected, "{}.skd".format(session["code"].lower()))
@@ -238,10 +246,10 @@ def select_best_intensives(df):
     dut1_rep = df["sim_repeatability_dUT1_[mus]"]
     # data = pd.concat([nobs, sky_cov, dut1_mfe, dut1_rep], axis=1)
 
-    s_nobs = scale(nobs, minIsGood=False)
-    s_sky_cov = scale(sky_cov, minIsGood=False)
-    s_dut1_mfe = scale(dut1_mfe)
-    s_dut1_rep = scale(dut1_rep)
+    s_nobs = Helper.scale(nobs, minIsGood=False)
+    s_sky_cov = Helper.scale(sky_cov, minIsGood=False)
+    s_dut1_mfe = Helper.scale(dut1_mfe)
+    s_dut1_rep = Helper.scale(dut1_rep)
     # scores = pd.concat([s_nobs, s_sky_cov, s_dut1_mfe, s_dut1_rep], axis=1)
 
     score = 1 * s_nobs + .25 * s_sky_cov + .8 * s_dut1_mfe + .8 * s_dut1_rep
@@ -265,12 +273,12 @@ def select_best_ohg(df):
     ohg_mfe = df["sim_mean_formal_error_OHIGGINS"]
     # data = pd.concat([nobs, sky_cov, avg_rep, ohg_rep, avg_mfe, ohg_mfe], axis=1)
 
-    s_nobs = scale(nobs, minIsGood=False)
-    s_sky_cov = scale(sky_cov, minIsGood=False)
-    s_rep_avg_sta = scale(avg_rep)
-    s_rep_ohg = scale(ohg_rep)
-    s_mfe_avg_sta = scale(avg_mfe)
-    s_mfe_ohg = scale(ohg_mfe)
+    s_nobs = Helper.scale(nobs, minIsGood=False)
+    s_sky_cov = Helper.scale(sky_cov, minIsGood=False)
+    s_rep_avg_sta = Helper.scale(avg_rep)
+    s_rep_ohg = Helper.scale(ohg_rep)
+    s_mfe_avg_sta = Helper.scale(avg_mfe)
+    s_mfe_ohg = Helper.scale(ohg_mfe)
     # scores = pd.concat([s_nobs, s_sky_cov, s_rep_avg_sta, s_rep_ohg, s_mfe_avg_sta, s_mfe_ohg], axis=1)
 
     score = 1 * s_nobs + .25 * s_sky_cov + 1.5 * s_rep_ohg + 1 * s_mfe_ohg + .75 * s_rep_avg_sta + .5 * s_mfe_avg_sta
@@ -309,16 +317,13 @@ def adjust_template(output_path, session, templates):
     return out
 
 
-def start_uploading():
+def start_uploading(settings):
     """
     start uploading process based on "upload_scheduler.txt"
 
     :return: None
     """
     today = datetime.date.today()
-    settings = configparser.ConfigParser()
-    settings.read("settings.ini")
-
     with open("upload_scheduler.txt", "r") as f:
         lines = [l for l in f if l.strip()]
 
@@ -342,7 +347,8 @@ def start_uploading():
                 if upload == "ivs":
                     code = os.path.basename(os.path.dirname(path))
                     Transfer.upload(path)
-                    SendMail.writeMail_upload(code, ["matthias.schartner@geo.tuwien.ac.at"])
+                    emails = Helper.read_emails(settings[program], args.fallback_email)
+                    SendMail.writeMail_upload(code, emails)
                 elif upload == "no":
                     pass
                 else:
@@ -362,9 +368,34 @@ def start_uploading():
                 f.write(lout)
 
 
-def setup_mail():
+def setup():
     settings = configparser.ConfigParser()
+    if not os.path.exists("settings.ini"):
+        print("Please first generate a settings.ini file.")
+        print("Have a look at the settings.ini.template file for further information.")
+        print("VieSched++ AUTO is shutting down!")
+        sys.exit(0)
     settings.read("settings.ini")
+
+    setup_mail(settings)
+
+    if settings["general"].get("path_to_scheduler") is None:
+        print("Path to scheduler not defined in settings.ini file!")
+        print("Please list the path to the VieSched++ execuatable under the \"general\" block!")
+        print("VieSched++ AUTO is shutting down!")
+        sys.exit(0)
+
+    if not os.path.exists(settings["general"].get("path_to_scheduler")):
+        print("VieSched++ executable ({}) not found!".format(settings["general"].get("path_to_scheduler")))
+        print("Pass path to VieSched++ executable via the '-s' flag")
+        print("e.g.: python VieSchedpp_AUTO.py -s \"path/to/VieSched++/executable\"")
+        print("VieSched++ AUTO is shutting down!")
+        sys.exit(0)
+
+    return settings
+
+
+def setup_mail(settings):
     email_slot = settings["general"].get("email_server", "gmail").lower()
     if email_slot != "fromfile":
         SendMail.delegate_send(email_slot)
@@ -378,15 +409,12 @@ def setup_mail():
 if __name__ == "__main__":
 
     doc = "This program automatically generates VLBI schedules and uploads them to the IVS servers." \
-          "Examples: python VieSchedpp_AUTO.py -s ../VieSchedpp/bin/VieSchedpp.exe -p INT2 INT3  -i \"TU Wien\" " \
+          "Examples: python VieSchedpp_AUTO.py  -p INT2 INT3 " \
           "-e max.mustermann@outlook.com john.doe@gmail.com; would process INT2 and INT3 sessions. " \
           "The two email addresses provided are contacted in case an error occurred and VieSchedpp_AUTO.py crashes. " \
-          "Processing parameters of the sessions is taken from the settings.ini file. "
+          "Processing parameters of the sessions are taken from the settings.ini file. "
 
     parser = argparse.ArgumentParser(description=doc)
-    parser.add_argument("-s", "--scheduler", default="~/VieSchedpp/VieSchedpp/Release/VieSchedpp",
-                        metavar="path_to_executable",
-                        help="full path to the VieSched++ executable. Default: \"./VieSchedpp.exe\"")
     parser.add_argument("-e", "--fallback_email", default="matthias.schartner@geo.tuwien.ac.at", nargs='+',
                         metavar="address",
                         help="potential error messages will be sent to these email addresses; "
@@ -394,8 +422,6 @@ if __name__ == "__main__":
                              "default: \"matthias.schartner@geo.tuwien.ac.at\"")
     parser.add_argument("-p", "--observing_programs", nargs='+', metavar="programs",
                         help="list of observing programs that should be scheduled or uploaded")
-    parser.add_argument("-i", "--institution", metavar="institution",
-                        help='optional: define your institution name to be listed in the reports')
     parser.add_argument("-ne", "--no_email", action="store_true",
                         help="use this option if you do not want to write any emails")
     parser.add_argument("-nd", "--no_download", action="store_true",
@@ -406,35 +432,29 @@ if __name__ == "__main__":
                         help="use this option if you do not want generate any schedules (upload only)")
     args = parser.parse_args()
 
-    if not os.path.exists(args.scheduler):
-        print("VieSched++ executable ({}) not found!".format(args.scheduler))
-        print("Pass path to VieSched++ executable via the '-s' flag")
-        print("e.g.: python VieSchedpp_AUTO.py -s \"path/to/VieSched++/executable\"")
+    if (args.fallback_email.count("@") == 1):
+        args.fallback_email = [args.fallback_email]
+
+    if args.observing_programs is None:
+        print("No observing programs selected!")
+        print("Pass observing program name as written in settings.ini file using the '-p' flag")
+        print("e.g.: python VieSchedpp_AUTO.py -p INT1 INT2 INT3")
         sys.exit(0)
 
     if args.no_email:
         SendMail.changeSendMailsFlag(False)
 
-    if args.observing_programs is None:
-        print("No observing program selected!")
-        print("Pass observing program name as written in settings.ini file using the '-p' flag")
-        print("e.g.: python VieSchedpp_AUTO.py -p INT1 INT2 INT3")
-        sys.exit(0)
-
-    setup_mail()
+    settings = setup()
     try:
         if not args.no_scheduling:
             print("===== START SCHEDULING =====")
-            start_scheduling()
+            start_scheduling(settings)
         if not args.no_upload:
             print("===== START UPLOADING =====")
-            start_uploading()
+            start_uploading(settings)
         print("VieSched++ AUTO finished")
 
     except BaseException as err:
         Message.addMessage("#### ERROR ####")
         Message.addMessage(traceback.format_exc())
-        email = args.fallback_email
-        if (email.count("@") == 1):
-            email = [email]
-        SendMail.writeErrorMail(email)
+        SendMail.writeErrorMail(args.fallback_email)

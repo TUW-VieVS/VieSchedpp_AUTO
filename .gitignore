@@ -3,6 +3,7 @@ MASTER
 CATALOGS
 Schedules
 venv
+settings.ini
 __pycache__
 /upload_scheduler.txt
 /VieSchedpp_AUTO.zip

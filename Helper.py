@@ -307,3 +307,11 @@ def scale(s, minIsGood=True):
         r.loc[r < 0] = 0
     return r
 
+
+def read_emails(program, fallback):
+    emails = program.get("contact", "")
+    if not emails:
+        emails = fallback
+    else:
+        emails = emails.split(",")
+    return emails
