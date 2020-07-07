@@ -22,7 +22,7 @@
             <station>WETTZELL</station>
         </stations>
         <scanAlignment>start</scanAlignment>
-        <logSeverityConsole>info</logSeverityConsole>
+        <logSeverityConsole>warning</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
         <versionOffset>200</versionOffset>

@@ -14,21 +14,21 @@
 		<startTime>2020.06.24 18:30:00</startTime>
 		<endTime>2020.06.24 19:30:00</endTime>
 		<subnetting>true</subnetting>
-		<subnettingMinAngle>150</subnettingMinAngle>
-		<subnettingMinNStaAllBut>1</subnettingMinNStaAllBut>
-		<fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
-		<fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
-		<idleToObservingTime>true</idleToObservingTime>
-		<stations>
-			<station>KOKEE</station>
-			<station>WETTZELL</station>
-		</stations>
-		<scanAlignment>start</scanAlignment>
-		<logSeverityConsole>info</logSeverityConsole>
-		<logSeverityFile>info</logSeverityFile>
-		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+        <subnettingMinAngle>150</subnettingMinAngle>
+        <subnettingMinNStaAllBut>1</subnettingMinNStaAllBut>
+        <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
+        <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
+        <idleToObservingTime>true</idleToObservingTime>
+        <stations>
+            <station>KOKEE</station>
+            <station>WETTZELL</station>
+        </stations>
+        <scanAlignment>start</scanAlignment>
+        <logSeverityConsole>warning</logSeverityConsole>
+        <logSeverityFile>info</logSeverityFile>
+        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
         <versionOffset>100</versionOffset>
-	</general>
+    </general>
 	<output>
 		<experimentDescription>IN120-176</experimentDescription>
 		<scheduler>USNO</scheduler>

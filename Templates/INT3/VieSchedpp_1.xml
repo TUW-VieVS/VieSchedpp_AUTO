@@ -15,20 +15,20 @@
 		<endTime>2020.04.20 08:00:00</endTime>
 		<subnetting>false</subnetting>
 		<fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
-		<fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
-		<idleToObservingTime>true</idleToObservingTime>
-		<stations>
-			<station>ISHIOKA</station>
-			<station>NYALES20</station>
-			<station>SESHAN25</station>
-			<station>WETTZ13N</station>
-			<station>WETTZELL</station>
-		</stations>
-		<scanAlignment>start</scanAlignment>
-		<logSeverityConsole>info</logSeverityConsole>
-		<logSeverityFile>info</logSeverityFile>
-		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-	</general>
+        <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
+        <idleToObservingTime>true</idleToObservingTime>
+        <stations>
+            <station>ISHIOKA</station>
+            <station>NYALES20</station>
+            <station>SESHAN25</station>
+            <station>WETTZ13N</station>
+            <station>WETTZELL</station>
+        </stations>
+        <scanAlignment>start</scanAlignment>
+        <logSeverityConsole>warning</logSeverityConsole>
+        <logSeverityFile>info</logSeverityFile>
+        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+    </general>
 	<output>
 		<experimentDescription>IN320-111</experimentDescription>
 		<scheduler>VIEN</scheduler>
