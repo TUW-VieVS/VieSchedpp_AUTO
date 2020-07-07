@@ -130,6 +130,9 @@ def add_oh_downtime(session, tree, settings):
     else:
         pad = 5
     path = settings["general"].get("Oh_down")
+    if not path or not os.path.exists(path):
+        Message.addMessage("WARNING: OH down time file \"{}\" not found!".format(path))
+        return
 
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
