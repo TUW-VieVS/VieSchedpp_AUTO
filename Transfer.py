@@ -179,7 +179,7 @@ def upload(path):
         Message.addMessage("\nuploading:", dump="download")
         for file in [skdFile, txtFile]:
             Message.addMessage("    {}... ".format(file), endLine=False, dump="download")
-            with open(skdFile, 'rb') as f:
+            with open(file, 'rb') as f:
                 msg = ftp.storbinary('STOR {}'.format(os.path.basename(file)), f)
             Message.addMessage(msg, dump="download")
 
