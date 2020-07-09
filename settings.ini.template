@@ -15,12 +15,12 @@ path_to_scheduler = ~/VieSchedpp/VieSchedpp/Release/VieSchedpp
 institute = TU Wien
 
 [SI]
-# is it an intensive session
-intensive = True
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY-int-SI.txt
 # regular expression to match session name
 pattern = SI\d{2}-\d{3}
 # days prior to session start when scheduling should be started
-schedule_date = 10
+schedule_date = 12
 # days prior to session start when schedule should be uploaded
 upload_date = 7
 # contact information as list of email addresses (separated with ",")
@@ -33,8 +33,8 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 upload = No
 
 [INT3]
-# is it an intensive session
-intensive = True
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY-int.txt
 # regular expression to match session name
 pattern = IN3\d{2}-\d{3}
 # days prior to session start when scheduling should be started
@@ -51,8 +51,8 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 upload = No
 
 [INT2]
-# is it an intensive session
-intensive = True
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY-int.txt
 # regular expression to match session name
 pattern = IN2\d{2}-\d{3}
 # days prior to session start when scheduling should be started
@@ -69,8 +69,8 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 upload = No
 
 [INT1]
-# is it an intensive session
-intensive = True
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY-int.txt
 # regular expression to match session name
 pattern = IN1\d{2}-\d{3}
 # days prior to session start when scheduling should be started
@@ -87,7 +87,11 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 upload = No
 
 [OHG]
-# regular expression to match session name
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY.txt
+# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
+pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
+# regular expression to matchsession name
 pattern = IVS-OHG\d{3}
 # days prior to session start when scheduling should be started
 schedule_date = 12
@@ -98,11 +102,15 @@ contact = matthias.schartner@geo.tuwien.ac.at
 # define function that should be used to select best schedule
 function = select_best_ohg
 # key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
+statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
 [AUA]
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY.txt
+# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
+pre_scheduling_functions = add_downtime_intensives
 # regular expression to match session name
 pattern = AUS-AST\d{3}
 # days prior to session start when scheduling should be started
