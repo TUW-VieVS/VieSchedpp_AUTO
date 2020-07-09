@@ -2,9 +2,11 @@ import datetime
 import os
 import re
 import traceback
+import inspect
 
 import pandas as pd
 from collections import defaultdict
+
 
 class Message:
     msg_program = ""
@@ -12,9 +14,14 @@ class Message:
     msg_download = ""
     msg_header = ""
     msg_log = ""
+    flag = True
 
     def __init__(self):
         pass
+
+    @staticmethod
+    def log(bool):
+        Message.flag = bool
 
     @staticmethod
     def addMessage(str="", dump="session", endLine=True):
@@ -32,18 +39,19 @@ class Message:
         else:
             print(str, end="")
 
-        if dump == "session":
-            Message.msg_session += str
-        elif dump == "program":
-            Message.msg_program += str
-        elif dump == "header":
-            Message.msg_header += str
-        elif dump == "log":
-            Message.msg_log += str
-        elif dump == "download":
-            Message.msg_download += str
-        else:
-            print("message dump place \"{}\" not recognized".format(dump))
+        if Message.flag:
+            if dump == "session":
+                Message.msg_session += str
+            elif dump == "program":
+                Message.msg_program += str
+            elif dump == "header":
+                Message.msg_header += str
+            elif dump == "log":
+                Message.msg_log += str
+            elif dump == "download":
+                Message.msg_download += str
+            else:
+                print("message dump place \"{}\" not recognized".format(dump))
 
     @staticmethod
     def clearMessage(type):
@@ -68,9 +76,12 @@ def readMaster(paths):
     """
     read session master
 
-    :param paths: list of paths to session master files
+    :param paths: path to session master file (list of paths or single string)
     :return: list of all sessions
     """
+    if isinstance(paths, str):
+        paths = [paths]
+
     sessions = []
     for path in paths:
         if not os.path.exists(path):
@@ -133,7 +144,7 @@ def readMaster(paths):
     return sessions
 
 
-def antennaLookupTable():
+def antennaLookupTable(reverse=False):
     """
     create lookup table from antenna two-leter-code (TLC) to antenna name
 
@@ -153,7 +164,10 @@ def antennaLookupTable():
                 continue
 
             # add to dictonary
-            dict[tmp[13].upper()] = tmp[1]
+            if reverse:
+                dict[tmp[1]] = tmp[13].upper()
+            else:
+                dict[tmp[13].upper()] = tmp[1]
 
     return dict
 
@@ -315,3 +329,19 @@ def read_emails(program, fallback):
     else:
         emails = emails.split(",")
     return emails
+
+
+def find_function(module, function_names):
+    f = []
+
+    if not function_names:
+        return f
+
+    for function_name in function_names.split(","):
+        function_name = function_name.strip()
+        functions_list = [f for n, f in inspect.getmembers(module) if inspect.isfunction(f) and n == function_name]
+        if len(functions_list) == 1:
+            f.append(functions_list[0])
+        else:
+            Message.addMessage("[ERROR] function \"{}\" not found".format(function_name), dump="header")
+    return f

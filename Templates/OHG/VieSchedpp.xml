@@ -237,7 +237,7 @@
 		<skdMode>64-16(EU-T2)</skdMode>
 		<bandPolicies>
 			<bandPolicy name="X">
-				<minSNR>22</minSNR>
+				<minSNR>20</minSNR>
 				<station>
 					<tag>required</tag>
 					<backup_value>0</backup_value>
@@ -248,7 +248,7 @@
 				</source>
 			</bandPolicy>
 			<bandPolicy name="S">
-				<minSNR>17</minSNR>
+				<minSNR>15</minSNR>
 				<station>
 					<tag>required</tag>
 					<backup_value>0</backup_value>

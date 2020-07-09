@@ -1,14 +1,8 @@
-import argparse
-import configparser
+import argparse, configparser
 import datetime
-import glob
-import os
-import platform
+import os, glob, platform, sys, subprocess, shutil, traceback
 import re
-import shutil
-import subprocess
-import sys
-import traceback
+from string import Template
 
 import pandas as pd
 
@@ -19,6 +13,7 @@ import skd_parser.skd as skd_parser
 import Helper
 from Helper import Message
 from XML_manipulation import adjust_xml
+import select_best_functions, pre_scheduling_functions, post_scheduling_functions
 
 
 def start_scheduling(settings):
@@ -61,12 +56,7 @@ def start_scheduling(settings):
             continue
 
         s_program = settings[program]
-        Helper.read_emails(s_program, args.fallback_email)
-        emails = s_program.get("contact", "")
-        if not emails:
-            emails = args.fallback_email
-        else:
-            emails = emails.split(",")
+        emails = Helper.read_emails(s_program, args.fallback_email)
         delta_days = s_program.get("schedule_date", "10")
         if delta_days.isnumeric():
             delta_days = int(delta_days)
@@ -76,25 +66,28 @@ def start_scheduling(settings):
             delta_days = delta_days.lower()
             year = today.year % 100
         delta_days_upload = s_program.getint("upload_date", 7)
-        intensive = s_program.getboolean("intensive", False)
         statistic_field = s_program.get("statistics").split(",")
         upload = True
         if s_program.get("upload", "no").lower() == "no":
             upload = False
 
         # read master files
-        masters = glob.glob(os.path.join("MASTER", "master{:02d}*".format(year)))
-        if intensive:
-            masters = [m for m in masters if "int" in m.lower()]
-        sessions = Helper.readMaster(masters)
+        template_master = Template(s_program.get("master", "master$YY.txt"))
+        master = template_master.substitute(YY=str(year))
+
+        master = os.path.join("MASTER", master)
+        sessions = Helper.readMaster(master)
 
         try:
             pattern = s_program["pattern"]
-            fun = s_program["function"]
-            f = globals()[fun]
+            f = Helper.find_function(select_best_functions, s_program["function"])
+            f = f[0]
+            f_pre = Helper.find_function(pre_scheduling_functions, s_program.get("pre_scheduling_functions", ""))
+            f_post = Helper.find_function(post_scheduling_functions, s_program.get("post_scheduling_functions", ""))
 
             start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
-                  prefix, intensive, upload)
+                  prefix, upload, f_pre, f_post)
+
         except:
             Message.addMessage("#### ERROR ####")
             Message.addMessage(traceback.format_exc())
@@ -102,7 +95,7 @@ def start_scheduling(settings):
 
 
 def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
-          output_path="./Schedules/", intensive=False, upload=False):
+          output_path="./Schedules/", upload=False, pre_scheduling_functions=None, post_scheduling_functions=None):
     """
     start auto processing for one observing program
 
@@ -116,8 +109,9 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
     :param delta_days: time offset in days from where schedule should be generated
     :param delta_days_upload: time offset in days when schedule should be updated
     :param output_path: prefix for output path
-    :param intensive: flag for intensive session
     :param upload: flag if session needs to be uploaded
+    :param pre_scheduling_functions: list of functions executed prior to scheduling
+    :param post_scheduling_functions: list of functions executed after to scheduling
     :return: None
     """
 
@@ -156,12 +150,11 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
 
     # loop over all sessions
     for session in sessions:
-        session["intensive"] = intensive
         Message.clearMessage("session")
         Message.clearMessage("log")
         Message.addMessage("##### {} #####".format(session["code"].upper()))
         Message.addMessage("{name} ({code}) start {date} duration {duration}h stations {stations}".format(**session))
-        xmls = adjust_template(output_path, session, templates)
+        xmls = adjust_template(output_path, session, templates, pre_scheduling_functions)
         xml_dir = os.path.dirname(xmls[0])
         df_list = []
 
@@ -246,124 +239,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         SendMail.writeMail(xml_dir_selected, emails)
 
 
-def select_best_intensives(df):
-    """
-    logic to select best schedule for intensive sessions
-
-    :param df: DataFrame of statistics.csv file
-    :return: version number of best schedule
-    """
-
-    nobs = df["n_observations"]
-    sky_cov = df["sky-coverage_average_37_areas_60_min"]
-    dut1_mfe = df["sim_mean_formal_error_dUT1_[mus]"]
-    dut1_rep = df["sim_repeatability_dUT1_[mus]"]
-    # data = pd.concat([nobs, sky_cov, dut1_mfe, dut1_rep], axis=1)
-
-    s_nobs = Helper.scale(nobs, minIsGood=False)
-    s_sky_cov = Helper.scale(sky_cov, minIsGood=False)
-    s_dut1_mfe = Helper.scale(dut1_mfe)
-    s_dut1_rep = Helper.scale(dut1_rep)
-    # scores = pd.concat([s_nobs, s_sky_cov, s_dut1_mfe, s_dut1_rep], axis=1)
-
-    score = 1 * s_nobs + .25 * s_sky_cov + .8 * s_dut1_mfe + .8 * s_dut1_rep
-    best = score.idxmax()
-    return best
-
-
-def select_best_ohg(df):
-    """
-    logic to select best schedule for OHG sessions
-
-    :param df: DataFrame of statistics.csv file
-    :return: version number of best schedule
-    """
-
-    nobs = df["n_observations"]
-    sky_cov = df["sky-coverage_average_25_areas_60_min"]
-    avg_rep = df["sim_repeatability_average_3d_coordinates_[mm]"]
-    ohg_rep = df["sim_repeatability_OHIGGINS"]
-    avg_mfe = df["sim_mean_formal_error_average_3d_coordinates_[mm]"]
-    ohg_mfe = df["sim_mean_formal_error_OHIGGINS"]
-    # data = pd.concat([nobs, sky_cov, avg_rep, ohg_rep, avg_mfe, ohg_mfe], axis=1)
-
-    s_nobs = Helper.scale(nobs, minIsGood=False)
-    s_sky_cov = Helper.scale(sky_cov, minIsGood=False)
-    s_rep_avg_sta = Helper.scale(avg_rep)
-    s_rep_ohg = Helper.scale(ohg_rep)
-    s_mfe_avg_sta = Helper.scale(avg_mfe)
-    s_mfe_ohg = Helper.scale(ohg_mfe)
-    # scores = pd.concat([s_nobs, s_sky_cov, s_rep_avg_sta, s_rep_ohg, s_mfe_avg_sta, s_mfe_ohg], axis=1)
-
-    score = 1 * s_nobs + .25 * s_sky_cov + 1.5 * s_rep_ohg + 1 * s_mfe_ohg + .75 * s_rep_avg_sta + .5 * s_mfe_avg_sta
-    best = score.idxmax()
-    return best
-
-
-def select_best_24h(df):
-    """
-    logic to select best schedule for OHG sessions
-
-    :param df: DataFrame of statistics.csv file
-    :return: version number of best schedule
-    """
-
-    mfe = 0.3
-    rep = 0.7
-    nobs = df["n_observations"]
-    # sky_cov = df["sky-coverage_average_25_areas_60_min"]
-
-    avg_rep = df["sim_repeatability_average_3d_coordinates_[mm]"]
-    avg_mfe = df["sim_mean_formal_error_average_3d_coordinates_[mm]"]
-
-    dut1_rep = df["sim_repeatability_dUT1_[mus]"]
-    dut1_mfe = df["sim_mean_formal_error_dUT1_[mus]"]
-    xpo_rep = df["sim_repeatability_x_pol_[muas]"]
-    xpo_mfe = df["sim_mean_formal_error_x_pol_[muas]"]
-    ypo_rep = df["sim_repeatability_y_pol_[muas]"]
-    ypo_mfe = df["sim_mean_formal_error_y_pol_[muas]"]
-    nutx_rep = df["sim_repeatability_x_nut_[muas]"]
-    nutx_mfe = df["sim_mean_formal_error_x_nut_[muas]"]
-    nuty_rep = df["sim_repeatability_y_pol_[muas]"]
-    nuty_mfe = df["sim_mean_formal_error_y_pol_[muas]"]
-
-    # data = pd.concat([nobs, sky_cov, avg_rep, ohg_rep, avg_mfe, ohg_mfe], axis=1)
-
-    s_nobs = Helper.scale(nobs, minIsGood=False)
-    # s_sky_cov = Helper.scale(sky_cov, minIsGood=False)
-    s_rep_avg_sta = Helper.scale(avg_rep)
-    s_mfe_avg_sta = Helper.scale(avg_mfe)
-
-    s_dut1_rep = Helper.scale(dut1_rep)
-    s_dut1_mfe = Helper.scale(dut1_mfe)
-    s_xpo_rep = Helper.scale(xpo_rep)
-    s_xpo_mfe = Helper.scale(xpo_mfe)
-    s_ypo_rep = Helper.scale(ypo_rep)
-    s_ypo_mfe = Helper.scale(ypo_mfe)
-    s_nutx_rep = Helper.scale(nutx_rep)
-    s_nutx_mfe = Helper.scale(nutx_mfe)
-    s_nuty_rep = Helper.scale(nuty_rep)
-    s_nuty_mfe = Helper.scale(nuty_mfe)
-    # scores = pd.concat([s_nobs, s_sky_cov, s_rep_avg_sta, s_rep_ohg, s_mfe_avg_sta, s_mfe_ohg], axis=1)
-
-    score = 1 * s_nobs + \
-            rep * 1 * s_rep_avg_sta + \
-            mfe * 1 * s_mfe_avg_sta + \
-            rep * 0.2 * s_dut1_rep + \
-            mfe * 0.2 * s_dut1_mfe + \
-            rep * 0.2 * s_xpo_rep + \
-            mfe * 0.2 * s_xpo_mfe + \
-            rep * 0.2 * s_ypo_rep + \
-            mfe * 0.2 * s_ypo_mfe + \
-            rep * 0.2 * s_nutx_rep + \
-            mfe * 0.2 * s_nutx_mfe + \
-            rep * 0.2 * s_nuty_rep + \
-            mfe * 0.2 * s_nuty_mfe
-    best = score.idxmax()
-    return best
-
-
-def adjust_template(output_path, session, templates):
+def adjust_template(output_path, session, templates, pre_scheduling_functions):
     """
     adjustes the template XML file with session specific fields
 
@@ -382,7 +258,8 @@ def adjust_template(output_path, session, templates):
 
     out = []
     for template in templates:
-        tree = adjust_xml(template, session)
+        tree = adjust_xml(template, session, pre_scheduling_functions)
+        Message.log(False)
 
         output_dir = os.path.join(folder, session["code"])
         if not os.path.exists(output_dir):
@@ -390,6 +267,7 @@ def adjust_template(output_path, session, templates):
         newFile = os.path.join(output_dir, os.path.basename(template))
         out.append(newFile)
         tree.write(newFile, pretty_print=True)
+    Message.log(True)
 
     return out
 
@@ -469,6 +347,25 @@ def setup():
         print("VieSched++ AUTO is shutting down!")
         sys.exit(0)
 
+    if args.test_mode:
+        programs = []
+        settings.set("general", "prefix_output_folder", "TEST")
+        for group in settings:
+            if group == "general" or group == "DEFAULT":
+                continue
+            programs.append(group)
+            settings.set(group, "schedule_date", "next")
+            settings.set(group, "upload", "No")
+            try:
+                f_pre = settings.get(group, "pre_scheduling_functions")
+                f_pre += ",test_mode"
+                settings.set(group, "pre_scheduling_functions", f_pre)
+            except:
+                settings.set(group, "pre_scheduling_functions", "test_mode")
+        if not args.observing_programs:
+            args.observing_programs = programs
+        args.no_upload = True
+
     return settings
 
 
@@ -507,10 +404,14 @@ if __name__ == "__main__":
                         help="use this option if you do not want to upload any files (scheduling only)")
     parser.add_argument("-ns", "--no_scheduling", action="store_true",
                         help="use this option if you do not want generate any schedules (upload only)")
+    parser.add_argument("-t", "--test_mode", action="store_true",
+                        help="use this option if you want to quickly process all templates with one schedule")
     args = parser.parse_args()
 
     if (args.fallback_email.count("@") == 1):
         args.fallback_email = [args.fallback_email]
+
+    settings = setup()
 
     if args.observing_programs is None:
         print("No observing programs selected!")
@@ -521,7 +422,6 @@ if __name__ == "__main__":
     if args.no_email:
         SendMail.changeSendMailsFlag(False)
 
-    settings = setup()
     try:
         if not args.no_scheduling:
             print("===== START SCHEDULING =====")

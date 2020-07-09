@@ -2,6 +2,7 @@
 MASTER
 CATALOGS
 Schedules
+TEST
 venv
 settings.ini
 __pycache__

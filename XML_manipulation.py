@@ -6,10 +6,9 @@ import re
 from lxml import etree
 
 from Helper import Message
-from Helper import readMaster
 
 
-def adjust_xml(template, session):
+def adjust_xml(template, session, pre_scheduling_functions):
     """
     change template xml file with session specific entries
     
@@ -51,23 +50,20 @@ def adjust_xml(template, session):
     tree.find("./catalogs/tracks").text = os.path.abspath(tree.find("./catalogs/tracks").text)
     os.chdir(cwd)
 
-    settings = configparser.ConfigParser()
-    settings.read("settings.ini")
-
     # add parameters
-    add_parameter(tree, "tagalong", ["tagalong"], ["1"])
-    add_parameter(tree, "down", ["available"], ["0"])
+    add_parameter(tree.find("./station/parameters"), "tagalong", ["tagalong"], ["1"])
+    add_parameter(tree.find("./station/parameters"), "down", ["available"], ["0"])
+    for f in pre_scheduling_functions:
+        f(tree=tree, session=session)
 
     # change setup for tagalong mode
     add_tagalong_time(session, tree)
 
     # change setup for downtimes
-    if not session["intensive"]:
-        include_down_time_ivs(session, tree, settings)
-        add_custom_downtime(session, tree)
+    add_custom_downtime(session, tree)
 
     if "OHIGGINS" in session["stations"]:
-        add_oh_downtime(session, tree, settings)
+        add_oh_downtime(session, tree)
 
     # remove setup if it refers to station that is not scheduled
     remove_unnecessary_station_setup(session, tree)
@@ -85,38 +81,7 @@ def adjust_xml(template, session):
     return tree
 
 
-def include_down_time_ivs(session, tree, settings):
-    """
-    add down time based on IVS intensive schedule master
-
-    it will extend the downtime based on entries in setting.ini file
-
-    :param session: dictionary with session specific fields 
-    :param tree: xml parameter tree
-    :param settings:  content of settings.ini file
-    :return: None
-    """
-    if settings.has_section("general"):
-        pad = settings["general"].getint("ivs_int_downtime_extra_min", 10)
-    else:
-        pad = 10
-
-    year = session["date"].year % 100
-    master_ivs = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
-    master_si = os.path.join("MASTER", "master{:02d}-int-SI.txt".format(year))
-    intensives = readMaster([master_ivs, master_si])
-    s_start = session["date"]
-    s_end = session["date"] + datetime.timedelta(hours=session["duration"])
-    for int in intensives:
-        int_start = int["date"] - datetime.timedelta(minutes=pad)
-        int_end = int["date"] + datetime.timedelta(hours=int["duration"]) + datetime.timedelta(minutes=pad)
-
-        for sta in int["stations"]:
-            if sta in session["stations"]:
-                insert_setup_node_logic(int_start, int_end, s_start, s_end, session, tree, sta, "down", int["name"])
-
-
-def add_oh_downtime(session, tree, settings):
+def add_oh_downtime(session, tree):
     """
     add OHIGGINS downtime necessary for satellite observations with higher priority
     
@@ -125,6 +90,8 @@ def add_oh_downtime(session, tree, settings):
     :param settings:  content of settings.ini file
     :return: None
     """
+    settings = configparser.ConfigParser()
+    settings.read("settings.ini")
     if settings.has_section("general"):
         pad = settings["general"].getint("Oh_down_extra_min", 5)
     else:
@@ -146,8 +113,8 @@ def add_oh_downtime(session, tree, settings):
                 start = datetime.datetime.strptime(g.group(2), "%Y-%m-%dT%H:%M") - datetime.timedelta(minutes=pad)
                 end = datetime.datetime.strptime(g.group(3), "%Y-%m-%dT%H:%M") + datetime.timedelta(minutes=pad)
 
-                insert_setup_node_logic(start, end, s_start, s_end, session, tree, "OHIGGINS", "down",
-                                        "satellite observation")
+                insert_station_setup_with_time(start, end, s_start, s_end, session, tree, "OHIGGINS", "down",
+                                               "satellite observation")
 
 
 def add_custom_downtime(session, tree):
@@ -195,11 +162,12 @@ def read_parameter_change_from_text_file(session, tree, path, parameter_name):
                 end = datetime.datetime.fromisoformat(end)
 
                 comment = " ".join(comment)
-                insert_setup_node_logic(start, end, s_start, s_end, session, tree, station, parameter_name, comment)
+                insert_station_setup_with_time(start, end, s_start, s_end, session, tree, station, parameter_name,
+                                               comment)
 
 
-def insert_setup_node_logic(p_start, p_end, session_start, session_end, session, tree, station, parameter_name,
-                            comment=""):
+def insert_station_setup_with_time(p_start, p_end, session_start, session_end, session, tree, station, parameter_name,
+                                   comment=""):
     """
     base logic to add new setup node
 
@@ -223,29 +191,34 @@ def insert_setup_node_logic(p_start, p_end, session_start, session_end, session,
             p_start = max(session_start, p_start)
             p_end = min(session_end, p_end)
             add_comment(station, p_start, p_end, parameter_name, comment)
-            insert_setup_node(session, station, p_start, p_end, tree, parameter_name)
+            insert_setup_node(session, station, tree.find("./station/setup"), parameter_name, p_start, p_end)
 
 
-def insert_setup_node(session, station, p_start, p_end, tree, parameter_name):
+def insert_setup_node(session, member, root, parameter_name, p_start=None, p_end=None, tag="member"):
     """
     add new setup node
     
     :param session: dictionary with session specific fields 
-    :param station: station name
+    :param member: member name
     :param p_start: start time of parameter change
     :param p_end: end time of parameter change
-    :param tree: xml parameter tree
+    :param root: xml parameter tree
     :param parameter_name:  name of the parameter in xml file
     :return: None
     """
-    setup = tree.find("./station/setup")
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
-    root = find_root_setup(station, p_start, p_end, s_start, s_end, setup)
+    if p_start is None:
+        p_start = s_start
+    if p_end is None:
+        p_end = s_end
+    root = find_root_setup(member, p_start, p_end, s_start, s_end, root)
     node = etree.Element("setup")
-    etree.SubElement(node, "member").text = station
-    etree.SubElement(node, "start").text = "{:%Y.%m.%d %H:%M:%S}".format(p_start)
-    etree.SubElement(node, "end").text = "{:%Y.%m.%d %H:%M:%S}".format(p_end)
+    etree.SubElement(node, tag).text = member
+    if p_start != s_start:
+        etree.SubElement(node, "start").text = "{:%Y.%m.%d %H:%M:%S}".format(p_start)
+    if p_end != s_end:
+        etree.SubElement(node, "end").text = "{:%Y.%m.%d %H:%M:%S}".format(p_end)
     etree.SubElement(node, "parameter").text = parameter_name
     etree.SubElement(node, "transition").text = "hard"
     root.insert(len(root), node)
@@ -311,6 +284,39 @@ def is_valid_root_setup(station, p_start, p_end, session_start, session_end, tre
     return flag
 
 
+def add_group(root, name, members):
+    """
+    add a new group to parameter setup
+
+    Parameters
+    ----------
+    root: xml tree root
+    name: group name
+    members: group members
+
+    Returns
+    -------
+    None
+    """
+    for s in root:
+        if s.tag == "groups":
+            root_group = s
+            break
+    else:
+        node = etree.Element("groups")
+        root.insert(len(root), node)
+        root_group = node
+
+    for s in root_group:
+        if s.tag == "groups" and s.attrib["name"] == name:
+            root_group.remove(s)
+
+    node = etree.Element("group", name=name)
+    for member in members:
+        etree.SubElement(node, "member").text = member
+    root_group.insert(len(root_group), node)
+
+
 def remove_unnecessary_station_setup(session, tree):
     """
     remove all parameters related to stations not observing in this session
@@ -353,24 +359,29 @@ def add_comment(station, p_start, p_end, parameter_name, comment=""):
         parameter_name, station, start_str, end_str, dur, comment))
 
 
-def add_parameter(tree, parameter_name, fieldnames, values):
+def add_parameter(root, parameter_name, fieldnames, values, attriutes=None):
     """
     add new parameter to xml tree
 
-    :param tree: xml parameter tree
+    :param root: xml parameter tree
     :param parameter_name:  name of the parameter in xml file
     :param fieldnames: list of fieldnames in xml parameter block
     :param values: list of corresponding values in xml parameter block
     :return: None
     """
-    root = tree.find("./station/parameters")
+    if attriutes is None:
+        attriutes = [None] * len(fieldnames)
+
     for s in root:
         if s.tag == "parameter" and s.attrib["name"] == parameter_name:
             break
     else:
-        node = etree.Element("parameters", name=parameter_name)
-        for fieldname, value in zip(fieldnames, values):
-            etree.SubElement(node, fieldname).text = value
+        node = etree.Element("parameter", name=parameter_name)
+        for fieldname, value, attriute in zip(fieldnames, values, attriutes):
+            ele = etree.SubElement(node, fieldname)
+            ele.text = value
+            if attriute is not None:
+                ele.set(attriute[0], attriute[1])
         root.insert(len(root), node)
 
 
@@ -405,3 +416,4 @@ def change_station_names_in_xml(session, tree):
                 node = etree.Element("variable", name=sta)
                 node.text = "0.0"
                 root.insert(len(root), node)
+
