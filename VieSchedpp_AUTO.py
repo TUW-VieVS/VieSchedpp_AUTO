@@ -170,13 +170,13 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage("   processing file: {}".format(xml))
             xml = os.path.abspath(xml)
             p = subprocess.run([path_scheduler, xml], cwd=xml_dir, capture_output=True, text=True)
-            p.check_returncode()
             log = p.stdout
             if log:
                 Message.addMessage(log, dump="log")
             errlog = p.stderr
             if errlog:
                 Message.addMessage(errlog, dump="log")
+            p.check_returncode()
 
             # rename statistics.csv and simulation_summary file to avoid name clashes
             statistic_in = os.path.join(xml_dir, "statistics.csv")
