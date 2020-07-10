@@ -236,6 +236,9 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage("#### ERROR ####")
             Message.addMessage(traceback.format_exc())
 
+        for post_f in post_scheduling_functions:
+            post_f()
+
         SendMail.writeMail(xml_dir_selected, emails)
 
 

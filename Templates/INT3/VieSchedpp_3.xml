@@ -17,6 +17,7 @@
         <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
         <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
         <idleToObservingTime>true</idleToObservingTime>
+        <idleToObservingTimeGroup>__all__</idleToObservingTimeGroup>
         <stations>
             <station>ISHIOKA</station>
             <station>NYALES20</station>
@@ -167,7 +168,7 @@
         <interpolationTime>cosine</interpolationTime>
     </skyCoverage>
     <weightFactor>
-        <skyCoverage>0.52000000000000002</skyCoverage>
+        <skyCoverage>0.02</skyCoverage>
         <duration>1</duration>
     </weightFactor>
     <multisched>
@@ -241,14 +242,13 @@
                 <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
-        <reference_clock>ISHIOKA</reference_clock>
         <station name="__all__">
             <coordinates>false</coordinates>
             <datum>true</datum>
             <linear_clock>true</linear_clock>
             <quadratic_clock>false</quadratic_clock>
             <PWL_ZWD>
-                <interval>360</interval>
+                <interval>300</interval>
                 <constraint>1.5</constraint>
             </PWL_ZWD>
         </station>

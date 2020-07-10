@@ -26,7 +26,7 @@
         </stations>
         <scanAlignment>start</scanAlignment>
         <logSeverityConsole>warning</logSeverityConsole>
-        <logSeverityFile>warning</logSeverityFile>
+        <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
         <versionOffset>300</versionOffset>
     </general>
@@ -251,7 +251,6 @@
                 <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
-        <reference_clock>NYALES20</reference_clock>
         <station name="__all__">
             <coordinates>false</coordinates>
             <datum>false</datum>

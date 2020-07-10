@@ -230,18 +230,17 @@
     <solver>
         <EOP>
             <dUT1>
-                <interval>24</interval>
+                <interval>6</interval>
                 <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
-        <reference_clock>ISHIOKA</reference_clock>
         <station name="__all__">
             <coordinates>false</coordinates>
             <datum>true</datum>
             <linear_clock>true</linear_clock>
             <quadratic_clock>false</quadratic_clock>
             <PWL_ZWD>
-                <interval>360</interval>
+                <interval>300</interval>
                 <constraint>1.5</constraint>
             </PWL_ZWD>
         </station>

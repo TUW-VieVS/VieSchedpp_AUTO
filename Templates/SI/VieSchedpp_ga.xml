@@ -232,7 +232,6 @@
                 <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
-        <reference_clock>YARRA12M</reference_clock>
         <station name="__all__">
             <coordinates>false</coordinates>
             <datum>false</datum>

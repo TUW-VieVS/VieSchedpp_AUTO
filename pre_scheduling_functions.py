@@ -18,6 +18,7 @@ def add_downtime_intensives(**kwargs):
     :return: None
     """
 
+    Message.addMessage("Look for Intensive downtime")
     settings = configparser.ConfigParser()
     settings.read("settings.ini")
 
@@ -43,6 +44,22 @@ def add_downtime_intensives(**kwargs):
             if sta in session["stations"]:
                 insert_station_setup_with_time(int_start, int_end, s_start, s_end, session, tree, sta, "down",
                                                int["name"])
+
+
+def alternate_R1_observing_mode(**kwargs):
+    """
+    change target SNR based on baseline sensitivity
+
+    :param kwargs: mandatory keyword-arguments: "tree", "session"
+    :return: None
+    """
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    number = int(session["name"][-3:])
+    if number % 2 == 1:
+        mode = "512-16(CONT11)"
+        tree.find("./mode/skdMode").text = mode
+        Message.addMessage("Changing observing mode to \"{}\"".format(mode))
 
 
 def sefd_based_snr(**kwargs):

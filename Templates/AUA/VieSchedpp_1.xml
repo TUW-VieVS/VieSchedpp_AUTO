@@ -291,7 +291,6 @@
                 <constraint>0.0001</constraint>
             </NUTY>
         </EOP>
-        <reference_clock>HOBART12</reference_clock>
         <station name="__all__">
             <coordinates>true</coordinates>
             <datum>true</datum>

@@ -14,21 +14,21 @@
 		<startTime>2020.06.24 18:30:00</startTime>
 		<endTime>2020.06.24 19:30:00</endTime>
 		<subnetting>true</subnetting>
-        <subnettingMinAngle>150</subnettingMinAngle>
-        <subnettingMinNStaAllBut>1</subnettingMinNStaAllBut>
-        <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
-        <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
-        <idleToObservingTime>true</idleToObservingTime>
-        <stations>
-            <station>KOKEE</station>
-            <station>WETTZELL</station>
-        </stations>
-        <scanAlignment>start</scanAlignment>
-        <logSeverityConsole>warning</logSeverityConsole>
-        <logSeverityFile>info</logSeverityFile>
-        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-        <versionOffset>200</versionOffset>
-    </general>
+		<subnettingMinAngle>150</subnettingMinAngle>
+		<subnettingMinNStaAllBut>1</subnettingMinNStaAllBut>
+		<fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
+		<fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
+		<idleToObservingTime>true</idleToObservingTime>
+		<stations>
+			<station>KOKEE</station>
+			<station>WETTZELL</station>
+		</stations>
+		<scanAlignment>start</scanAlignment>
+		<logSeverityConsole>warning</logSeverityConsole>
+		<logSeverityFile>info</logSeverityFile>
+		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+		<versionOffset>300</versionOffset>
+	</general>
 	<output>
 		<experimentDescription>IN120-176</experimentDescription>
 		<scheduler>USNO</scheduler>
@@ -132,7 +132,7 @@
 				<minScan>0</minScan>
 				<maxScan>9999</maxScan>
 				<minNumberOfStations>2</minNumberOfStations>
-				<minRepeat>1080</minRepeat>
+				<minRepeat>1200</minRepeat>
 				<minFlux>0.05</minFlux>
 				<maxNumberOfScans>999</maxNumberOfScans>
 			</parameter>
@@ -164,23 +164,33 @@
 		<skyCoverage>0.02</skyCoverage>
 		<duration>1</duration>
 	</weightFactor>
+	<focusCorners>
+		<cadence>900</cadence>
+	</focusCorners>
 	<multisched>
 		<weight_factor_sky-coverage>
 			<value>0</value>
-			<value>0.20000000000000001</value>
-			<value>0.40000000000000002</value>
-			<value>0.59999999999999998</value>
-			<value>0.80000000000000004</value>
 			<value>1</value>
 		</weight_factor_sky-coverage>
 		<weight_factor_duration>
 			<value>0</value>
-			<value>0.20000000000000001</value>
-			<value>0.40000000000000002</value>
-			<value>0.59999999999999998</value>
-			<value>0.80000000000000004</value>
 			<value>1</value>
 		</weight_factor_duration>
+		<general_focus_corner_switch_cadence>
+			<value>600</value>
+			<value>1200</value>
+		</general_focus_corner_switch_cadence>
+		<maxNumber>512</maxNumber>
+		<pick_random>true</pick_random>
+		<genetic>
+			<evolutions>5</evolutions>
+			<population_size>128</population_size>
+			<select_best_percent>10</select_best_percent>
+			<select_random_percent>2.5</select_random_percent>
+			<mutation_acceleration>0.5</mutation_acceleration>
+			<min_mutation_percent>10</min_mutation_percent>
+			<parents_for_crossover>2</parents_for_crossover>
+		</genetic>
 	</multisched>
 	<multiCore>
 		<threads>auto</threads>
