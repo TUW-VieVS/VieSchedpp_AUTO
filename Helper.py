@@ -264,7 +264,8 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     # output source dependent statistics
     Message.addMessage("\nnumber of scans per source")
     for i in range(1, max(nscans_src.keys()) + 1):
-        Message.addMessage("    {} source(s) observed in {} scans ".format(nscans_src[i], i))
+        if nscans_src[i] > 0:
+            Message.addMessage("    {:2d} source(s) observed in {} scans ".format(nscans_src[i], i))
 
     tlcs = "".join(tlcs)
     stats_dict["stations"] = tlcs

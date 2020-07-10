@@ -24,20 +24,20 @@
 		<idleToObservingTime>true</idleToObservingTime>
 		<idleToObservingTimeGroup>__all__</idleToObservingTimeGroup>
 		<stations>
-			<station>FORTLEZA</station>
-			<station>HART15M</station>
-			<station>KOKEE</station>
-			<station>NYALES20</station>
-			<station>WARK12M</station>
-			<station>WETTZ13N</station>
-			<station>YARRA12M</station>
-			<station>YEBES40M</station>
-		</stations>
-		<scanAlignment>start</scanAlignment>
-		<logSeverityConsole>info</logSeverityConsole>
-		<logSeverityFile>info</logSeverityFile>
-		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-	</general>
+            <station>FORTLEZA</station>
+            <station>HART15M</station>
+            <station>KOKEE</station>
+            <station>NYALES20</station>
+            <station>WARK12M</station>
+            <station>WETTZ13N</station>
+            <station>YARRA12M</station>
+            <station>YEBES40M</station>
+        </stations>
+        <scanAlignment>start</scanAlignment>
+        <logSeverityConsole>warning</logSeverityConsole>
+        <logSeverityFile>info</logSeverityFile>
+        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+    </general>
 	<output>
 		<experimentDescription>IVS-R4955</experimentDescription>
 		<scheduler>USNO</scheduler>
