@@ -54,7 +54,7 @@ def adjust_xml(template, session, pre_scheduling_functions):
     add_parameter(tree.find("./station/parameters"), "tagalong", ["tagalong"], ["1"])
     add_parameter(tree.find("./station/parameters"), "down", ["available"], ["0"])
     for f in pre_scheduling_functions:
-        f(tree=tree, session=session)
+        f(tree=tree, session=session, folder=os.path.dirname(template))
 
     # change setup for tagalong mode
     add_tagalong_time(session, tree)

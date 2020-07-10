@@ -182,3 +182,8 @@ def select_best_24h_focus_EOP(df):
             mfe * 0.3 * s_nuty_mfe
     best = score.idxmax()
     return best
+
+
+def select_best_CRF(df):
+    print("TODO: implement select_best_CRF")
+    return 1

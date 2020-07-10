@@ -4,7 +4,7 @@ import datetime
 from lxml import etree
 from itertools import combinations
 
-from Helper import readMaster, antennaLookupTable, Message
+from Helper import readMaster, antennaLookupTable, Message, read_sources
 from XML_manipulation import insert_station_setup_with_time, add_parameter, insert_setup_node, add_group
 
 
@@ -91,6 +91,23 @@ def sefd_based_snr(**kwargs):
     insert_setup_node(session, "high_high", tree.find("./baseline/setup"), "low_snr", tag="group")
     insert_setup_node(session, "high_low", tree.find("./baseline/setup"), "mid_snr", tag="group")
     insert_setup_node(session, "low_low", tree.find("./baseline/setup"), "high_snr", tag="group")
+
+
+def prepare_source_list_crf(**kwargs):
+    """
+    prepare for CRF session
+
+    :param kwargs: mandatory keyword-arguments: "tree", "session"
+    :return: None
+    """
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+
+    target = read_sources(os.path.join(folder, "source.cat.{}.target".format(session["code"].lower())))
+    calib = read_sources(os.path.join(folder, "source.cat.{}.calib".format(session["code"].lower())))
+    add_group(tree.find("./baseline"), "target", target)
+    add_group(tree.find("./baseline"), "calib", calib)
 
 
 def test_mode(**kwargs):

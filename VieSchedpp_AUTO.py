@@ -80,8 +80,7 @@ def start_scheduling(settings):
 
         try:
             pattern = s_program["pattern"]
-            f = Helper.find_function(select_best_functions, s_program["function"])
-            f = f[0]
+            f = Helper.find_function(select_best_functions, s_program["function"])[0]
             f_pre = Helper.find_function(pre_scheduling_functions, s_program.get("pre_scheduling_functions", ""))
             f_post = Helper.find_function(post_scheduling_functions, s_program.get("post_scheduling_functions", ""))
 

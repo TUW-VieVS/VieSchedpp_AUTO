@@ -346,3 +346,14 @@ def find_function(module, function_names):
         else:
             Message.addMessage("[ERROR] function \"{}\" not found".format(function_name), dump="header")
     return f
+
+
+def read_sources(path):
+    sources = []
+    with open(path, "r") as f:
+        for l in f:
+            l = l.strip()
+            src = l.split()[0]
+            if not src.startswith("*"):
+                sources.append(src)
+    return sources
