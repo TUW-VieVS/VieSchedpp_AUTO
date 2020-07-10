@@ -175,3 +175,14 @@ def polar_plot_per_station(all_obs, station, ax, attribute_name):
     ax.set_title(station)
     h = ax.scatter(az, zd, c=target, cmap=cmap, alpha=0.75, vmin=vmin, vmax=vmax, edgecolors='k')
     return h
+
+
+def close_all():
+    """
+    close all figures
+
+    Returns
+    -------
+
+    """
+    plt.close('all')

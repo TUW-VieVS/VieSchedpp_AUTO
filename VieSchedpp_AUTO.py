@@ -232,6 +232,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Plotting.summary(summary_df, xml_dir_selected)
             Plotting.polar_plots(skd, xml_dir_selected, "duration")
             Plotting.polar_plots(skd, xml_dir_selected, "start_time")
+            Plotting.close_all()
         except:
             Message.addMessage("#### ERROR ####")
             Message.addMessage(traceback.format_exc())
