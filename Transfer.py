@@ -27,11 +27,14 @@ def download_ftp():
     now = datetime.datetime.now()
     year = now.year % 100
     names = ["master{:02d}.txt".format(year),
-             "master{:02d}-int.txt".format(year)]
+             "master{:02d}-int.txt".format(year),
+             "mediamaster{:02d}.txt".format(year)]
+
     # also download master file for next year in case today is December
     if now.month == 12:
         names.append("master{:02d}.txt".format(year + 1))
         names.append("master{:02d}-int.txt".format(year + 1))
+        names.append("mediamaster{:02d}.txt".format(year + 1))
 
     try:
         # connect to FTP server

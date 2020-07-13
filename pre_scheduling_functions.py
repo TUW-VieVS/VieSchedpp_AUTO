@@ -55,8 +55,28 @@ def alternate_R1_observing_mode(**kwargs):
     """
     tree = kwargs["tree"]
     session = kwargs["session"]
-    number = int(session["name"][-3:])
-    if number % 2 == 1:
+    mediamaster = os.path.join("MASTER", "mediamaster{:02d}.txt".format(session["date"].year % 100))
+
+    flag_512 = False
+    with open(mediamaster) as f:
+        for l in f:
+            l = l.strip()
+            if l.startswith("|"):
+                l = l.strip("|")
+                if l.startswith(session["name"]):
+                    stations = l.split("|")[6]
+                    stations = stations.split()[0]
+                    stations = [stations[i:i + 4] for i in range(0, len(stations), 4)]
+                    g_module = sum(1 for sta in stations if sta[3] == "G")
+                    if g_module == len(stations):
+                        flag_512 = True
+                    elif g_module > 0:
+                        Message.addMessage("WARNING: undefined observing mode! {:d} stations with 512 Mbps, "
+                                           "{:d} stations with 256 Mbps".format(g_module, len(stations) - g_module),
+                                           dump="header")
+                    break
+
+    if flag_512:
         mode = "512-16(CONT11)"
         tree.find("./mode/skdMode").text = mode
         Message.addMessage("Changing observing mode to \"{}\"".format(mode))
