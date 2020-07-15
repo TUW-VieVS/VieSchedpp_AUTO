@@ -112,7 +112,7 @@
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
                 <minScan>30</minScan>
-                <maxScan>600</maxScan>
+                <maxScan>900</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
@@ -147,25 +147,24 @@
                 <group>target</group>
                 <parameter>target</parameter>
                 <transition>hard</transition>
-                <setup>
-                    <group>calib</group>
-                    <parameter>calib</parameter>
-                    <transition>hard</transition>
-                </setup>
+            </setup>
+            <setup>
+                <group>calib</group>
+                <parameter>calib</parameter>
+                <transition>hard</transition>
             </setup>
         </setup>
         <parameters>
             <parameter name="calib">
                 <minScan>180</minScan>
                 <maxScan>9999</maxScan>
-                <tryToObserveXTimesEvenlyDistributed>7</tryToObserveXTimesEvenlyDistributed>
+                <tryToObserveXTimesEvenlyDistributed>8</tryToObserveXTimesEvenlyDistributed>
                 <tryToObserveXTimesMinRepeat>600</tryToObserveXTimesMinRepeat>
                 <tryToFocusIfObservedOnce>true</tryToFocusIfObservedOnce>
                 <tryToFocusFactor>10</tryToFocusFactor>
                 <tryToFocusOccurrency>perScan</tryToFocusOccurrency>
                 <tryToFocusType>multiplicative</tryToFocusType>
-                <minSNR band="S">70</minSNR>
-                <minSNR band="X">100</minSNR>
+                <fixedScanDuration>280</fixedScanDuration>
             </parameter>
             <parameter name="default">
                 <available>1</available>
@@ -227,7 +226,7 @@
     </weightFactor>
     <rules>
         <sourceSequence>
-            <cadence>7</cadence>
+            <cadence>8</cadence>
             <sequence>
                 <modulo>0</modulo>
                 <member>calib</member>
@@ -256,6 +255,10 @@
                 <modulo>6</modulo>
                 <member>__all__</member>
             </sequence>
+            <sequence>
+                <modulo>7</modulo>
+                <member>__all__</member>
+            </sequence>
         </sourceSequence>
     </rules>
     <optimization>
@@ -266,7 +269,7 @@
         <percentageGentleSourceReduction>5</percentageGentleSourceReduction>
         <condition>
             <members>__all__</members>
-            <minScans>5</minScans>
+            <minScans>4</minScans>
             <minBaselines>0</minBaselines>
         </condition>
     </optimization>
@@ -285,7 +288,7 @@
         <jobScheduling>auto</jobScheduling>
     </multiCore>
     <mode>
-        <skdMode>256-16(R1-R4)</skdMode>
+        <skdMode>AOV16W</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
                 <minSNR>20</minSNR>

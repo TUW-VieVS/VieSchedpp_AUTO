@@ -89,13 +89,13 @@
         <antenna>../../CATALOGS/antenna.cat</antenna>
         <equip>../../CATALOGS/equip.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
-        <freq>./freq.cat_crf</freq>
+        <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
         <loif>../../CATALOGS/loif.cat</loif>
         <mask>../../CATALOGS/mask.cat</mask>
-        <modes>./modes.cat_crf</modes>
+        <modes>../../CATALOGS/modes.cat</modes>
         <position>../../CATALOGS/position.cat</position>
-        <rec>./rec.cat_crf</rec>
+        <rec>./rec.cat_crd</rec>
         <rx>../../CATALOGS/rx.cat</rx>
         <source>../../CATALOGS/source.cat.geodetic.good</source>
         <tracks>../../CATALOGS/tracks.cat</tracks>
@@ -174,7 +174,7 @@
                 <minSunDistance>4</minSunDistance>
                 <minScan>0</minScan>
                 <maxScan>9999</maxScan>
-                <minNumberOfStations>100</minNumberOfStations>
+                <minNumberOfStations>4</minNumberOfStations>
                 <minRepeat>1800</minRepeat>
                 <minFlux>0.05</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
@@ -223,6 +223,7 @@
     <weightFactor>
         <skyCoverage>0.10000000000000001</skyCoverage>
         <duration>1</duration>
+        <numberOfObservations>1</numberOfObservations>
     </weightFactor>
     <rules>
         <sourceSequence>
@@ -288,7 +289,7 @@
         <jobScheduling>auto</jobScheduling>
     </multiCore>
     <mode>
-        <skdMode>AOV16W</skdMode>
+        <skdMode>1024-16(AU)</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
                 <minSNR>20</minSNR>

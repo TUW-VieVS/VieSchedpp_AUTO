@@ -6,3 +6,5 @@
 #
 # example: tagalong for WETTZELL between noon and 2pm on January 5th with optional comment:
 # WETTZELL 2020-01-05T12:00 2020-01-05T14:00 antenna maintenance
+AGGO 2020-07-21T00:00 2020-07-23T00:00 tagalong CRD107
+OHIGGINS 2020-07-21T00:00 2020-07-23T00:00 tagalong CRD107

@@ -4,7 +4,7 @@ import datetime
 from lxml import etree
 from itertools import combinations
 
-from Helper import readMaster, antennaLookupTable, Message, read_sources
+from Helper import read_master, antennaLookupTable, Message, read_sources
 from XML_manipulation import insert_station_setup_with_time, add_parameter, insert_setup_node, add_group
 
 
@@ -33,7 +33,7 @@ def add_downtime_intensives(**kwargs):
     year = session["date"].year % 100
     master_ivs = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
     master_si = os.path.join("MASTER", "master{:02d}-int-SI.txt".format(year))
-    intensives = readMaster([master_ivs, master_si])
+    intensives = read_master([master_ivs, master_si])
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
     for int in intensives:
@@ -67,7 +67,7 @@ def alternate_R1_observing_mode(**kwargs):
                     stations = l.split("|")[6]
                     stations = stations.split()[0]
                     stations = [stations[i:i + 4] for i in range(0, len(stations), 4)]
-                    g_module = sum(1 for sta in stations if sta[3] == "G")
+                    g_module = sum(sta[3] == "G" for sta in stations)
                     if g_module == len(stations):
                         flag_512 = True
                     elif g_module > 0:
@@ -124,10 +124,21 @@ def prepare_source_list_crf(**kwargs):
     session = kwargs["session"]
     folder = kwargs["folder"]
 
-    target = read_sources(os.path.join(folder, "source.cat.{}.target".format(session["code"].lower())))
-    calib = read_sources(os.path.join(folder, "source.cat.{}.calib".format(session["code"].lower())))
-    add_group(tree.find("./baseline"), "target", target)
-    add_group(tree.find("./baseline"), "calib", calib)
+    target, target_list, _ = read_sources(os.path.join(folder, "source.cat.target"), session["name"])
+    calib, calib_list, _ = read_sources(os.path.join(folder, "source.cat.calib"), session["name"])
+    add_group(tree.find("./source"), "target", target)
+    add_group(tree.find("./source"), "calib", calib)
+
+    source_list = os.path.join(folder, "source.cat.{}".format(session["code"]))
+    with open(source_list, 'w') as f:
+        f.write("* targets:\n")
+        for l in target_list:
+            f.write(l + "\n")
+        f.write("* calibrators:\n")
+        for l in calib_list:
+            f.write(l + "\n")
+
+    tree.find("./catalogs/source").text = os.path.abspath(source_list)
 
 
 def test_mode(**kwargs):

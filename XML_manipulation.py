@@ -308,7 +308,7 @@ def add_group(root, name, members):
         root_group = node
 
     for s in root_group:
-        if s.tag == "groups" and s.attrib["name"] == name:
+        if s.tag == "group" and s.attrib["name"] == name:
             root_group.remove(s)
 
     node = etree.Element("group", name=name)

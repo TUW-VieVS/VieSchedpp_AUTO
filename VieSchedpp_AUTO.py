@@ -76,7 +76,7 @@ def start_scheduling(settings):
         master = template_master.substitute(YY=str(year))
 
         master = os.path.join("MASTER", master)
-        sessions = Helper.readMaster(master)
+        sessions = Helper.read_master(master)
 
         try:
             pattern = s_program["pattern"]
@@ -195,7 +195,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         stats.sort_index(inplace=True)
 
         # find best schedule based on statistics
-        best_idx = select_best(stats)
+        best_idx = select_best(stats, template_path=template_path)
         Message.addMessage("best version: v{:03d}".format(best_idx))
         if upload:
             Message.addMessage("this session will be uploaded on: {:%B %d, %Y}".format(
@@ -237,7 +237,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage(traceback.format_exc())
 
         for post_f in post_scheduling_functions:
-            post_f()
+            post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, code=code)
 
         SendMail.writeMail(xml_dir_selected, emails)
 
