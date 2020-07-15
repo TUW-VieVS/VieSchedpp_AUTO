@@ -72,7 +72,7 @@ class Message:
             Message.msg_log = ""
 
 
-def readMaster(paths):
+def read_master(paths):
     """
     read session master
 
@@ -348,12 +348,28 @@ def find_function(module, function_names):
     return f
 
 
-def read_sources(path):
-    sources = []
+def read_sources(path, session_name=None):
+    source_name = []
+    source_list = []
+    comment_list = []
     with open(path, "r") as f:
         for l in f:
             l = l.strip()
-            src = l.split()[0]
-            if not src.startswith("*"):
-                sources.append(src)
-    return sources
+
+            # check if source was observed by previous session
+            list_comment = l.split("*")
+            list = list_comment[0]
+            if len(list_comment) == 1:
+                comment = ""
+            else:
+                comment = list_comment[1]
+
+            if session_name is not None and comment and session_name != comment:
+                continue
+
+            src = list.split()[0]
+            source_name.append(src)
+            source_list.append(list)
+            comment_list.append(comment)
+
+    return source_name, source_list, comment_list
