@@ -13,6 +13,9 @@ def select_best_intensives(df, **kwargs):
     :return: version number of best schedule
     """
 
+    if df.shape[0] == 1:
+        return df.index[0]
+
     nobs = df["n_observations"]
     sky_cov = df["sky-coverage_average_37_areas_60_min"]
     dut1_mfe = df["sim_mean_formal_error_dUT1_[mus]"]
@@ -69,6 +72,9 @@ def select_best_24h(df, **kwargs):
     :param df: DataFrame of statistics.csv file
     :return: version number of best schedule
     """
+
+    if df.shape[0] == 1:
+        return df.index[0]
 
     mfe = 0.3
     rep = 0.7
@@ -133,6 +139,9 @@ def select_best_24h_focus_EOP(df, **kwargs):
     :return: version number of best schedule
     """
 
+    if df.shape[0] == 1:
+        return df.index[0]
+
     mfe = 0.3
     rep = 0.7
     nobs = df["n_observations"]
@@ -189,6 +198,9 @@ def select_best_24h_focus_EOP(df, **kwargs):
 
 
 def select_best_CRF(df, **kwargs):
+    if df.shape[0] == 1:
+        return df.index[0]
+
     template_path = kwargs["template_path"]
     target = Helper.read_sources(Path(template_path) / "source.cat.target")[0]
     calib = Helper.read_sources(Path(template_path) / "source.cat.calib")[0]

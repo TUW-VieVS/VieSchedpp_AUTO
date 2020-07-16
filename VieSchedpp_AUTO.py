@@ -237,7 +237,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage(traceback.format_exc())
 
         for post_f in post_scheduling_functions:
-            post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, code=code)
+            post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, program_code=code)
 
         SendMail.writeMail(xml_dir_selected, emails)
 

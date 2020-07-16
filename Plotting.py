@@ -119,7 +119,10 @@ def polar_plots(skd, output, attribute_name):
         fig.subplots_adjust(left=0.05, right=0.95, bottom=0.15, top=0.95, wspace=0.2, hspace=0.25)
         cbar_ax = fig.add_axes([0.05, 0.07, 0.9, 0.025])
 
-    fig.colorbar(h[0], cax=cbar_ax, orientation="horizontal")
+    cb = fig.colorbar(h[0], cax=cbar_ax, orientation="horizontal")
+    for this_h in h:
+        this_h.set_clim(cb.vmin, cb.vmax)
+
     if attribute_name == "duration":
         cbar_ax.set_xlabel("duration [sec]")
     elif attribute_name == "start_time":

@@ -1,6 +1,7 @@
-import os
+from pathlib import Path
+import re
 
-from Helper import read_sources
+from Helper import read_sources, Message
 
 
 def upload_vex_in_sked_format(**kwargs):
@@ -9,15 +10,69 @@ def upload_vex_in_sked_format(**kwargs):
     pass
 
 
+def VGOS_procs_block(**kwargs):
+    path = kwargs["path"]
+    session = kwargs["session"]
+    stations = session["stations"]
+    program_code = kwargs["program_code"]
+
+    procs_cat = Path("Templates") / program_code / "procs.cat"
+    if not procs_cat.exists():
+        Message.addMessage("[WARNING] procs.cat file not found!", dump="session")
+        return
+
+    skd_file = next(Path(path).glob("*.skd"))
+
+    re_begin = re.compile(r"BEGIN\s+(\w+)")
+    re_end = re.compile(r"END\s+(\w+)")
+    with open(skd_file, 'a') as f_skd:
+        f_skd.write("$PROCS\n")
+
+        with open(procs_cat) as f_procs:
+            flag_write = False
+            for l in f_procs:
+                re_begin_search = re_begin.search(l)
+                if re_begin_search:
+                    station = re_begin_search.group(1)
+                    if station == "COMMON" or station in stations:
+                        flag_write = True
+
+                if re_end.search(l):
+                    f_skd.write(l)
+                    flag_write = False
+
+                if flag_write:
+                    f_skd.write(l)
+
+
+def VGOS_Broadband_block_512_8192_4096(**kwargs):
+    path = kwargs["path"]
+    session = kwargs["session"]
+    stations = session["stations"]
+
+    broadband_string = "$BROADBAND\n"
+    for sta in stations:
+        broadband_string += "{:8s}   512.00    8192       4096\n".format(sta)
+
+    skd_file = next(Path(path).glob("*.skd"))
+    with open(skd_file, 'r') as f:
+        skd_content = f.read()
+
+    skd_content = skd_content.replace("$BROADBAND\n", broadband_string)
+
+    with open(skd_file, 'w') as f:
+        f.write(skd_content)
+
+
 def update_source_list(**kwargs):
     path = kwargs["path"]
     ds = kwargs["ds"]
     session = kwargs["session"]
     session_code = session["code"]
-    code = kwargs["code"]
+    program_code = kwargs["program_code"]
 
-    target_source_list = os.path.join("Templates", code, "source.cat.target")
-    calib_source_list = os.path.join("Templates", code, "source.cat.calib")
+    target_source_list = Path("Templates") / program_code / "source.cat.target"
+    calib_source_list = Path("Templates") / program_code / "source.cat.calib"
 
     targets, target_list, target_comment = read_sources(target_source_list)
     calibs, calib_list, calib_comment = read_sources(calib_source_list)
