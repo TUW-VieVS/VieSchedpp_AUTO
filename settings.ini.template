@@ -14,7 +14,6 @@ path_to_scheduler = ~/VieSchedpp/VieSchedpp/Release/VieSchedpp
 # institute
 institute = TU Wien
 
-
 [SI]
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY-int-SI.txt
@@ -32,7 +31,6 @@ function = select_best_intensives
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
-
 
 [INT3]
 # session master file (use $YY as a template for the two-digit year)
@@ -52,7 +50,6 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
-
 [INT2]
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY-int.txt
@@ -71,14 +68,13 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
-
 [INT1]
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY-int.txt
 # regular expression to match session name
 pattern = IN1\d{2}-\d{3}
 # days prior to session start when scheduling should be started
-schedule_date = 13
+schedule_date = 12
 # days prior to session start when schedule should be uploaded
 upload_date = 9
 # contact information as list of email addresses (separated with ",")
@@ -89,7 +85,6 @@ function = select_best_intensives
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
-
 
 [OHG]
 # session master file (use $YY as a template for the two-digit year)
@@ -110,7 +105,6 @@ function = select_best_ohg
 statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
-
 
 [T2]
 # session master file (use $YY as a template for the two-digit year)
@@ -134,7 +128,6 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
-
 [AUA]
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY.txt
@@ -143,7 +136,7 @@ pre_scheduling_functions = add_downtime_intensives
 # regular expression to match session name
 pattern = AUS-AST\d{3}
 # days prior to session start when scheduling should be started
-schedule_date = next
+schedule_date = 12
 # days prior to session start when schedule should be uploaded
 upload_date = 9
 # contact information as list of email addresses (separated with ",")
@@ -154,7 +147,6 @@ function = select_best_24h
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
-
 
 [R4]
 # session master file (use $YY as a template for the two-digit year)
@@ -176,7 +168,6 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
-
 [R1]
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY.txt
@@ -194,5 +185,49 @@ contact = matthias.schartner@geo.tuwien.ac.at
 function = select_best_24h_focus_EOP
 # key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+upload = No
+
+[CRF]
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY.txt
+# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
+pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
+# special functions that have to run after the scheduling (multiple functions can be separated with ",")
+post_scheduling_functions = update_source_list
+# regular expression to match session name
+pattern = IVS-CRF\d{3}
+# days prior to session start when scheduling should be started
+schedule_date = 12
+# days prior to session start when schedule should be uploaded
+upload_date = 9
+# contact information as list of email addresses (separated with ",")
+contact = matthias.schartner@geo.tuwien.ac.at
+# define function that should be used to select best schedule
+function = select_best_CRF
+# key attributes to store and compare
+statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
+# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+upload = No
+
+[CRD]
+# session master file (use $YY as a template for the two-digit year)
+master = master$YY.txt
+# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
+pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
+# special functions that have to run after the scheduling (multiple functions can be separated with ",")
+post_scheduling_functions = update_source_list
+# regular expression to match session name
+pattern = IVS-CRD\d{3}
+# days prior to session start when scheduling should be started
+schedule_date = 12
+# days prior to session start when schedule should be uploaded
+upload_date = 9
+# contact information as list of email addresses (separated with ",")
+contact = matthias.schartner@geo.tuwien.ac.at
+# define function that should be used to select best schedule
+function = select_best_CRF
+# key attributes to store and compare
+statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
