@@ -120,14 +120,21 @@ def polar_plots(skd, output, attribute_name):
         cbar_ax = fig.add_axes([0.05, 0.07, 0.9, 0.025])
 
     fig.colorbar(h[0], cax=cbar_ax, orientation="horizontal")
-    vmin = min([o.duration for o in all_obs])
-    vmax = max([o.duration for o in all_obs])
-    for this_h in h:
-        this_h.set_clim(vmin, vmax)
 
     if attribute_name == "duration":
         cbar_ax.set_xlabel("duration [sec]")
+        vmin = min([o.duration for o in all_obs])
+        vmax = max([o.duration for o in all_obs])
+        for this_h in h:
+            this_h.set_clim(vmin, vmax)
+
     elif attribute_name == "start_time":
+        vmin = min([o.scan.start_time for o in all_obs])
+        vmax = max([o.scan.start_time for o in all_obs])
+        vmax = (vmax - vmin).total_seconds() / 3600.
+        vmin = 0.0
+        for this_h in h:
+            this_h.set_clim(vmin, vmax)
         cbar_ax.set_xlabel("time since observation start [h]")
 
     plt.savefig(os.path.join(output, "{:s}.png".format(attribute_name)), dpi=150)
