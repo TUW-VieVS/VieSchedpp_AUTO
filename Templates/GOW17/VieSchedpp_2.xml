@@ -5,7 +5,7 @@
         <GUI_version>8e9702888232e9e2fd3bf9e58fba7e3a7098b338</GUI_version>
     </software>
     <created>
-        <time>2020.06.23 14:47:45</time>
+        <time>2020.06.23 14:45:41</time>
         <name>unknown</name>
         <email>unknown</email>
     </created>
@@ -27,7 +27,7 @@
         <logSeverityConsole>error</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-        <versionOffset>300</versionOffset>
+        <versionOffset>100</versionOffset>
     </general>
     <output>
         <experimentDescription>IN120-176</experimentDescription>
@@ -46,7 +46,7 @@
                 <name>Christian Ploetz</name>
                 <email>christian.ploetz@bkg.bund.de</email>
                 <phone/>
-                <affiliation>Bundesamt fuer Kartographie und Geodaesie (BKG), Germany</affiliation>
+                <affiliation>Geodatisches Observatorium Wettzell, Germany</affiliation>
             </contact>
             <contact>
                 <function/>
@@ -80,9 +80,9 @@
         <mask>../../CATALOGS/mask.cat</mask>
         <modes>../../CATALOGS/modes.cat</modes>
         <position>../../CATALOGS/position.cat</position>
-        <rec>./rec.cat_int9</rec>
+        <rec>../../CATALOGS/rec.cat</rec>
         <rx>../../CATALOGS/rx.cat</rx>
-        <source>../../CATALOGS/source.cat.geodetic.good</source>
+        <source>./source.cat</source>
         <tracks>../../CATALOGS/tracks.cat</tracks>
     </catalogs>
     <station>
@@ -97,12 +97,12 @@
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
                 <minScan>30</minScan>
-                <maxScan>300</maxScan>
+                <maxScan>900</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
                 <minSlewDistance>0</minSlewDistance>
-                <maxWait>600</maxWait>
+                <maxWait>1800</maxWait>
                 <minElevation>5</minElevation>
                 <maxNumberOfScans>9999</maxNumberOfScans>
                 <maxTotalObsTime>999999</maxTotalObsTime>
@@ -139,7 +139,7 @@
                 <minScan>0</minScan>
                 <maxScan>9999</maxScan>
                 <minNumberOfStations>3</minNumberOfStations>
-                <minRepeat>1200</minRepeat>
+                <minRepeat>1680</minRepeat>
                 <minFlux>0.05</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
             </parameter>
@@ -172,39 +172,29 @@
         <duration>1</duration>
     </weightFactor>
     <focusCorners>
-        <cadence>900</cadence>
+        <cadence>600</cadence>
     </focusCorners>
     <multisched>
         <weight_factor_sky-coverage>
+            <value>0.29999999999999999</value>
+            <value>0.25</value>
             <value>0</value>
-            <value>1</value>
+            <value>0.02</value>
+            <value>0.040000000000000001</value>
+            <value>0.059999999999999998</value>
+            <value>0.080000000000000002</value>
+            <value>0.10000000000000001</value>
+            <value>0.12</value>
+            <value>0.14999999999999999</value>
+            <value>0.20000000000000001</value>
         </weight_factor_sky-coverage>
-        <weight_factor_duration>
-            <value>0</value>
-            <value>1</value>
-        </weight_factor_duration>
-        <general_focus_corner_switch_cadence>
-            <value>600</value>
-            <value>1200</value>
-        </general_focus_corner_switch_cadence>
-        <maxNumber>512</maxNumber>
-        <pick_random>true</pick_random>
-        <genetic>
-            <evolutions>5</evolutions>
-            <population_size>128</population_size>
-            <select_best_percent>10</select_best_percent>
-            <select_random_percent>2.5</select_random_percent>
-            <mutation_acceleration>0.5</mutation_acceleration>
-            <min_mutation_percent>10</min_mutation_percent>
-            <parents_for_crossover>2</parents_for_crossover>
-        </genetic>
     </multisched>
     <multiCore>
         <threads>auto</threads>
         <jobScheduling>auto</jobScheduling>
     </multiCore>
     <mode>
-        <skdMode>1024-16(AU)</skdMode>
+        <skdMode>256-16(R1-R4)</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
                 <minSNR>20</minSNR>

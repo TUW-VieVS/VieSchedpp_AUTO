@@ -80,9 +80,9 @@
         <mask>../../CATALOGS/mask.cat</mask>
         <modes>../../CATALOGS/modes.cat</modes>
         <position>../../CATALOGS/position.cat</position>
-        <rec>./rec.cat_int9</rec>
+        <rec>../../CATALOGS/rec.cat</rec>
         <rx>../../CATALOGS/rx.cat</rx>
-        <source>../../CATALOGS/source.cat.geodetic.good</source>
+        <source>./source.cat</source>
         <tracks>../../CATALOGS/tracks.cat</tracks>
     </catalogs>
     <station>
@@ -97,12 +97,12 @@
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
                 <minScan>30</minScan>
-                <maxScan>300</maxScan>
+                <maxScan>900</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
                 <minSlewDistance>0</minSlewDistance>
-                <maxWait>600</maxWait>
+                <maxWait>1800</maxWait>
                 <minElevation>5</minElevation>
                 <maxNumberOfScans>9999</maxNumberOfScans>
                 <maxTotalObsTime>999999</maxTotalObsTime>
@@ -139,7 +139,7 @@
                 <minScan>0</minScan>
                 <maxScan>9999</maxScan>
                 <minNumberOfStations>3</minNumberOfStations>
-                <minRepeat>1200</minRepeat>
+                <minRepeat>900</minRepeat>
                 <minFlux>0.05</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
             </parameter>
@@ -204,7 +204,7 @@
         <jobScheduling>auto</jobScheduling>
     </multiCore>
     <mode>
-        <skdMode>1024-16(AU)</skdMode>
+        <skdMode>256-16(R1-R4)</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
                 <minSNR>20</minSNR>
