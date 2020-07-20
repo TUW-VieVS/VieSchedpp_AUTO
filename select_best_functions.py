@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -33,7 +34,7 @@ def select_best_intensives(df, **kwargs):
     return best
 
 
-def select_best_ohg(df):
+def select_best_ohg(df, **kwargs):
     """
     logic to select best schedule for OHG sessions
 
