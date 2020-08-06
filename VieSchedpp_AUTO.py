@@ -309,6 +309,11 @@ def start_uploading(settings):
                     SendMail.writeMail_upload(code, emails)
                 elif upload == "no":
                     pass
+                elif upload == "gow":
+                    code = os.path.basename(os.path.dirname(path))
+                    Transfer.upload_GOW_ftp(path)
+                    emails = Helper.read_emails(settings[program], args.fallback_email)
+                    SendMail.writeMail_upload(code, emails)
                 else:
                     emails = upload.split(",")
                     with open(os.path.join(path, "selected", "email.txt"), "r") as f:

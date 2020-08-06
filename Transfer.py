@@ -163,7 +163,7 @@ def upload(path):
     Message.addMessage("##### {} #####\n".format(code), dump="download")
     Message.addMessage("connecting to: ivs.bkg.bund.de\n", dump="download")
 
-    pw = read_bkg_pw_from_file()
+    pw = read_pw_from_file("BKG_pw.txt")
     if pw is not None:
         ftp = FTP("ivs.bkg.bund.de")
 
@@ -198,9 +198,65 @@ def upload(path):
                            "\"*** INSERT PASSWORD HERE (replace pw) ***\"", dump="log")
 
 
-def read_bkg_pw_from_file():
-    if os.path.exists("BKG_pw.txt"):
-        with open('BKG_pw.txt') as f:
+def upload_GOW_ftp(path):
+    """
+    upload to GOW server using ftp
+
+    :param path: path to session
+    :return: None
+    """
+    flag = True
+    path = os.path.join(path, "selected")
+    code = os.path.basename(os.path.dirname(path))
+
+    skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
+    txtFile = os.path.splitext(skdFile)[0] + ".txt"
+    vexFile = os.path.splitext(skdFile)[0] + ".vex"
+
+    today = datetime.date.today()
+    Message.addMessage("##### {} #####\n".format(code), dump="download")
+    Message.addMessage("connecting to: 141.74.2.12\n", dump="download")
+
+    pw = read_pw_from_file("GOW_ftp_pw.txt")
+    if pw is not None:
+        ftp = FTP("141.74.2.12")
+        ftp.login("vlbi", pw)  # *** INSERT PASSWORD HERE (replace pw) ***
+        ftp.set_pasv(True)
+
+        Message.addMessage("uploading files to GOW ftp server", dump="download")
+
+        Message.addMessage("\nserver content before upload:", dump="log")
+        # get a list of all files at FTP server
+        content = []
+        ftp.retrlines('LIST', content.append)
+        for l1 in content:
+            Message.addMessage(l1, dump="log")
+
+        Message.addMessage("\nuploading:", dump="download")
+        ftp.mkd(code)
+        ftp.cwd(code)
+        for file in [skdFile, txtFile, vexFile]:
+            Message.addMessage("    {}... ".format(file), endLine=False, dump="download")
+            with open(file, 'rb') as f:
+                msg = ftp.storbinary('STOR {}'.format(os.path.basename(file)), f)
+            Message.addMessage(msg, dump="download")
+        ftp.cwd("..")
+
+        # get a list of all files at FTP server
+        Message.addMessage("\nserver content after upload:", dump="log")
+        content = []
+        ftp.retrlines('LIST', content.append)
+        for l2 in content:
+            Message.addMessage(l2, dump="log")
+    else:
+        Message.addMessage("No password for GOW FTP server was provided. Please store password in a \"GOW_ftp_pw.txt\" "
+                           "file or insert password in source code (See file \"Transfer.py\" line with comment "
+                           "\"*** INSERT PASSWORD HERE (replace pw) ***\"", dump="log")
+
+
+def read_pw_from_file(file):
+    if os.path.exists(file):
+        with open(file) as f:
             return f.read().strip()
     else:
         return None
