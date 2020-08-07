@@ -219,7 +219,7 @@ def upload_GOW_ftp(path):
 
     pw = read_pw_from_file("GOW_ftp_pw.txt")
     if pw is not None:
-        ftp = FTP("141.74.2.12")
+        ftp = FTP("141.74.1.12")
         ftp.login("vlbi", pw)  # *** INSERT PASSWORD HERE (replace pw) ***
         ftp.set_pasv(True)
 
