@@ -4,6 +4,16 @@ import re
 from Helper import read_sources, Message
 
 
+def vlba_vex_file(**kwargs):
+    path_selected = kwargs["path"]
+    code = kwargs["session"]["code"].lower()
+    path_to_skd = Path(path_selected) / (code + ".skd")
+    path_to_vex = Path(path_selected) / (code + ".vex")
+    # TODO: generate new .vex file in "sked" format
+    # TODO: execute vlba_vex_correct on this .vex file and replace the existing one
+    pass
+
+
 def upload_vex_in_sked_format(**kwargs):
     path = kwargs["path"]
     print("TODO: convert .skd to .vex in \"sked format\" and upload it")
