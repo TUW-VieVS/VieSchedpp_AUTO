@@ -66,14 +66,14 @@
         <antenna>../../CATALOGS/antenna.cat</antenna>
         <equip>../../CATALOGS/equip.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
-        <freq>./freq.cat</freq>
+        <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
         <loif>../../CATALOGS/loif.cat</loif>
         <mask>../../CATALOGS/mask.cat</mask>
         <modes>../../CATALOGS/modes.cat</modes>
         <position>../../CATALOGS/position.cat</position>
         <rec>../../CATALOGS/rec.cat</rec>
-        <rx>./rx.cat</rx>
+        <rx>../../CATALOGS/rx.cat</rx>
         <source>../../CATALOGS/source.cat.geodetic.good</source>
         <tracks>../../CATALOGS/tracks.cat</tracks>
     </catalogs>
@@ -186,7 +186,7 @@
         <jobScheduling>auto</jobScheduling>
     </multiCore>
     <mode>
-        <skdMode>256-8(RDV)</skdMode>
+        <skdMode>256-16(R1-R4)</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
                 <minSNR>23</minSNR>
