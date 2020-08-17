@@ -53,6 +53,10 @@ upload = No
 [INT2]
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY-int.txt
+# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
+pre_scheduling_functions = adjust_INT2_observing_mode
+# special functions that have to run after the scheduling (multiple functions can be separated with ",")
+post_scheduling_functions = vlba_vex_file
 # regular expression to match session name
 pattern = IN2\d{2}-\d{3}
 # days prior to session start when scheduling should be started
@@ -172,7 +176,7 @@ upload = No
 # session master file (use $YY as a template for the two-digit year)
 master = master$YY.txt
 # special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,alternate_R1_observing_mode
+pre_scheduling_functions = add_downtime_intensives,adjust_R1_observing_mode
 # regular expression to match session name
 pattern = IVS-R1\d{3}
 # days prior to session start when scheduling should be started
