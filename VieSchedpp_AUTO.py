@@ -58,13 +58,19 @@ def start_scheduling(settings):
         s_program = settings[program]
         emails = Helper.read_emails(s_program, args.fallback_email)
         delta_days = s_program.get("schedule_date", "10")
-        if delta_days.isnumeric():
-            delta_days = int(delta_days)
-            target_day = today + datetime.timedelta(days=delta_days)
+        try:
+            target_day = datetime.datetime.strptime(delta_days, '%Y-%m-%d')
+            delta_days = (target_day.date() - today).days
             year = target_day.year % 100
-        else:
-            delta_days = delta_days.lower()
-            year = today.year % 100
+        except ValueError:
+            if delta_days.isnumeric():
+                delta_days = int(delta_days)
+                target_day = today + datetime.timedelta(days=delta_days)
+                year = target_day.year % 100
+            else:
+                delta_days = delta_days.lower()
+                year = today.year % 100
+
         delta_days_upload = s_program.getint("upload_date", 7)
         statistic_field = s_program.get("statistics").split(",")
         upload = True

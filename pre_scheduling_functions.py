@@ -46,7 +46,28 @@ def add_downtime_intensives(**kwargs):
                                                int["name"])
 
 
-def alternate_R1_observing_mode(**kwargs):
+def adjust_INT2_observing_mode(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+
+    flag_VLBA = any(["VLBA" in sta or "PIETOWN" in sta for sta in session["stations"]])
+
+    if flag_VLBA:
+        mode = "256-8(RDV)"
+        tree.find("./mode/skdMode").text = mode
+        # catalogs to absolut path
+        cwd = os.getcwd()
+        os.chdir(folder)
+        tree.find("./catalogs/freq").text = os.path.abspath("./freq.cat")
+        tree.find("./catalogs/rx").text = os.path.abspath("./rx.cat")
+        os.chdir(cwd)
+
+        Message.addMessage("Changing observing mode to \"{}\"".format(mode))
+        Message.addMessage("Changing freq and rx catalogs")
+
+
+def adjust_R1_observing_mode(**kwargs):
     """
     change target SNR based on baseline sensitivity
 
