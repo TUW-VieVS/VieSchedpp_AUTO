@@ -24,7 +24,7 @@
             <station>YARRA12M</station>
         </stations>
         <scanAlignment>start</scanAlignment>
-        <logSeverityConsole>warning</logSeverityConsole>
+        <logSeverityConsole>error</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
         <versionOffset>200</versionOffset>

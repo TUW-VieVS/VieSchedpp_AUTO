@@ -41,7 +41,7 @@
             <station>YEBES40M</station>
         </stations>
         <scanAlignment>start</scanAlignment>
-        <logSeverityConsole>warning</logSeverityConsole>
+        <logSeverityConsole>error</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
         <versionOffset>300</versionOffset>

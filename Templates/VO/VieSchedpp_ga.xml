@@ -22,21 +22,21 @@
 		<fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
 		<fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
 		<stations>
-			<station>GGAO12M</station>
-			<station>KOKEE12M</station>
-			<station>MACGO12M</station>
-			<station>ONSA13NE</station>
-			<station>ONSA13SW</station>
-			<station>RAEGYEB</station>
-			<station>WESTFORD</station>
-			<station>WETTZ13S</station>
-		</stations>
-		<scanAlignment>start</scanAlignment>
-		<logSeverityConsole>warning</logSeverityConsole>
-		<logSeverityFile>info</logSeverityFile>
-		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-		<versionOffset>300</versionOffset>
-	</general>
+            <station>GGAO12M</station>
+            <station>KOKEE12M</station>
+            <station>MACGO12M</station>
+            <station>ONSA13NE</station>
+            <station>ONSA13SW</station>
+            <station>RAEGYEB</station>
+            <station>WESTFORD</station>
+            <station>WETTZ13S</station>
+        </stations>
+        <scanAlignment>start</scanAlignment>
+        <logSeverityConsole>error</logSeverityConsole>
+        <logSeverityFile>info</logSeverityFile>
+        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+        <versionOffset>300</versionOffset>
+    </general>
 	<output>
 		<experimentDescription>VGOS-O0202</experimentDescription>
 		<scheduler>HAYS</scheduler>

@@ -31,20 +31,20 @@
 			<station>FORTLEZA</station>
 			<station>HART15M</station>
 			<station>KOGANEI</station>
-			<station>KUNMING</station>
-			<station>NYALES20</station>
-			<station>OHIGGINS</station>
-			<station>SEJONG</station>
-			<station>WETTZ13N</station>
-			<station>WETTZELL</station>
-			<station>YARRA12M</station>
-			<station>YEBES40M</station>
-		</stations>
-		<scanAlignment>start</scanAlignment>
-		<logSeverityConsole>warning</logSeverityConsole>
-		<logSeverityFile>info</logSeverityFile>
-		<doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-	</general>
+            <station>KUNMING</station>
+            <station>NYALES20</station>
+            <station>OHIGGINS</station>
+            <station>SEJONG</station>
+            <station>WETTZ13N</station>
+            <station>WETTZELL</station>
+            <station>YARRA12M</station>
+            <station>YEBES40M</station>
+        </stations>
+        <scanAlignment>start</scanAlignment>
+        <logSeverityConsole>error</logSeverityConsole>
+        <logSeverityFile>info</logSeverityFile>
+        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+    </general>
 	<output>
 		<experimentDescription>IVS-T2140</experimentDescription>
 		<scheduler>VIEN</scheduler>
