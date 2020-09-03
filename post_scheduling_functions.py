@@ -1,5 +1,5 @@
 from pathlib import Path
-import re, os, configparser
+import re, os, configparser, shutil
 from subprocess import Popen, PIPE, TimeoutExpired
 
 from Helper import read_sources, Message
@@ -15,7 +15,7 @@ def vex_in_sked_format(**kwargs):
     # create backup of original .vex file
     path_to_vex = Path(path_selected) / name_vex
     backup_vex = Path(path_selected) / (code + "_orig.vex")
-    path_to_vex.rename(backup_vex)
+    shutil.copy(str(path_to_vex), str(backup_vex))
 
     settings = configparser.ConfigParser()
     settings.read("settings.ini")
@@ -39,7 +39,7 @@ def vex_in_sked_format(**kwargs):
             return
 
         newVex = Path(name_vex)
-        newVex.rename(cwd / name_vex)
+        newVex.replace(cwd / name_vex)
 
     except FileNotFoundError:
         os.chdir(cwd)
