@@ -61,10 +61,11 @@ def adjust_INT2_observing_mode(**kwargs):
         os.chdir(folder)
         tree.find("./catalogs/freq").text = os.path.abspath("./freq.cat")
         tree.find("./catalogs/rx").text = os.path.abspath("./rx.cat")
+        tree.find("./catalogs/tracks").text = os.path.abspath("./tracks.cat")
         os.chdir(cwd)
 
         Message.addMessage("Changing observing mode to \"{}\"".format(mode))
-        Message.addMessage("Changing freq and rx catalogs")
+        Message.addMessage("Changing freq, tracks and rx catalogs")
 
 
 def adjust_R1_observing_mode(**kwargs):

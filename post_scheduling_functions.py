@@ -1,22 +1,51 @@
 from pathlib import Path
-import re
+import re, os, configparser
+from subprocess import Popen, PIPE, TimeoutExpired
 
 from Helper import read_sources, Message
 
 
-def vlba_vex_file(**kwargs):
+def vex_in_sked_format(**kwargs):
     path_selected = kwargs["path"]
     code = kwargs["session"]["code"].lower()
-    path_to_skd = Path(path_selected) / (code + ".skd")
-    path_to_vex = Path(path_selected) / (code + ".vex")
-    # TODO: generate new .vex file in "sked" format
-    # TODO: execute vlba_vex_correct on this .vex file and replace the existing one
-    pass
+    name_skd = (code + ".skd")
+    name_vex = (code + ".vex")
+    path_to_skd = Path(path_selected) / name_skd
 
+    # create backup of original .vex file
+    path_to_vex = Path(path_selected) / name_vex
+    backup_vex = Path(path_selected) / (code + "_orig.vex")
+    path_to_vex.rename(backup_vex)
 
-def upload_vex_in_sked_format(**kwargs):
-    path = kwargs["path"]
-    print("TODO: convert .skd to .vex in \"sked format\" and upload it")
+    settings = configparser.ConfigParser()
+    settings.read("settings.ini")
+
+    path_sked = settings["general"].get("path_sked")
+    if path_sked is None:
+        Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format! Undefined path to sked folder",
+                           dump="session")
+        return
+
+    cwd = Path.cwd()
+    try:
+        os.chdir(path_sked)
+        p = Popen("sked " + name_skd, stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=1, text=True)
+        try:
+            outs, errs = p.communicate("vwc " + name_vex + "\n", timeout=1)
+        except TimeoutExpired:
+            p.kill()
+            Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format", dump="session")
+            os.chdir(cwd)
+            return
+
+        newVex = Path(name_vex)
+        newVex.rename(cwd / name_vex)
+
+    except FileNotFoundError:
+        os.chdir(cwd)
+        Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format", dump="session")
+
+    os.chdir(cwd)
     pass
 
 
