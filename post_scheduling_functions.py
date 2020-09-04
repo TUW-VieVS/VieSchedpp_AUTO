@@ -1,11 +1,12 @@
 from pathlib import Path
 import re, os, configparser, shutil
 import pexpect
+import subprocess
 
 from Helper import read_sources, Message
 
 
-def vex_in_sked_format(**kwargs):
+def _vex_in_sked_format(**kwargs):
     path_selected = kwargs["path"]
     code = kwargs["session"]["code"].lower()
     name_skd = (code + ".skd")
@@ -21,13 +22,13 @@ def vex_in_sked_format(**kwargs):
     settings.read("settings.ini")
 
     path_sked = settings["general"].get("path_sked")
-    shutil.copy(str(path_to_skd), str(Path(path_sked) / name_skd))
 
     if path_sked is None:
         Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format! Undefined path to sked folder",
                            dump="session")
         return
 
+    shutil.copy(str(path_to_skd), str(Path(path_sked) / name_skd))
     cwd = Path.cwd()
     try:
         os.chdir(path_sked)
@@ -56,6 +57,42 @@ def vex_in_sked_format(**kwargs):
         f.writelines(all)
 
     pass
+
+
+def _vlba_vex_adjustments(**kwargs):
+    path_selected = kwargs["path"]
+    code = kwargs["session"]["code"].lower()
+    name_vex = (code + ".vex")
+
+    # create backup of original .vex file
+    path_to_vex = Path(path_selected) / name_vex
+
+    settings = configparser.ConfigParser()
+    settings.read("settings.ini")
+
+    path_script = settings["general"].get("path_vex_correction_script")
+
+    if path_script is None:
+        Message.addMessage("[WARNING] failed to execute \"vlba_vex_correct\" script", dump="session")
+        return
+
+    cwd = Path.cwd()
+
+    try:
+        os.chdir(path_script)
+
+        p = subprocess.run([path_script, path_to_vex], capture_output=True, text=True)
+        log = p.stdout
+        if log:
+            Message.addMessage(log, dump="log")
+        errlog = p.stderr
+        if errlog:
+            Message.addMessage(errlog, dump="log")
+        p.check_returncode()
+    finally:
+        os.chdir(cwd)
+
+    os.chdir(cwd)
 
 
 def VGOS_procs_block(**kwargs):

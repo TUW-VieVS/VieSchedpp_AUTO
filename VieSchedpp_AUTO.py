@@ -100,7 +100,7 @@ def start_scheduling(settings):
 
 
 def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
-          output_path="./Schedules/", upload=False, pre_scheduling_functions=None, post_scheduling_functions=None):
+          output_path="./Schedules/", upload=False, pre_fun=None, post_fun=None):
     """
     start auto processing for one observing program
 
@@ -115,8 +115,8 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
     :param delta_days_upload: time offset in days when schedule should be updated
     :param output_path: prefix for output path
     :param upload: flag if session needs to be uploaded
-    :param pre_scheduling_functions: list of functions executed prior to scheduling
-    :param post_scheduling_functions: list of functions executed after to scheduling
+    :param pre_fun: list of functions executed prior to scheduling
+    :param post_fun: list of functions executed after to scheduling
     :return: None
     """
 
@@ -159,9 +159,16 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         Message.clearMessage("log")
         Message.addMessage("##### {} #####".format(session["code"].upper()))
         Message.addMessage("{name} ({code}) start {date} duration {duration}h stations {stations}".format(**session))
-        xmls = adjust_template(output_path, session, templates, pre_scheduling_functions)
+        xmls = adjust_template(output_path, session, templates, pre_fun)
         xml_dir = os.path.dirname(xmls[0])
         df_list = []
+
+        flag_VLBA = any(["VLBA" in sta or "PIETOWN" in sta for sta in session["stations"]])
+        flag_DSS = any([sta.startswith("DSS") for sta in session["stations"]])
+        if flag_VLBA or flag_DSS:
+            post_fun.append(post_scheduling_functions._vex_in_sked_format)
+        if flag_VLBA:
+            post_fun.append(post_scheduling_functions._vlba_vex_adjustments)
 
         # loop over all templates
         for xml in xmls:
@@ -242,7 +249,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage("#### ERROR ####")
             Message.addMessage(traceback.format_exc())
 
-        for post_f in post_scheduling_functions:
+        for post_f in post_fun:
             post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, program_code=code)
 
         SendMail.writeMail(xml_dir_selected, emails)
