@@ -15,7 +15,7 @@ def _vex_in_sked_format(**kwargs):
 
     # create backup of original .vex file
     path_to_vex = Path(path_selected) / name_vex
-    backup_vex = Path(path_selected) / (code + "_orig_VieSchedpp.vex")
+    backup_vex = Path(path_selected) / (code + ".vex.orig.VieSchedpp")
     shutil.copy(str(path_to_vex), str(backup_vex))
 
     settings = configparser.ConfigParser()
@@ -79,7 +79,7 @@ def _vlba_vex_adjustments(**kwargs):
     cwd = Path.cwd()
 
     try:
-        os.chdir(path_script)
+        os.chdir(Path(path_script).parent)
 
         p = subprocess.run([path_script, path_to_vex], capture_output=True, text=True)
         log = p.stdout
