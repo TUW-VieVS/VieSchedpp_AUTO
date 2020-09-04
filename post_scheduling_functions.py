@@ -21,6 +21,8 @@ def vex_in_sked_format(**kwargs):
     settings.read("settings.ini")
 
     path_sked = settings["general"].get("path_sked")
+    shutil.copy(str(path_to_skd), str(Path(path_sked) / name_skd))
+
     if path_sked is None:
         Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format! Undefined path to sked folder",
                            dump="session")
