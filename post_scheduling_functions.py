@@ -39,13 +39,21 @@ def vex_in_sked_format(**kwargs):
         child.close()
 
         newVex = Path(path_sked) / name_vex
-        newVex.replace(path_to_vex)
+        shutil.copy(str(newVex), str(path_to_vex))
+
 
     except:
         os.chdir(cwd)
         Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format", dump="session")
 
     os.chdir(cwd)
+
+    with open(path_to_vex) as f:
+        all = f.readlines()
+        all[1] = "*  schedule gernerated by VieSched++, converted with sked\n"
+
+    with open(path_to_vex, 'w') as f:
+        f.writelines(all)
 
     pass
 
