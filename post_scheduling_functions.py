@@ -1,6 +1,6 @@
 from pathlib import Path
 import re, os, configparser, shutil
-from subprocess import Popen, PIPE, TimeoutExpired
+import pexpect
 
 from Helper import read_sources, Message
 
@@ -14,7 +14,7 @@ def vex_in_sked_format(**kwargs):
 
     # create backup of original .vex file
     path_to_vex = Path(path_selected) / name_vex
-    backup_vex = Path(path_selected) / (code + "_orig.vex")
+    backup_vex = Path(path_selected) / (code + "_orig_VieSchedpp.vex")
     shutil.copy(str(path_to_vex), str(backup_vex))
 
     settings = configparser.ConfigParser()
@@ -29,23 +29,22 @@ def vex_in_sked_format(**kwargs):
     cwd = Path.cwd()
     try:
         os.chdir(path_sked)
-        p = Popen("sked " + name_skd, stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=1, text=True)
-        try:
-            outs, errs = p.communicate("vwc " + name_vex + "\n", timeout=1)
-        except TimeoutExpired:
-            p.kill()
-            Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format", dump="session")
-            os.chdir(cwd)
-            return
+        child = pexpect.spawn("sked " + name_skd)
+        child.expect(r'\?')
+        child.sendline("vwc " + name_vex)
+        child.expect(r'\?')
+        child.sendline("q")
+        child.close()
 
-        newVex = Path(name_vex)
-        newVex.replace(cwd / name_vex)
+        newVex = Path(path_sked) / name_vex
+        newVex.replace(path_to_vex)
 
-    except FileNotFoundError:
+    except:
         os.chdir(cwd)
         Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format", dump="session")
 
     os.chdir(cwd)
+
     pass
 
 

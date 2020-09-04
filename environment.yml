@@ -2,22 +2,37 @@ name: VieSchedpp_AUTO
 channels:
   - defaults
 dependencies:
+  - _libgcc_mutex=0.1
   - asn1crypto=1.3.0
   - blas=1.0
-  - ca-certificates=2020.1.1
-  - certifi=2019.11.28
+  - ca-certificates=2020.7.22
+  - certifi=2020.6.20
   - cffi=1.14.0
   - chardet=3.0.4
   - cryptography=2.8
   - cycler=0.10.0
+  - dbus=1.13.14
+  - expat=2.2.6
+  - fontconfig=2.13.0
   - freetype=2.9.1
+  - glib=2.63.1
+  - gst-plugins-base=1.14.0
+  - gstreamer=1.14.0
   - icu=58.2
   - idna=2.9
   - intel-openmp=2020.0
   - jpeg=9b
   - kiwisolver=1.1.0
+  - ld_impl_linux-64=2.33.1
+  - libedit=3.1.20191231
+  - libffi=3.2.1
+  - libgcc-ng=9.1.0
+  - libgfortran-ng=7.3.0
   - libiconv=1.15
   - libpng=1.6.37
+  - libstdcxx-ng=9.1.0
+  - libuuid=1.0.3
+  - libxcb=1.13
   - libxml2=2.9.9
   - libxslt=1.1.33
   - lxml=4.5.0
@@ -27,11 +42,15 @@ dependencies:
   - mkl-service=2.3.0
   - mkl_fft=1.0.15
   - mkl_random=1.1.0
+  - ncurses=6.2
   - numpy=1.18.1
   - numpy-base=1.18.1
-  - openssl=1.1.1e
+  - openssl=1.1.1g
   - pandas=1.0.3
+  - pcre=8.43
+  - pexpect=4.8.0
   - pip=20.0.2
+  - ptyprocess=0.6.0
   - pycparser=2.20
   - pyopenssl=19.1.0
   - pyparsing=2.4.6
@@ -41,14 +60,17 @@ dependencies:
   - python-dateutil=2.8.1
   - pytz=2019.3
   - qt=5.9.7
+  - readline=8.0
   - requests=2.23.0
   - setuptools=46.1.1
   - sip=4.19.8
   - six=1.14.0
   - sqlite=3.31.1
+  - tk=8.6.10
   - tornado=6.0.4
   - urllib3=1.25.8
   - wheel=0.34.2
+  - xz=5.2.5
   - zlib=1.2.11
-prefix: C:\Users\matth\anaconda3\envs\VieSchedpp_AUTO
+prefix: /home/mschartn/anaconda3/envs/VieSchedpp_AUTO
 
