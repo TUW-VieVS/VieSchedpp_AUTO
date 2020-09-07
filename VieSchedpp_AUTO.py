@@ -58,18 +58,28 @@ def start_scheduling(settings):
         s_program = settings[program]
         emails = Helper.read_emails(s_program, args.fallback_email)
         delta_days = s_program.get("schedule_date", "10")
-        try:
-            target_day = datetime.datetime.strptime(delta_days, '%Y-%m-%d')
-            delta_days = (target_day.date() - today).days
-            year = target_day.year % 100
-        except ValueError:
-            if delta_days.isnumeric():
-                delta_days = int(delta_days)
-                target_day = today + datetime.timedelta(days=delta_days)
+        if args.date is not None:
+            try:
+                target_day = datetime.datetime.strptime(args.date, '%Y-%m-%d')
+                delta_days = (target_day.date() - today).days
                 year = target_day.year % 100
-            else:
-                delta_days = delta_days.lower()
-                year = today.year % 100
+            except ValueError:
+                print("ERROR while interpreting target date (-d option): {}".format(args.date))
+                print("    must be in format \"yyyy-mm-dd\" (e.g.: 2020-01-31)")
+                return
+        else:
+            try:
+                target_day = datetime.datetime.strptime(delta_days, '%Y-%m-%d')
+                delta_days = (target_day.date() - today).days
+                year = target_day.year % 100
+            except ValueError:
+                if delta_days.isnumeric():
+                    delta_days = int(delta_days)
+                    target_day = today + datetime.timedelta(days=delta_days)
+                    year = target_day.year % 100
+                else:
+                    delta_days = delta_days.lower()
+                    year = today.year % 100
 
         delta_days_upload = s_program.getint("upload_date", 7)
         statistic_field = s_program.get("statistics").split(",")
@@ -213,6 +223,8 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         if upload:
             Message.addMessage("this session will be uploaded on: {:%B %d, %Y}".format(
                 today + datetime.timedelta(days=delta_days - delta_days_upload)))
+            if delta_days - delta_days_upload < 1:
+                Message.addMessage("[WARNING]: upload date already passed!")
         else:
             Message.addMessage("this session will NOT be uploaded!")
 
@@ -427,6 +439,9 @@ if __name__ == "__main__":
                         help="use this option if you do not want generate any schedules (upload only)")
     parser.add_argument("-t", "--test_mode", action="store_true",
                         help="use this option if you want to quickly process all templates with one schedule")
+    parser.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
+                                             "If omitted (default), information is taken from settings.ini file")
+
     args = parser.parse_args()
 
     if (args.fallback_email.count("@") == 1):
