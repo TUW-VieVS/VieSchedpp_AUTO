@@ -7,3 +7,4 @@
 #
 # example: downtime for WETTZELL between noon and 2pm on January 5th with optional comment:
 # WETTZELL 2020-01-05T12:00 2020-01-05T14:00 antenna maintenance
+DSS36 2020-09-16T07:15 2020-09-16T17:30 DSS downtime
