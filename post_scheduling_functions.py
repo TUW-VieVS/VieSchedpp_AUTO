@@ -14,7 +14,7 @@ def _vex_in_sked_format(**kwargs):
     path_to_skd = Path(path_selected) / name_skd
 
     # create backup of original .vex file
-    path_to_vex = Path(path_selected) / name_vex
+    path_to_vex = (Path(path_selected) / name_vex).absolute()
     backup_vex = Path(path_selected) / (code + ".vex.orig.VieSchedpp")
     shutil.copy(str(path_to_vex), str(backup_vex))
 
@@ -65,7 +65,7 @@ def _vlba_vex_adjustments(**kwargs):
     name_vex = (code + ".vex")
 
     # create backup of original .vex file
-    path_to_vex = Path(path_selected) / name_vex
+    path_to_vex = (Path(path_selected) / name_vex).absolute()
 
     settings = configparser.ConfigParser()
     settings.read("settings.ini")
