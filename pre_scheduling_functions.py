@@ -1,8 +1,9 @@
 import configparser
-import os
 import datetime
-from lxml import etree
+import os
 from itertools import combinations
+
+from lxml import etree
 
 from Helper import read_master, antennaLookupTable, Message, read_sources
 from XML_manipulation import insert_station_setup_with_time, add_parameter, insert_setup_node, add_group
@@ -46,7 +47,7 @@ def add_downtime_intensives(**kwargs):
                                                int["name"])
 
 
-def adjust_INT2_observing_mode(**kwargs):
+def adjust_INT_observing_mode_VLBA_256_8_RDV(**kwargs):
     tree = kwargs["tree"]
     session = kwargs["session"]
     folder = kwargs["folder"]

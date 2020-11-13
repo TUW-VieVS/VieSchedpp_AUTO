@@ -1,10 +1,9 @@
 import datetime
-import glob
-import os
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from pathlib import Path
 
 from Helper import Message
 
@@ -60,20 +59,25 @@ def writeMail_upload(code, emails):
         SendMail.send(msg)
 
 
-def writeMail(path, emails, body=None):
+def writeMail(path_str, emails, body=None, date=None):
     """
-    write an email
+    write an emailFile.stem.replace("","_sourceStatistics")
 
-    :param path: path to "selected" folder
+    :param path_str: path to "selected" folder
     :param emails: list of email addresses
     :param body: email body text. If None text will be taken from Message object
     :return: None
     """
-    skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
-    operationNotesFile = skdFile.replace(".skd", ".txt")
-    vexFile = skdFile.replace(".skd", ".vex")
+    path = Path(path_str)
+    skdFile = list(path.glob("*.skd"))[0]
+    operationNotesFile = skdFile.with_suffix('.txt')
+    vexFile = skdFile.with_suffix('.vex')
+    files = [skdFile, operationNotesFile, vexFile]
+    source_stat = path / (skdFile.stem + "_sourceStatistics.txt")
+    if source_stat.exists():
+        files.append(source_stat)
 
-    figures = glob.glob(os.path.join(path, "*.png"))
+    figures = path.glob("*.png")
     if body is None:
         body = Message.msg_header + "\n" + \
                Message.msg_program + "\n" + \
@@ -81,23 +85,27 @@ def writeMail(path, emails, body=None):
                Message.msg_download + "\n" + \
                Message.msg_log
 
-        with open(os.path.join(path, "email.txt"), "w") as f:
+        with open(path / "email.txt", "w") as f:
             f.write(body)
 
     if SendMail.flag_sendMail:
         msg = MIMEMultipart()
         msg['From'] = "VieSched++ AUTO"
         msg['To'] = ", ".join(emails)
-        sessionCode = os.path.basename(os.path.dirname(path))
-        msg['Subject'] = "[VieSched++ AUTO] {}".format(sessionCode)
+        sessionCode = path.parent.name
+        program = path.parents[1].name
+        subject = "[VieSched++ AUTO] [{}] {}".format(program, sessionCode)
+        if date is not None:
+            subject += " ({:%B %d, %Y})".format(date)
+        msg['Subject'] = subject
 
         msg.attach(MIMEText(body))
 
-        for f in [skdFile, operationNotesFile, vexFile, *figures]:
+        for f in [*files, *figures]:
             with open(f, "rb") as fil:
-                part = MIMEApplication(fil.read(), Name=os.path.basename(f))
+                part = MIMEApplication(fil.read(), Name=f.name)
             # After the file is closed
-            part['Content-Disposition'] = 'attachment; filename="%s"' % os.path.basename(f)
+            part['Content-Disposition'] = 'attachment; filename="%s"' % f.name
             msg.attach(part)
 
         SendMail.send(msg)

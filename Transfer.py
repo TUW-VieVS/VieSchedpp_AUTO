@@ -2,9 +2,9 @@ import datetime
 import glob
 import os
 import time
+import traceback
 from ftplib import FTP
 from ftplib import all_errors as ftp_errors
-import traceback
 
 import requests
 
@@ -38,7 +38,7 @@ def download_ftp():
 
     try:
         # connect to FTP server
-        ftp = FTP("cddis.gsfc.nasa.gov")
+        ftp = FTP("ivs.bkg.bund.de")
         ftp.login()
         ftp.cwd("pub/vlbi/ivscontrol")
 

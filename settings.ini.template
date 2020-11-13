@@ -14,227 +14,6 @@ path_to_scheduler = ~/VieSchedpp/VieSchedpp/Release/VieSchedpp
 # institute
 institute = TU Wien
 
-[SI]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-int-SI.txt
-# regular expression to match session name
-pattern = SI\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 7
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[INT3]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-int.txt
-# regular expression to match session name
-pattern = IN3\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[INT2]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-int.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = adjust_INT2_observing_mode
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = vlba_vex_file
-# regular expression to match session name
-pattern = IN2\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[INT1]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-int.txt
-# regular expression to match session name
-pattern = IN1\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[OHG]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
-# regular expression to match session name
-pattern = IVS-OHG\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_ohg
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[T2]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = upload_vex_in_sked_format
-# regular expression to match session name
-pattern = IVS-T2\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_24h
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_average_13_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[AUA]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives
-# regular expression to match session name
-pattern = AUS-AST\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_24h
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[R4]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives
-# regular expression to match session name
-pattern = IVS-R4\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_24h_focus_EOP
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[R1]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,adjust_R1_observing_mode
-# regular expression to match session name
-pattern = IVS-R1\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_24h_focus_EOP
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[CRF]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = update_source_list
-# regular expression to match session name
-pattern = IVS-CRF\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_CRF
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[CRD]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = update_source_list
-# regular expression to match session name
-pattern = IVS-CRD\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
-function = select_best_CRF
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
 
 [VO]
 # session master file (use $YY as a template for the two-digit year)
@@ -258,56 +37,155 @@ statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
-[INT9]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-GOW.txt
-# regular expression to match session name
-pattern = IN9\d{2}-\d{3}
-# days prior to session start when scheduling should be started
+
+[SI]
+master = master$YY-int-SI.txt
+pattern = SI\d{2}-\d{3}
 schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
+upload_date = 7
 contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
 function = select_best_intensives
-# key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+upload = No
+
+[INT3]
+master = master$YY-int.txt
+pattern = IN3\d{2}-\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
+upload = No
+
+[INT2]
+master = master$YY-int.txt
+pre_scheduling_functions = adjust_INT_observing_mode_VLBA_256_8_RDV
+pattern = IN2\d{2}-\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
+upload = No
+
+[INT1]
+master = master$YY-int.txt
+pre_scheduling_functions = adjust_INT_observing_mode_VLBA_256_8_RDV
+pattern = IN1\d{2}-\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
+upload = No
+
+[OHG]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
+pattern = IVS-OHG\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_ohg
+statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
+upload = No
+
+[T2]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
+post_scheduling_functions = upload_vex_in_sked_format
+pattern = IVS-T2\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_24h
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_average_13_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+upload = No
+
+[AUA]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives
+pattern = AUS-AST\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_24h
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+upload = No
+
+[R4]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives
+pattern = IVS-R4\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_24h_focus_EOP
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+upload = No
+
+[R1]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives,adjust_R1_observing_mode
+pattern = IVS-R1\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_24h_focus_EOP
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+upload = No
+
+[CRF]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
+post_scheduling_functions = update_source_list
+pattern = IVS-CRF\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_CRF
+statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
+upload = No
+
+[CRD]
+master = master$YY.txt
+pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
+post_scheduling_functions = update_source_list
+pattern = IVS-CRD\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_CRF
+statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
+upload = No
+
+[INT9]
+master = master$YY-GOW.txt
+pattern = IN9\d{2}-\d{3}
+schedule_date = 12
+upload_date = 9
+contact = matthias.schartner@geo.tuwien.ac.at
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
 upload = No
 
 [GOW16]
-# session master file (use $YY as a template for the two-digit year)
 master = master$YY-GOW.txt
-# regular expression to match session name
 pattern = GOW\d{5}16
-# days prior to session start when scheduling should be started
 schedule_date = 12
-# days prior to session start when schedule should be uploaded
 upload_date = 9
-# contact information as list of email addresses (separated with ",")
 contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
 function = select_best_intensives
-# key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
 [GOW17]
-# session master file (use $YY as a template for the two-digit year)
 master = master$YY-GOW.txt
-# regular expression to match session name
 pattern = GOW\d{5}17
-# days prior to session start when scheduling should be started
 schedule_date = 12
-# days prior to session start when schedule should be uploaded
 upload_date = 9
-# contact information as list of email addresses (separated with ",")
 contact = matthias.schartner@geo.tuwien.ac.at
-# define function that should be used to select best schedule
 function = select_best_intensives
-# key attributes to store and compare
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No

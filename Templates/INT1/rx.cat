@@ -1,0 +1,16 @@
+* VERSION 2020JUL14_iBKG
+* CATALOG rx.cat
+* RX.CAT - station receiver setups
+*
+ VLBA_RV
+ -       BR-VLBA     VLBA_RV
+ -       FD-VLBA     VLBA_RV
+ -       HN-VLBA     VLBA_RV
+ -       KP-VLBA     VLBA_RV
+ -       LA-VLBA     VLBA_RV
+ -       MK-VLBA     VLBA_RV
+ -       NL-VLBA     VLBA_RV
+ -       OV-VLBA     VLBA_RV
+ -       PIETOWN     VLBA_RV
+ -       SC-VLBA     VLBA_RV
+ -       WETTZELL    ODB_WIDE

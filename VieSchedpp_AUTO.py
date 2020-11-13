@@ -1,19 +1,28 @@
-import argparse, configparser
+import argparse
+import configparser
 import datetime
-import os, glob, platform, sys, subprocess, shutil, traceback
+import glob
+import os
+import platform
 import re
+import shutil
+import subprocess
+import sys
+import traceback
 from string import Template
 
 import pandas as pd
 
+import Helper
 import Plotting
 import SendMail
 import Transfer
+import post_scheduling_functions
+import pre_scheduling_functions
+import select_best_functions
 import skd_parser.skd as skd_parser
-import Helper
 from Helper import Message
 from XML_manipulation import adjust_xml
-import select_best_functions, pre_scheduling_functions, post_scheduling_functions
 
 
 def start_scheduling(settings):
@@ -264,7 +273,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         for post_f in post_fun:
             post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, program_code=code)
 
-        SendMail.writeMail(xml_dir_selected, emails)
+        SendMail.writeMail(xml_dir_selected, emails, date=session["date"])
 
 
 def adjust_template(output_path, session, templates, pre_scheduling_functions):
@@ -343,7 +352,7 @@ def start_uploading(settings):
                     emails = upload.split(",")
                     with open(os.path.join(path, "selected", "email.txt"), "r") as f:
                         body = f.read()
-                    SendMail.writeMail(os.path.join(path, "selected"), emails, body)
+                    SendMail.writeMail(os.path.join(path, "selected"), emails, body, date=target_date)
 
                 lines[i] = lin.replace("pending", "uploaded")
 

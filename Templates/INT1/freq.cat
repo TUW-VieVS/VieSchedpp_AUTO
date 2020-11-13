@@ -1,0 +1,12 @@
+* VERSION 2020Jun02_iBKG
+* FREQ.CAT - frequency sequences
+*
+ VGEOSX SX STD  VLBA_RV
+- X    R   8365.75  U   CH1     1    10000.0
+- X    R   8445.75  U   CH2     2    10000.0
+- X    R   8805.75  U   CH3     3    10000.0
+- X    R   8925.75  U   CH4     4    10000.0
+- S    R   2232.75  U   CH5     5    10000.0
+- S    R   2262.75  U   CH6     6    10000.0
+- S    R   2372.75  U   CH7     7    10000.0
+- S    R   2392.75  U   CH8     8    10000.0
