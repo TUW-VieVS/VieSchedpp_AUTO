@@ -151,12 +151,17 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
     today = datetime.date.today()
     sessions = []
     if delta_days == "next":
-        for s in master:
-            if s["date"].date() < today:
-                continue
-            if pattern.match(s["name"]):
-                sessions.append(s)
-                break
+        offset = 0;
+        while not sessions:
+            if offset >0:
+                Message.addMessage("no \"next\" schedule in master - checking {} days earlier".format(offset), dump="program")
+            for s in master:
+                if s["date"].date() < today - datetime.timedelta(days=offset):
+                    continue
+                if pattern.match(s["name"]):
+                    sessions.append(s)
+                    break
+            offset += 30
         upload = False
     else:
         target_day = today + datetime.timedelta(days=delta_days)
@@ -402,6 +407,11 @@ def setup():
                 f_pre = settings.get(group, "pre_scheduling_functions")
                 f_pre += ",test_mode"
                 settings.set(group, "pre_scheduling_functions", f_pre)
+                f_post = settings.get(group, "post_scheduling_functions")
+                if "update_source_list" in f_post:
+                    f_post = f_post.replace("update_source_list","")
+                    f_post = f_post.replace(",,",",")
+                    settings.set(group, "post_scheduling_functions", f_post)
             except:
                 settings.set(group, "pre_scheduling_functions", "test_mode")
         if not args.observing_programs:
