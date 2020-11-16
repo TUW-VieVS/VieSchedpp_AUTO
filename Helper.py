@@ -1,11 +1,11 @@
 import datetime
+import inspect
 import os
 import re
 import traceback
-import inspect
+from collections import defaultdict
 
 import pandas as pd
-from collections import defaultdict
 
 
 class Message:
@@ -47,7 +47,11 @@ class Message:
             elif dump == "header":
                 Message.msg_header += str
             elif dump == "log":
-                Message.msg_log += str
+                if len(str) > 2000:
+                    Message.msg_log += str[1:2000]
+                    Message.msg_log += "\n log too long!"
+                else:
+                    Message.msg_log += str
             elif dump == "download":
                 Message.msg_download += str
             else:
