@@ -21,7 +21,7 @@ def _vex_in_sked_format(**kwargs):
     # create backup of original .vex file
     path_to_vex = (Path(path_selected) / name_vex).absolute()
     backup_vex = Path(path_selected) / (code + ".vex.orig.VieSchedpp")
-    Message.addMessage("generate backup of {} to {}".format(path_to_vex, backup_vex), dump="session")
+    Message.addMessage("    - generate backup of {} to {}".format(path_to_vex, backup_vex), dump="session")
     shutil.copy(str(path_to_vex), str(backup_vex))
 
     settings = configparser.ConfigParser()
@@ -34,14 +34,14 @@ def _vex_in_sked_format(**kwargs):
                            dump="session")
         return
 
-    Message.addMessage("copy {} to {}".format(path_to_skd, Path(path_sked) / name_skd), dump="session")
+    Message.addMessage("    - copy {} to {}".format(path_to_skd, Path(path_sked) / name_skd), dump="session")
     shutil.copy(str(path_to_skd), str(Path(path_sked) / name_skd))
 
     cwd = Path.cwd()
     try:
-        Message.addMessage("change dir to {}".format(path_sked), dump="session")
+        Message.addMessage("    - change dir to {}".format(path_sked), dump="session")
         os.chdir(path_sked)
-        Message.addMessage("execute sked to parse .vex file".format(path_sked), dump="session")
+        Message.addMessage("    - execute sked to parse .vex file".format(path_sked), dump="session")
         child = pexpect.spawn("sked " + name_skd)
         child.expect(r'\?')
         child.sendline("vwc " + name_vex)
@@ -50,12 +50,12 @@ def _vex_in_sked_format(**kwargs):
         child.close()
 
         newVex = Path(path_sked) / name_vex
-        Message.addMessage("copy new .vex file from {} to {}".format(newVex, path_to_vex), dump="session")
+        Message.addMessage("    - copy new .vex file from {} to {}".format(newVex, path_to_vex), dump="session")
         shutil.copy(str(newVex), str(path_to_vex))
     except:
         Message.addMessage("[ERROR] failed to generate .vex file in \"sked\" format", dump="session")
     finally:
-        Message.addMessage("change dir to {}".format(cwd), dump="session")
+        Message.addMessage("    - change dir to {}".format(cwd), dump="session")
         os.chdir(str(cwd))
 
     with open(path_to_vex) as f:
@@ -88,10 +88,10 @@ def _vlba_vex_adjustments(**kwargs):
     cwd = Path.cwd()
 
     try:
-        Message.addMessage("change dir to {}".format(Path(path_script).parent), dump="session")
+        Message.addMessage("    - change dir to {}".format(Path(path_script).parent), dump="session")
         os.chdir(Path(path_script).parent)
 
-        Message.addMessage("execute {} {}".format(path_script, path_to_vex), dump="session")
+        Message.addMessage("    - execute {} {}".format(path_script, path_to_vex), dump="session")
         p = subprocess.run([path_script, path_to_vex], capture_output=True, text=True)
         log = p.stdout
         if log:
@@ -103,7 +103,7 @@ def _vlba_vex_adjustments(**kwargs):
     except:
         Message.addMessage("[ERROR] failed to execute \"vlba_vex_correct\" script - returns error", dump="session")
     finally:
-        Message.addMessage("change dir to {}".format(cwd), dump="session")
+        Message.addMessage("    - change dir to {}".format(cwd), dump="session")
         os.chdir(str(cwd))
 
 
