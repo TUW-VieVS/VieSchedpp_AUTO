@@ -49,7 +49,7 @@ class Message:
             elif dump == "log":
                 if len(str) > 2000:
                     Message.msg_log += str[1:2000]
-                    Message.msg_log += "\n log too long!"
+                    Message.msg_log += "\n[WARNING] log too long!\n\n"
                 else:
                     Message.msg_log += str
             elif dump == "download":
