@@ -161,6 +161,27 @@ def VGOS_Broadband_block_512_8192_4096(**kwargs):
         f.write(skd_content)
 
 
+def VGOS_fake_256mbps_mode(**kwargs):
+    path = kwargs["path"]
+    session = kwargs["session"]
+    program_code = kwargs["program_code"]
+    path_codes = Path("Templates") / program_code / "dummy_CODES.txt"
+    with open(path_codes, 'r') as f:
+        codes = f.read()
+
+    skd_file = next(Path(path).glob("*.skd"))
+    with open(skd_file, 'r') as f:
+        skd_content = f.read()
+
+    skd_content = skd_content.replace("* no sked observind mode used! \n", codes)
+    skd_content = re.sub(r'A\s+\d+\.?\d?\s+B\s+\d+\.?\d?\s+C\s+\d+\.?\d?\s+D\s+\d+\.?\d?', "X 2500.0 S 2500.0",
+                         skd_content)
+    skd_content = skd_content + "$PROCS\n$DUMMY\n"
+
+    with open(skd_file, 'w') as f:
+        f.write(skd_content)
+
+
 def update_source_list(**kwargs):
     path = kwargs["path"]
     ds = kwargs["ds"]

@@ -61,7 +61,7 @@ def writeMail_upload(code, emails):
 
 def writeMail(path_str, emails, body=None, date=None):
     """
-    write an emailFile.stem.replace("","_sourceStatistics")
+    write an email
 
     :param path_str: path to "selected" folder
     :param emails: list of email addresses
