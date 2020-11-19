@@ -173,11 +173,11 @@
             <value>300</value>
             <value>1200</value>
         </general_focus_corner_switch_cadence>
-        <maxNumber>512</maxNumber>
+        <maxNumber>384</maxNumber>
         <pick_random>true</pick_random>
         <genetic>
-            <evolutions>5</evolutions>
-            <population_size>128</population_size>
+            <evolutions>6</evolutions>
+            <population_size>64</population_size>
             <select_best_percent>10</select_best_percent>
             <select_random_percent>2.5</select_random_percent>
             <mutation_acceleration>0.5</mutation_acceleration>
