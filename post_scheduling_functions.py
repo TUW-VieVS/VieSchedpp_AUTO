@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import subprocess
+import traceback
 from pathlib import Path
 
 import pexpect
@@ -54,6 +55,8 @@ def _vex_in_sked_format(**kwargs):
         shutil.copy(str(newVex), str(path_to_vex))
     except:
         Message.addMessage("[ERROR] failed to generate .vex file in \"sked\" format", dump="session")
+        Message.addMessage(traceback.format_exc(), dump="session")
+
     finally:
         Message.addMessage("    - change dir to {}".format(cwd), dump="session")
         os.chdir(str(cwd))
@@ -102,6 +105,7 @@ def _vlba_vex_adjustments(**kwargs):
         p.check_returncode()
     except:
         Message.addMessage("[ERROR] failed to execute \"vlba_vex_correct\" script - returns error", dump="session")
+        Message.addMessage(traceback.format_exc(), dump="session")
     finally:
         Message.addMessage("    - change dir to {}".format(cwd), dump="session")
         os.chdir(str(cwd))
