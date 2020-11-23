@@ -394,6 +394,14 @@ def setup():
         print("VieSched++ AUTO is shutting down!")
         sys.exit(0)
 
+    if "ALL" in args.observing_programs:
+        programs = []
+        for group in settings:
+            if group == "general" or group == "DEFAULT":
+                continue
+            programs.append(group)
+        args.observing_programs = programs
+
     if args.test_mode:
         programs = []
         settings.set("general", "prefix_output_folder", "TEST")
@@ -447,7 +455,7 @@ if __name__ == "__main__":
                              "multiple email addresses can be given; "
                              "default: \"matthias.schartner@geo.tuwien.ac.at\"")
     parser.add_argument("-p", "--observing_programs", nargs='+', metavar="programs",
-                        help="list of observing programs that should be scheduled or uploaded")
+                        help="list of observing programs that should be scheduled or uploaded (use \"ALL\" for all)")
     parser.add_argument("-ne", "--no_email", action="store_true",
                         help="use this option if you do not want to write any emails")
     parser.add_argument("-nd", "--no_download", action="store_true",
@@ -461,23 +469,23 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
                                              "If omitted (default), information is taken from settings.ini file")
 
-    args = parser.parse_args()
-
-    if (args.fallback_email.count("@") == 1):
-        args.fallback_email = [args.fallback_email]
-
-    settings = setup()
-
-    if args.observing_programs is None:
-        print("No observing programs selected!")
-        print("Pass observing program name as written in settings.ini file using the '-p' flag")
-        print("e.g.: python VieSchedpp_AUTO.py -p INT1 INT2 INT3")
-        sys.exit(0)
-
-    if args.no_email:
-        SendMail.changeSendMailsFlag(False)
-
     try:
+        args = parser.parse_args()
+
+        if (args.fallback_email.count("@") == 1):
+            args.fallback_email = [args.fallback_email]
+
+        settings = setup()
+
+        if args.observing_programs is None:
+            print("No observing programs selected!")
+            print("Pass observing program name as written in settings.ini file using the '-p' flag")
+            print("e.g.: python VieSchedpp_AUTO.py -p INT1 INT2 INT3")
+            sys.exit(0)
+
+        if args.no_email:
+            SendMail.changeSendMailsFlag(False)
+
         if not args.no_scheduling:
             print("===== START SCHEDULING =====")
             start_scheduling(settings)
