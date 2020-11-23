@@ -151,10 +151,11 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
     today = datetime.date.today()
     sessions = []
     if delta_days == "next":
-        offset = 0;
+        offset = 0
         while not sessions:
-            if offset >0:
-                Message.addMessage("no \"next\" schedule in master - checking {} days earlier".format(offset), dump="program")
+            if offset > 0:
+                Message.addMessage("no \"next\" schedule in master - checking {} days earlier".format(offset),
+                                   dump="program")
             for s in master:
                 if s["date"].date() < today - datetime.timedelta(days=offset):
                     continue
@@ -247,7 +248,9 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
 
         # copy best schedule to selected folder
         version_pattern = "_v{:03d}".format(best_idx)
-        bestFiles = glob.glob(os.path.join(xml_dir, "*{}*".format(version_pattern)))
+        version_pattern_regex = re.compile(version_pattern + r'[^\d]')
+        bestFiles = [f for f in glob.glob(os.path.join(xml_dir, "*{}*".format(version_pattern))) if
+                     version_pattern_regex.search(f)]
         xml_dir_selected = os.path.join(xml_dir, "selected")
 
         if os.path.exists(xml_dir_selected):
@@ -417,8 +420,8 @@ def setup():
                 settings.set(group, "pre_scheduling_functions", f_pre)
                 f_post = settings.get(group, "post_scheduling_functions")
                 if "update_source_list" in f_post:
-                    f_post = f_post.replace("update_source_list","")
-                    f_post = f_post.replace(",,",",")
+                    f_post = f_post.replace("update_source_list", "")
+                    f_post = f_post.replace(",,", ",")
                     settings.set(group, "post_scheduling_functions", f_post)
             except:
                 settings.set(group, "pre_scheduling_functions", "test_mode")
