@@ -155,6 +155,9 @@ def read_parameter_change_from_text_file(session, tree, path, parameter_name):
         for l in f:
             if l.startswith("#"):
                 continue
+            l = l.strip()
+            if not l:
+                continue
 
             station, start, end, *comment = l.split()
             if station in session["stations"]:
