@@ -247,3 +247,29 @@ def select_best_CRF(df, **kwargs):
     best = score.idxmax()
 
     return best
+
+
+def select_best_local_tie(df, **kwargs):
+    """
+    logic to select best schedule for local tie measurements
+
+    :param df: DataFrame of statistics.csv file
+    :return: version number of best schedule
+    """
+
+    if df.shape[0] == 1:
+        return df.index[0]
+
+    nobs = df["n_observations"]
+    sky_cov1 = df["sky-coverage_average_25_areas_30_min"]
+    sky_cov2 = df["sky-coverage_average_37_areas_30_min"]
+    sky_cov3 = df["sky-coverage_average_37_areas_60_min"]
+
+    s_nobs = Helper.scale(nobs, minIsGood=False)
+    s_sky_cov1 = Helper.scale(sky_cov1, minIsGood=False)
+    s_sky_cov2 = Helper.scale(sky_cov2, minIsGood=False)
+    s_sky_cov3 = Helper.scale(sky_cov3, minIsGood=False)
+
+    score = 1 * s_nobs + .25 * s_sky_cov1 + .25 * s_sky_cov2 + .25 * s_sky_cov3
+    best = score.idxmax()
+    return best
