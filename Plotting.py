@@ -127,6 +127,7 @@ def polar_plots(skd, output, attribute_name):
         vmax = max([o.duration for o in all_obs])
         for this_h in h:
             this_h.set_clim(vmin, vmax)
+        cbar_ax.set_xlabel("integration time [sec]")
 
     elif attribute_name == "start_time":
         vmin = min([o.scan.start_time for o in all_obs])
@@ -198,3 +199,16 @@ def close_all():
 
     """
     plt.close('all')
+
+if __name__ == "__main__":
+    import skd_parser.skd as skd_parser
+    # skd = skd_parser.skdParser('C:/programming/q20341.skd')
+    # skd.parse()
+    # polar_plots(skd, 'C:/programming/', "duration")
+
+    # import pandas as pd
+    # df = pd.read_csv('C:/programming/summary.txt',index_col=0)
+    # df.drop('#stations',axis=1,inplace=True)
+    # df.drop('#sources',axis=1,inplace=True)
+    # df = df.tail(10)
+    # summary(df, 'C:/programming/')
