@@ -455,11 +455,11 @@ if __name__ == "__main__":
           "Processing parameters of the sessions are taken from the settings.ini file. "
 
     parser = argparse.ArgumentParser(description=doc)
-    parser.add_argument("-e", "--fallback_email", default="matthias.schartner@geo.tuwien.ac.at", nargs='+',
+    parser.add_argument("-e", "--fallback_email", default="mschartner@ethz.ch", nargs='+',
                         metavar="address",
                         help="potential error messages will be sent to these email addresses; "
                              "multiple email addresses can be given; "
-                             "default: \"matthias.schartner@geo.tuwien.ac.at\"")
+                             "default: \"mschartner@ethz.ch\"")
     parser.add_argument("-p", "--observing_programs", nargs='+', metavar="programs",
                         help="list of observing programs that should be scheduled or uploaded (use \"ALL\" for all)")
     parser.add_argument("-ne", "--no_email", action="store_true",
