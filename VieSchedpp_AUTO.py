@@ -400,7 +400,7 @@ def setup():
         print("VieSched++ AUTO is shutting down!")
         sys.exit(0)
 
-    if "ALL" in args.observing_programs:
+    if (args.observing_programs is None) or ("ALL" in args.observing_programs):
         programs = []
         for group in settings:
             if group == "general" or group == "DEFAULT":
