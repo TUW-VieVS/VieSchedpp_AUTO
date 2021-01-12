@@ -29,6 +29,10 @@ def _vex_in_sked_format(**kwargs):
     settings.read("settings.ini")
 
     path_sked = settings["general"].get("path_sked")
+    sked_executable = settings["general"].get("sked_executable")
+    if sked_executable is None:
+        Message.addMessage("no path to sked executable define - defaulting to 'sked'", dump="session")
+        sked_executable = "sked"
 
     if path_sked is None:
         Message.addMessage("[WARNING] failed to generate .vex file in \"sked\" format! Undefined path to sked folder",
@@ -43,7 +47,7 @@ def _vex_in_sked_format(**kwargs):
         Message.addMessage("    - change dir to {}".format(path_sked), dump="session")
         os.chdir(path_sked)
         Message.addMessage("    - execute sked to parse .vex file".format(path_sked), dump="session")
-        child = pexpect.spawn("sked " + name_skd)
+        child = pexpect.spawn(sked_executable + " " + name_skd)
         child.expect(r'\?')
         child.sendline("vwc " + name_vex)
         child.expect(r'\?')
