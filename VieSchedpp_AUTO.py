@@ -102,6 +102,8 @@ def start_scheduling(settings):
 
         master = os.path.join("MASTER", master)
         sessions = Helper.read_master(master)
+        if sessions is None:
+            return
 
         try:
             pattern = s_program["pattern"]

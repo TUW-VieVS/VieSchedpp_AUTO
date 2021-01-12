@@ -89,11 +89,12 @@ def read_master(paths):
     sessions = []
     for path in paths:
         if not os.path.exists(path):
-            Message.addMessage("Error reading session master file: {}".format(path), dump="header")
+            Message.addMessage("[Error] reading session master file: {}".format(path), dump="header")
+            return
 
         # extract year
         year = [int(s) for s in re.findall(r'\d{2}', os.path.basename(path))]
-        if len(year) is not 1:
+        if len(year) != 1:
             return
         else:
             year = year[0] + 2000
