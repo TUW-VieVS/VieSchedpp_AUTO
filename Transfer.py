@@ -158,6 +158,7 @@ def upload(path):
 
     skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
     txtFile = os.path.splitext(skdFile)[0] + ".txt"
+    vexFile = os.path.splitext(skdFile)[0] + ".vex"
 
     today = datetime.date.today()
     Message.addMessage("##### {} #####\n".format(code), dump="download")
@@ -180,7 +181,7 @@ def upload(path):
             Message.addMessage(l1, dump="log")
 
         Message.addMessage("\nuploading:", dump="download")
-        for file in [skdFile, txtFile]:
+        for file in [skdFile, txtFile, vexFile]:
             Message.addMessage("    {}... ".format(file), endLine=False, dump="download")
             with open(file, 'rb') as f:
                 msg = ftp.storbinary('STOR {}'.format(os.path.basename(file)), f)
