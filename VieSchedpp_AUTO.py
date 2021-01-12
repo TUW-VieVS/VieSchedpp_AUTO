@@ -102,10 +102,11 @@ def start_scheduling(settings):
 
         master = os.path.join("MASTER", master)
         sessions = Helper.read_master(master)
-        if sessions is None:
-            return
 
         try:
+            if sessions is None:
+                raise FileNotFoundError
+
             pattern = s_program["pattern"]
             f = Helper.find_function(select_best_functions, s_program["function"])[0]
             f_pre = Helper.find_function(pre_scheduling_functions, s_program.get("pre_scheduling_functions", ""))
