@@ -75,8 +75,9 @@ def download_http():
         os.makedirs(path)
     now = datetime.datetime.now()
     year = now.year % 100
-    masters = [(os.path.join(path, "master{:02d}-int-SI.txt".format(year)),
-                "https://www.vlbi.at/wp-content/uploads/2020/06/master20-int-SI.txt")]
+    masters = []
+    # masters = [(os.path.join(path, "master{:02d}-int-SI.txt".format(year)),
+    #             "https://www.vlbi.at/wp-content/uploads/2020/06/master20-int-SI.txt")]
 
     for cat in masters:
         url_response(cat)
