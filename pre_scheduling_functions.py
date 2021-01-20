@@ -33,8 +33,8 @@ def add_downtime_intensives(**kwargs):
 
     year = session["date"].year % 100
     master_ivs = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
-    master_si = os.path.join("MASTER", "master{:02d}-int-SI.txt".format(year))
-    intensives = read_master([master_ivs, master_si])
+    # master_si = os.path.join("MASTER", "master{:02d}-int-SI.txt".format(year))
+    intensives = read_master([master_ivs])
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
     for int in intensives:
