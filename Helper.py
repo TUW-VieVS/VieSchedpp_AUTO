@@ -378,3 +378,15 @@ def read_sources(path, session_name=None):
             comment_list.append(comment)
 
     return source_name, source_list, comment_list
+
+
+def skip_session(program, session):
+    if program.startswith("GOW"):
+        stations_tlc = session["stations_tlc"]
+        if program == "GOW08" and ("AG" in stations_tlc or "OH" in stations_tlc):
+            return True
+        if program == "GOW16" and ("AG" not in stations_tlc or "OH" in stations_tlc):
+            return True
+        if program == "GOW17" and "OH" not in stations_tlc:
+            return True
+    return False

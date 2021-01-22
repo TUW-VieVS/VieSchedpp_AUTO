@@ -183,6 +183,8 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
 
     # loop over all sessions
     for session in sessions:
+        if Helper.skip_session(code, session):
+            continue
         Message.clearMessage("session")
         Message.clearMessage("log")
         Message.addMessage("##### {} #####".format(session["code"].upper()))
