@@ -185,7 +185,7 @@ upload = No
 
 [GOW16]
 master = master$YY-GOW.txt
-pattern = GOW\d{5}16
+pattern = GOW\d{7}
 schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
@@ -195,7 +195,7 @@ upload = No
 
 [GOW17]
 master = master$YY-GOW.txt
-pattern = GOW\d{5}17
+pattern = GOW\d{7}
 schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
@@ -205,7 +205,7 @@ upload = No
 
 [GOW08]
 master = master$YY-GOW.txt
-pattern = GOW\d{5}08
+pattern = GOW\d{7}
 schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
