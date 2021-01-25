@@ -117,7 +117,7 @@
                 <maxSlewtime>600</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
                 <minSlewDistance>0</minSlewDistance>
-                <maxWait>600</maxWait>
+                <maxWait>9999</maxWait>
                 <minElevation>5</minElevation>
                 <maxNumberOfScans>9999</maxNumberOfScans>
                 <maxTotalObsTime>999999</maxTotalObsTime>
@@ -223,6 +223,8 @@
     <weightFactor>
         <skyCoverage>0.10000000000000001</skyCoverage>
         <duration>1</duration>
+		<idleTime>1</idleTime>
+		<idleTimeInterval>300</idleTimeInterval>
         <numberOfObservations>1</numberOfObservations>
     </weightFactor>
     <rules>
