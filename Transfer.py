@@ -86,20 +86,22 @@ def download_http():
     if not os.path.exists(path):
         os.makedirs(path)
 
-    catalogs = [(os.path.join(path, "antenna.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
-                (os.path.join(path, "equip.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
-                (os.path.join(path, "flux.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/flux.cat"),
-                (os.path.join(path, "freq.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/freq.cat"),
-                (os.path.join(path, "hdpos.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/hdpos.cat"),
-                (os.path.join(path, "loif.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/loif.cat"),
-                (os.path.join(path, "mask.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/mask.cat"),
-                (os.path.join(path, "modes.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/modes.cat"),
-                (os.path.join(path, "position.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/position.cat"),
-                (os.path.join(path, "rec.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rec.cat"),
-                (os.path.join(path, "rx.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rx.cat"),
-                (os.path.join(path, "source.cat.geodetic.good"),
-                 "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/source.cat.geodetic.good"),
-                (os.path.join(path, "tracks.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/tracks.cat")]
+    # catalogs = [(os.path.join(path, "antenna.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
+    #             (os.path.join(path, "equip.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
+    #             (os.path.join(path, "flux.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/flux.cat"),
+    #             (os.path.join(path, "freq.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/freq.cat"),
+    #             (os.path.join(path, "hdpos.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/hdpos.cat"),
+    #             (os.path.join(path, "loif.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/loif.cat"),
+    #             (os.path.join(path, "mask.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/mask.cat"),
+    #             (os.path.join(path, "modes.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/modes.cat"),
+    #             (os.path.join(path, "position.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/position.cat"),
+    #             (os.path.join(path, "rec.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rec.cat"),
+    #             (os.path.join(path, "rx.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rx.cat"),
+    #             (os.path.join(path, "source.cat.geodetic.good"),
+    #              "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/source.cat.geodetic.good"),
+    #             (os.path.join(path, "tracks.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/tracks.cat")]
+
+    catalogs = []
 
     # ThreadPool(13).imap_unordered(url_response, catalogs)
 
