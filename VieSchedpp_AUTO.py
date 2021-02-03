@@ -477,8 +477,8 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
                                              "If omitted (default), information is taken from settings.ini file")
 
+    args = parser.parse_args()
     try:
-        args = parser.parse_args()
 
         if (args.fallback_email.count("@") == 1):
             args.fallback_email = [args.fallback_email]
