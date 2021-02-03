@@ -4,18 +4,18 @@ contact: matthias.schartner@geo.tuwien.ac.at
 
 # Installation
 
-have a look at the `environemt.yml` or `requirements.txt` file. 
-They list all necessary packages to run the scripts. 
-You can use these files file to generate a new environment. 
+For a full installation description of VieSched++, have a look at
+https://github.com/TUW-VieVS/VieSchedpp
+
+The installation of VieSched++ AUTO should be straightforward since it is only a python project. 
+The required python libraries are listed in the `environemt.yml` or `requirements.txt` file. 
+You can use these files file to generate a new virtual environment. 
 
 -----
 
 When using anaconda type:
 
     conda env create -f environment.yml 
-
-to activate the environment type:
-
     conda activate VieSchedpp_AUTO 
 
 -----
