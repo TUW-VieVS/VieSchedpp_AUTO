@@ -4,9 +4,12 @@ contact: matthias.schartner@geo.tuwien.ac.at
 
 # Installation
 
-have a look at the `environemt.yml` file. 
-It lists all necessary packages to run the scripts. 
-You can use the `environment.yml` file to generate a new environment. 
+have a look at the `environemt.yml` or `requirements.txt` file. 
+They list all necessary packages to run the scripts. 
+You can use these files file to generate a new environment. 
+
+-----
+
 When using anaconda type:
 
     conda env create -f environment.yml 
@@ -14,7 +17,15 @@ When using anaconda type:
 to activate the environment type:
 
     conda activate VieSchedpp_AUTO 
-    
+
+-----
+
+If you instead use venv create a new virtual environment:
+
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt    
+
 # Start 
 
 The software is meant to run as a daily `cronjob`. 
