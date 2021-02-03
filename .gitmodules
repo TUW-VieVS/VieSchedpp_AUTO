@@ -1,0 +1,3 @@
+[submodule "CATALOGS"]
+	path = CATALOGS
+	url = https://github.com/nvi-inc/sked_catalogs
