@@ -202,13 +202,11 @@ def close_all():
 
 if __name__ == "__main__":
     import skd_parser.skd as skd_parser
-    # skd = skd_parser.skdParser('C:/programming/q20341.skd')
-    # skd.parse()
-    # polar_plots(skd, 'C:/programming/', "duration")
+    skd = skd_parser.skdParser(r'C:/programming/q20348.skd')
+    skd.parse()
+    polar_plots(skd, 'C:/programming/', "duration")
 
     # import pandas as pd
-    # df = pd.read_csv('C:/programming/summary.txt',index_col=0)
-    # df.drop('#stations',axis=1,inplace=True)
-    # df.drop('#sources',axis=1,inplace=True)
+    # df = pd.read_csv(r'C:\Users\Matthias Schartner\Desktop\Neuer Ordner\summary.txt',index_col=0)
     # df = df.tail(10)
     # summary(df, 'C:/programming/')

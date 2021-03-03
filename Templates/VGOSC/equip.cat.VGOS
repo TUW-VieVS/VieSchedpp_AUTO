@@ -1,0 +1,6 @@
+*Antenna    ID  DAT_Name  Heads Tape_len  X  SEFD   S SEFD  SEFD param/Equip
+*                         den/spd ft/min     (Jy)      (Jy)
+ONSA13NE   Oe  ONSA13NE 2x56000  17640   A  3000.0   B  1800.0  C  1600.0   D  1600.0   DBBC_DDC FlexBuff
+ONSA13SW   Ow  ONSA13SW 2x56000  17640   A  3000.0   B  1800.0  C  1600.0   D  1600.0   DBBC_DDC FlexBuff
+ISHIOKA    Is  ISHIOKA     1      100    A  3750.0   B  2555.0  C  4350.0   D  4770.0   K4-2 K5
+
