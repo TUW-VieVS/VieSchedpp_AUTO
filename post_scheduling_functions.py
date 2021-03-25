@@ -46,6 +46,9 @@ def _vex_in_sked_format(**kwargs):
     try:
         Message.addMessage("    - change dir to {}".format(path_sked), dump="session")
         os.chdir(path_sked)
+        if Path(name_vex).is_file():
+            Message.addMessage("    - delete existing .vex file {}".format(name_vex), dump="session")
+            Path(name_vex).unlink(missing_ok=True)
         Message.addMessage("    - execute sked to parse .vex file".format(path_sked), dump="session")
         child = pexpect.spawn(sked_executable + " " + name_skd)
         child.expect(r'\?')
