@@ -6,8 +6,8 @@
     </software>
     <created>
         <time>2020.07.10 09:48:41</time>
-        <name>Matthias Schartner</name>
-        <email>matthias.schartner@geo.tuwien.ac.at</email>
+        <name>VieSched++ AUTO</name>
+        <email>oc.dach@bkg.bund.de</email>
     </created>
     <general>
         <experimentName>T2140</experimentName>
@@ -53,16 +53,20 @@
         <contacts>
             <contact>
                 <function/>
+                <name>DACH</name>
+                <email>oc.dach@bkg.bund.de</email>
+                <affiliation></affiliation>
+            </contact>
+            <contact>
+                <function/>
                 <name>Matthias Schartner</name>
-                <email>matthias.schartner@geo.tuwien.ac.at</email>
-                <phone>+43(1)58801-12811</phone>
-                <affiliation>Technische Universitaet Wien, Austria</affiliation>
+                <email>mschartner@ethz.ch</email>
+                <affiliation>ETH Zurich, Switzerland</affiliation>
             </contact>
             <contact>
                 <function/>
                 <name>Christian Ploetz</name>
                 <email>christian.ploetz@bkg.bund.de</email>
-                <phone/>
                 <affiliation>Geodatisches Observatorium Wettzell, Germany</affiliation>
             </contact>
         </contacts>

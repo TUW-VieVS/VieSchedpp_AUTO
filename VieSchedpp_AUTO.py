@@ -239,7 +239,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
 
         # find best schedule based on statistics
         best_idx = select_best(stats, template_path=template_path)
-        Message.addMessage("best version: v{:03d}".format(best_idx))
+        Message.addMessage("best version: v{:03d}".format(int(best_idx)))
         if upload:
             Message.addMessage("this session will be uploaded on: {:%B %d, %Y}".format(
                 today + datetime.timedelta(days=delta_days - delta_days_upload)))
@@ -420,10 +420,10 @@ def setup():
             settings.set(group, "schedule_date", "next")
             settings.set(group, "upload", "No")
             try:
-                f_pre = settings.get(group, "pre_scheduling_functions")
+                f_pre = settings.get(group, "pre_scheduling_functions", fallback="")
                 f_pre += ",test_mode"
                 settings.set(group, "pre_scheduling_functions", f_pre)
-                f_post = settings.get(group, "post_scheduling_functions")
+                f_post = settings.get(group, "post_scheduling_functions", fallback="")
                 if "update_source_list" in f_post:
                     f_post = f_post.replace("update_source_list", "")
                     f_post = f_post.replace(",,", ",")

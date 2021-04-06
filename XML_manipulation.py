@@ -22,7 +22,6 @@ def adjust_xml(template, session, pre_scheduling_functions):
     # adjust general parameters
     tree.find("./created/time").text = "{:%Y.%m.%d %H:%M:%S}".format(datetime.datetime.now())
     tree.find("./created/name").text = "VieSched++ AUTO"
-    tree.find("./created/name").text = "matthias.schartner@geo.tuwien.ac.at"
     tree.find("./general/experimentName").text = session["code"]
     tree.find("./general/startTime").text = "{:%Y.%m.%d %H:%M:%S}".format(session["date"])
     tree.find("./general/endTime").text = "{:%Y.%m.%d %H:%M:%S}".format(

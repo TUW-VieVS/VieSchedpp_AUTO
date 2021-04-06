@@ -6,8 +6,8 @@
 	</software>
 	<created>
 		<time>2020.11.26 12:12:44</time>
-		<name>unknown</name>
-		<email>unknown</email>
+        <name>VieSched++ AUTO</name>
+        <email>oc.dach@bkg.bund.de</email>
 	</created>
 	<general>
 		<experimentName>local</experimentName>
@@ -32,6 +32,26 @@
 		<experimentDescription>no further description</experimentDescription>
 		<scheduler>unknown</scheduler>
 		<correlator>unknown</correlator>
+        <contacts>
+            <contact>
+                <function/>
+                <name>DACH</name>
+                <email>oc.dach@bkg.bund.de</email>
+                <affiliation></affiliation>
+            </contact>
+            <contact>
+                <function/>
+                <name>Matthias Schartner</name>
+                <email>mschartner@ethz.ch</email>
+                <affiliation>ETH Zurich, Switzerland</affiliation>
+            </contact>
+            <contact>
+                <function/>
+                <name>Christian Ploetz</name>
+                <email>christian.ploetz@bkg.bund.de</email>
+                <affiliation>Geodatisches Observatorium Wettzell, Germany</affiliation>
+            </contact>
+        </contacts>
 		<initializer_log>true</initializer_log>
 		<iteration_log>true</iteration_log>
 		<createSummary>false</createSummary>

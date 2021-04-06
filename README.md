@@ -1,6 +1,6 @@
 # VieSched++ AUTO
 
-contact: matthias.schartner@geo.tuwien.ac.at
+contact: mschartner@ethz.ch
 
 # Installation
 
