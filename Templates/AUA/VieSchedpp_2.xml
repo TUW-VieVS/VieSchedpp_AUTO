@@ -17,7 +17,7 @@
         <subnettingMinAngle>150</subnettingMinAngle>
         <subnettingMinNStaAllBut>1</subnettingMinNStaAllBut>
         <fillinmodeAPosteriori>true</fillinmodeAPosteriori>
-        <fillinmodeAPosteriori_minNumberOfStations>2</fillinmodeAPosteriori_minNumberOfStations>
+        <fillinmodeAPosteriori_minNumberOfStations>3</fillinmodeAPosteriori_minNumberOfStations>
         <fillinmodeAPosteriori_minRepeat>180</fillinmodeAPosteriori_minRepeat>
         <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
         <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>

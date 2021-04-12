@@ -144,7 +144,7 @@
 				<minSunDistance>4</minSunDistance>
 				<minScan>0</minScan>
 				<maxScan>9999</maxScan>
-				<minNumberOfStations>2</minNumberOfStations>
+				<minNumberOfStations>3</minNumberOfStations>
 				<minRepeat>1800</minRepeat>
 				<minFlux>0.05</minFlux>
 				<maxNumberOfScans>999</maxNumberOfScans>

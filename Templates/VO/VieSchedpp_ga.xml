@@ -216,10 +216,10 @@
 		<genetic>
 			<evolutions>15</evolutions>
 			<population_size>120</population_size>
-			<select_best_percent>10</select_best_percent>
-			<select_random_percent>2.5</select_random_percent>
-			<mutation_acceleration>0.5</mutation_acceleration>
-			<min_mutation_percent>10</min_mutation_percent>
+            <select_best_percent>20</select_best_percent>
+            <select_random_percent>5</select_random_percent>
+            <mutation_acceleration>0.4</mutation_acceleration>
+            <min_mutation_percent>5</min_mutation_percent>
 			<parents_for_crossover>2</parents_for_crossover>
 		</genetic>
 	</multisched>
