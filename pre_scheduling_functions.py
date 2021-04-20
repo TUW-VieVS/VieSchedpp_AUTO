@@ -124,11 +124,11 @@ def sefd_based_snr(**kwargs):
     Message.addMessage("    new baseline group \"{:2}\" with {:d} members".format("high_low", len(high_low)))
     Message.addMessage("    new baseline group \"{:2}\" with {:d} members".format("low_low", len(low_low)))
 
-    add_parameter(tree.find("./baseline/parameters"), "low_snr", ["minSNR", "minSNR"], ["20", "15"],
+    add_parameter(tree.find("./baseline/parameters"), "low_snr", ["minSNR", "minSNR"], ["18", "13"],
                   [("band", "X"), ("band", "S")])
-    add_parameter(tree.find("./baseline/parameters"), "mid_snr", ["minSNR", "minSNR"], ["22", "17"],
+    add_parameter(tree.find("./baseline/parameters"), "mid_snr", ["minSNR", "minSNR"], ["20", "15"],
                   [("band", "X"), ("band", "S")])
-    add_parameter(tree.find("./baseline/parameters"), "high_snr", ["minSNR", "minSNR"], ["25", "20"],
+    add_parameter(tree.find("./baseline/parameters"), "high_snr", ["minSNR", "minSNR"], ["22", "17"],
                   [("band", "X"), ("band", "S")])
 
     insert_setup_node(session, "high_high", tree.find("./baseline/setup"), "low_snr", tag="group")
