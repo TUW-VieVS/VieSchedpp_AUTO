@@ -34,7 +34,7 @@
         <scanAlignment>start</scanAlignment>
         <logSeverityConsole>error</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
-        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+        <doNotObserveSourcesWithinMinRepeat>false</doNotObserveSourcesWithinMinRepeat>
     </general>
 	<output>
 		<experimentDescription>IVS-OHG125</experimentDescription>
