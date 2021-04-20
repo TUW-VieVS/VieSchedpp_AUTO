@@ -165,7 +165,7 @@
 				<minScan>0</minScan>
 				<maxScan>9999</maxScan>
 				<minNumberOfStations>3</minNumberOfStations>
-				<minRepeat>1800</minRepeat>
+				<minRepeat>1200</minRepeat>
 				<minFlux>0.25</minFlux>
 				<maxNumberOfScans>999</maxNumberOfScans>
 			</parameter>
