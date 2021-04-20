@@ -108,7 +108,7 @@
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
                 <minScan>30</minScan>
-                <maxScan>780</maxScan>
+                <maxScan>900</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>1200</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
