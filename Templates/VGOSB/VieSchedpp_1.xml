@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VieSchedpp>
+	<rules>
+		<calibration>
+			<block>
+				<startTime>450</startTime>
+				<scans>1</scans>
+				<duration>300</duration>
+				<sources>__all__</sources>
+			</block>
+		</calibration>
+	</rules>
     <software>
         <name>VieSched++ GUI</name>
         <GUI_version>b64510b4dfa3dfe53aaf243e1315c0d36158bbae</GUI_version>
