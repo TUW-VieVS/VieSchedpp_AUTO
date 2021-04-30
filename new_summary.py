@@ -12,6 +12,11 @@ def start(path_main):
         p = p / "selected"
         if not p.is_dir():
             continue
+        if not (p / "email.txt").is_file():
+            continue
+        if not (p / "merged_statistics.csv").is_file():
+            continue
+
         with open(p / "email.txt") as f:
             for l in f:
                 if l.startswith("best version: "):
