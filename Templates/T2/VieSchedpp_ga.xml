@@ -110,7 +110,7 @@
         <position>../../CATALOGS/position.cat</position>
         <rec>../../CATALOGS/rec.cat</rec>
         <rx>../../CATALOGS/rx.cat</rx>
-        <source>../../CATALOGS/source.cat.geodetic.good</source>
+        <source>./source.cat.t2</source>
         <tracks>../../CATALOGS/tracks.cat</tracks>
     </catalogs>
     <station>
