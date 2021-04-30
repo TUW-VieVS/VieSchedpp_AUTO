@@ -4,13 +4,15 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 
-def summary(df, output):
+def summary(df, fields, output):
     """
     generate summary plot with four fields: #obs, #scans, #sources and sky-coverage score
 
     :param df: DateFrame with summary statistics
+    :param fields: list of fields
     :param output: output directory path
     :return: None
     """
@@ -19,30 +21,37 @@ def summary(df, output):
     networks = df["stations"].tolist()
     df = df.drop(columns=["stations"])
 
-    unique_networks = set(networks)
-    cat = []
-    for net in unique_networks:
-        cat.append([i for i, x in enumerate(networks) if x == net])
+    unique_networks = [*set(networks)]
+    cat = [ unique_networks.index(net) for net in networks ]
 
-    n_col = df.columns.size
+    n_col = len(fields)
     fig_r = math.floor(math.sqrt(n_col))
     fig_c = math.ceil(n_col / fig_r)
 
-    fig, axes = plt.subplots(fig_r, fig_c, figsize=(fig_c * 3, fig_r * 3), sharex='all')
+    fig, axes = plt.subplots(fig_r, fig_c, figsize=(fig_c * 3.5, fig_r * 4), sharex='all')
 
     plt.xticks(range(n), codes)
-    hs = []
-    first_empty = 0;
-    for i, field in itertools.zip_longest(range(0, fig_r * fig_c), df):
+    first_empty = 0
+    hs = None
+    for i, field in itertools.zip_longest(range(0, fig_r * fig_c), fields):
+        ax = axes.flat[i]
+        hs = plot_summary_background(ax, cat)
         if field is None:
-            hs.append(plot_summary(axes.flat[i], None, cat, field))
-            axes.flat[i].get_yaxis().set_visible(False)
-
+            ax.get_yaxis().set_visible(False)
             if first_empty == 0:
                 first_empty = i
+        elif field in df:
+            data = df[field]
+            ax.bar(range(len(data)), data, width=.6, ec='#252525', fc='#969696')
+            if field.startswith("n_"):
+                field = "#" + field[2:]
+            ax.set_title(field)
+
         else:
-            hs.append(plot_summary(axes.flat[i], df[field], cat, field))
-        for tick in axes.flat[i].get_xticklabels():
+            plot_special_stats(ax, df, field)
+            pass
+
+        for tick in ax.get_xticklabels():
             tick.set_rotation(90)
 
     labels = []
@@ -53,21 +62,13 @@ def summary(df, output):
         else:
             labels.append("({:.0f}) {}".format(n, net))
 
-    axes.flat[first_empty].legend(hs[first_empty], labels, loc='lower left')
-    fig.subplots_adjust(left=0.1, right=0.975, bottom=0.15, top=0.95, wspace=0.2, hspace=0.15)
+    axes.flat[first_empty].legend(hs, labels, loc='lower left')
+    plt.tight_layout()
+    # fig.subplots_adjust(left=0.1, right=0.975, bottom=0.15, top=0.95, wspace=0.2, hspace=0.15)
     plt.savefig(os.path.join(output, "summary.png"), dpi=150)
 
 
-def plot_summary(ax, data, cat, title):
-    """
-    generate one summary plot in axes
-
-    :param ax: axes
-    :param data: values
-    :param cat: categories for color-coding
-    :param title: title for axes
-    :return: list of plot handles
-    """
+def plot_summary_background(ax, cats):
     colors = ["#1f78b4",
               "#33a02c",
               "#e31a1c",
@@ -77,17 +78,265 @@ def plot_summary(ax, data, cat, title):
               "#b2df8a",
               "#fb9a99",
               "#fdbf6f",
-              "#cab2d6"]
+              "#cab2d6",
+              ]
+
+    painted = []
 
     hs = []
-    for x, c in zip(cat, colors):
-        if data is None:
-            d = np.full(len(x), np.nan)
-        else:
-            d = data[x]
-        hs.append(ax.bar(x, d, color=c))
-    ax.set_title(title)
+    for x, cat in enumerate(cats):
+        c = colors[cat]
+        h = ax.axvspan(x-.5, x+.5, alpha=0.25, color=c)
+        if c not in painted:
+            painted.append(c)
+            hs.append(h)
     return hs
+
+
+def plot_special_stats(ax, df, field):
+    """
+    generate one summary plot in axes
+
+    :param ax: axes
+    :param data: dataframe
+    :param field: field
+    """
+    x = np.arange(df.shape[0])
+    if field == "n_scans_per_sta":
+        storage = np.zeros((df.shape[0]))
+        df_src_scans = df[[c for c in df.columns if c.endswith("station_scans")]].copy()
+        df_src_scans.fillna(0,inplace=True)
+
+        n = df_src_scans.shape[1]
+        groupby = int(n/10)+1
+        if groupby > 1:
+            xx = np.arange(len(df_src_scans.columns)) // groupby
+            cols = []
+            for i in set(xx):
+                c = df_src_scans.columns[xx == i]
+                start = c[0].split("-")[0]
+                end = c[-1].split("-")[0]
+                if start == end:
+                    cols.append("{}-station_scans".format(start))
+                else:
+                    cols.append("{}-{}-station_scans".format(start,end))
+            df_src_scans = df_src_scans.groupby(xx, axis=1).sum()
+            df_src_scans.columns = cols
+
+        for c in df_src_scans.columns[::-1]:
+            s = df_src_scans[c]
+            l = "-".join(c.split("-")[:-1])
+            ax.bar(x, s, label=l, bottom=storage, width=.6)
+            storage += s
+        handles, labels = ax.get_legend_handles_labels()
+        legend = ax.legend(reversed(handles), reversed(labels), title='stations', loc='lower left')
+        legend.get_frame().set_alpha(None)
+        legend.get_frame().set_facecolor((1, 1, 1, 0.45))
+        ax.set_title("#scans per #stations")
+
+    elif field == "n_scans_per_type":
+        ax.bar(x, df["n_single_source_scans"], label="standard", width=.6)
+        ax.bar(x, df["n_subnetting_scans"], bottom=df["n_single_source_scans"], label="subnetting", width=.6)
+        handles, labels = ax.get_legend_handles_labels()
+        legend = ax.legend(reversed(handles), reversed(labels), title='type', loc='lower left')
+        legend.get_frame().set_alpha(None)
+        legend.get_frame().set_facecolor((1, 1, 1, 0.45))
+        ax.set_title("#scans per type")
+
+    elif field == "sky-coverage_37_areas_60_min":
+        df_sky = df[[c for c in df.columns if c.startswith('sky-coverage_') and c.endswith("37_areas_60_min")]].copy()
+        df_sky.drop("sky-coverage_average_37_areas_60_min", axis=1, inplace=True)
+        sky = df_sky.mean(axis=1)
+        sky_std = df_sky.std(axis=1)
+        ax.bar(x, sky, yerr=sky_std, width=.6, ec='#252525', fc='#969696')
+        ax.set_title("sky-coverage score 37/60 ")
+
+    elif field == "sky-coverage_25_areas_60_min":
+        df_sky = df[[c for c in df.columns if c.startswith('sky-coverage_') and c.endswith("25_areas_60_min")]].copy()
+        df_sky.drop("sky-coverage_average_25_areas_60_min", axis=1, inplace=True)
+        sky = df_sky.mean(axis=1)
+        sky_std = df_sky.std(axis=1)
+        ax.bar(x, sky, yerr=sky_std, width=.6, ec='#252525', fc='#969696')
+        ax.set_title("sky-coverage score 25/60 ")
+
+    elif field == "sky-coverage_13_areas_60_min":
+        df_sky = df[[c for c in df.columns if c.startswith('sky-coverage_') and c.endswith("13_areas_60_min")]].copy()
+        df_sky.drop("sky-coverage_average_13_areas_60_min", axis=1, inplace=True)
+        sky = df_sky.mean(axis=1)
+        sky_std = df_sky.std(axis=1)
+        ax.bar(x, sky, yerr=sky_std, width=.6, ec='#252525', fc='#969696')
+        ax.set_title("sky-coverage score 13/60 ")
+
+    elif field == "sky-coverage_37_areas_30_min":
+        df_sky = df[[c for c in df.columns if c.startswith('sky-coverage_') and c.endswith("37_areas_30_min")]].copy()
+        df_sky.drop("sky-coverage_average_37_areas_30_min", axis=1, inplace=True)
+        sky = df_sky.mean(axis=1)
+        sky_std = df_sky.std(axis=1)
+        ax.bar(x, sky, yerr=sky_std, width=.6, ec='#252525', fc='#969696')
+        ax.set_title("sky-coverage score 37/30 ")
+
+    elif field == "sky-coverage_25_areas_30_min":
+        df_sky = df[[c for c in df.columns if c.startswith('sky-coverage_') and c.endswith("25_areas_30_min")]].copy()
+        df_sky.drop("sky-coverage_average_25_areas_30_min", axis=1, inplace=True)
+        sky = df_sky.mean(axis=1)
+        sky_std = df_sky.std(axis=1)
+        ax.bar(x, sky, yerr=sky_std, width=.6, ec='#252525', fc='#969696')
+        ax.set_title("sky-coverage score 25/30 ")
+
+    elif field == "sky-coverage_13_areas_30_min":
+        df_sky = df[[c for c in df.columns if c.startswith('sky-coverage_') and c.endswith("13_areas_30_min")]].copy()
+        df_sky.drop("sky-coverage_average_13_areas_30_min", axis=1, inplace=True)
+        sky = df_sky.mean(axis=1)
+        sky_std = df_sky.std(axis=1)
+        ax.bar(x, sky, yerr=sky_std, width=.6, ec='#252525', fc='#969696')
+        ax.set_title("sky-coverage score 13/30 ")
+
+    elif field == "time":
+
+        storage = np.zeros((df.shape[0]))
+        df_obs = df[[c for c in df.columns if c.startswith('time_') and c.endswith("_observation")]].copy()
+        df_obs.drop("time_average_observation", axis=1, inplace=True)
+        obs = df_obs.mean(axis=1)
+        std_obs = df_obs.std(axis=1)
+
+        df_preob = df[[c for c in df.columns if c.startswith('time_') and c.endswith("_preob")]].copy()
+        df_preob.drop("time_average_preob", axis=1, inplace=True)
+        preob = df_preob.mean(axis=1)
+        std_preob = df_preob.std(axis=1)
+
+        df_idle = df[[c for c in df.columns if c.startswith('time_') and c.endswith("_idle")]].copy()
+        df_idle.drop("time_average_idle", axis=1, inplace=True)
+        idle = df_idle.mean(axis=1)
+        std_idle = df_idle.std(axis=1)
+
+        df_slew = df[[c for c in df.columns if c.startswith('time_') and c.endswith("_slew")]].copy()
+        df_slew.drop("time_average_slew", axis=1, inplace=True)
+        slew = df_slew.mean(axis=1)
+        std_slew = df_slew.std(axis=1)
+
+        df_field_system = df[[c for c in df.columns if c.startswith('time_') and c.endswith("_field_system")]].copy()
+        df_field_system.drop("time_average_field_system", axis=1, inplace=True)
+        field_system = df_field_system.mean(axis=1)
+        std_field_system = df_field_system.std(axis=1)
+
+        ax.bar(x, obs, label='obs', bottom=storage, width=.6, yerr=std_obs)
+        storage += obs
+        ax.bar(x, slew, label='slew', bottom=storage, width=.6)
+        storage += slew
+        ax.bar(x, preob, label='preob', bottom=storage, width=.6)
+        storage += preob
+        ax.bar(x, field_system, label='field system', bottom=storage, width=.6)
+        storage += field_system
+        ax.bar(x, idle, label='idle', bottom=storage, width=.6, yerr=std_idle)
+        storage += idle
+
+        handles, labels = ax.get_legend_handles_labels()
+        legend = ax.legend(reversed(handles), reversed(labels), loc='lower left')
+        legend.get_frame().set_alpha(None)
+        legend.get_frame().set_facecolor((1, 1, 1, 0.45))
+        ax.set_title("spent time")
+        ax.set_ylabel("[%]")
+
+
+        pass
+    elif field == "dUT1":
+        ax.plot(x, df["sim_repeatability_dUT1_[mus]"], label="rep", marker='o')
+        ax.plot(x, df["sim_mean_formal_error_dUT1_[mus]"], label="mfe", marker='o')
+        ax.set_title("dUT1")
+        ax.set_ylabel("$\mu$s")
+        ax.legend(loc='best')
+
+    elif field == "POL":
+        ax.plot(x, df["sim_repeatability_x_pol_[muas]"], marker='^', label="X rep")
+        ax.plot(x, df["sim_mean_formal_error_x_pol_[muas]"], marker='^', label="X mfe")
+        ax.plot(x, df["sim_repeatability_y_pol_[muas]"], marker='v', label="Y rep", linestyle="dashed")
+        ax.plot(x, df["sim_mean_formal_error_y_pol_[muas]"], marker='v', label="Y mfe", linestyle="dashed")
+        ax.legend(loc='best')
+        ax.set_title("POL")
+        ax.set_ylabel("$\mu$as")
+
+    elif field == "NUT":
+        ax.plot(x, df["sim_repeatability_x_nut_[muas]"], marker='^', label="X rep")
+        ax.plot(x, df["sim_mean_formal_error_x_nut_[muas]"], marker='^', label="X mfe")
+        ax.plot(x, df["sim_repeatability_y_nut_[muas]"], marker='v', label="Y rep", linestyle="dashed")
+        ax.plot(x, df["sim_mean_formal_error_y_nut_[muas]"], marker='v', label="Y mfe", linestyle="dashed")
+        ax.legend(loc='best')
+        ax.set_title("NUT")
+        ax.set_ylabel("$\mu$as")
+
+    elif field == "COORD":
+        df_rep_sta = df[[c for c in df.columns if c.startswith('sim_repeatability_') and not c.endswith("]")]].copy()
+        df_rep_sta.drop("sim_repeatability_n_sim", axis=1, inplace=True)
+        rep_sta = df_rep_sta.mean(axis=1)
+        rep_sta_std = df_rep_sta.std(axis=1)
+
+        df_mfe_sta = df[[c for c in df.columns if c.startswith('sim_mean_formal_error_') and not c.endswith("]")]].copy()
+        df_mfe_sta.drop("sim_mean_formal_error_n_sim", axis=1, inplace=True)
+        mfe_sta = df_mfe_sta.mean(axis=1)
+        mfe_sta_std = df_mfe_sta.std(axis=1)
+
+        ax.errorbar(x, rep_sta, yerr=rep_sta_std, marker='o', label="rep")
+        ax.errorbar(x, mfe_sta, yerr=mfe_sta_std, marker='o', label="mfe")
+        ax.legend(loc='best')
+        ax.set_title("3d sta-coordinates")
+        ax.set_ylabel("mm")
+
+    elif field == "sources_per_obs":
+        n_src_obs = [c for c in df.columns if c.startswith('n_src_obs_')]
+        df_src_obs = df[n_src_obs]
+        bins = [1, 34, 68, 101, 201, 301, 501, 701, 1301, float('inf')]
+        s_obs = []
+        header = []
+        for s, e in zip(bins[0:-1], bins[1:]):
+            s_obs.append(((df_src_obs >= s) & (df_src_obs < e)).sum(axis=1))
+            header.append(f"{s}-{e - 1} obs")
+        df_sources_obs = pd.concat(s_obs, axis=1)
+        df_sources_obs.columns = header
+
+        ax.set_title("#sources per #obs")
+        storage = np.zeros((df_sources_obs.shape[0]))
+        for c in df_sources_obs.columns[::-1]:
+            s = df_sources_obs[c]
+            l = c[:-4]
+            ax.bar(x, s, label=l, bottom=storage, width=.6)
+            storage += s
+        ax.bar(x, df["n_sources"] - storage, bottom=storage, facecolor="#dddddd", label=0, width=.6)
+        handles, labels = ax.get_legend_handles_labels()
+        legend = ax.legend(reversed(handles), reversed(labels), title='obs', loc='lower left')
+        legend.get_frame().set_alpha(None)
+        legend.get_frame().set_facecolor((1, 1, 1, 0.45))
+
+    elif field == "sources_per_scans":
+        ax.set_title("#sources per #scans")
+        n_src_scans = [c for c in df.columns if c.startswith('n_src_scans_')]
+        df_src = df[n_src_scans]
+        s1 = ((df_src > 0) & (df_src <= 5)).sum(axis=1)
+        s2 = ((df_src > 5) & (df_src <= 10)).sum(axis=1)
+        s3 = ((df_src > 10) & (df_src <= 15)).sum(axis=1)
+        s4 = ((df_src > 15) & (df_src <= 20)).sum(axis=1)
+        s5 = ((df_src > 20) & (df_src <= 30)).sum(axis=1)
+        s6 = ((df_src > 30) & (df_src <= 40)).sum(axis=1)
+        s7 = ((df_src > 40) & (df_src <= 9999)).sum(axis=1)
+        df["scans_1-5"] = s1
+        df["scans_6-10"] = s2
+        df["scans_11-15"] = s3
+        df["scans_16-20"] = s4
+        df["scans_20-30"] = s5
+        df["scans_30-40"] = s6
+        df["scans_40+"] = s7
+
+        storage = np.zeros((df.shape[0]))
+        df_src_scans = df[[c for c in df.columns if c.startswith('scans_')]]
+        for c in df_src_scans.columns[::-1]:
+            s = df_src_scans[c]
+            l = c.split("_")[1]
+            ax.bar(x, s, label=l, bottom=storage, width=.6)
+            storage += s
+        ax.bar(x, df["n_sources"] - storage, bottom=storage, facecolor="#dddddd", label=0, width=.6)
+        handles, labels = ax.get_legend_handles_labels()
+        legend = ax.legend(reversed(handles), reversed(labels), title='scans', loc='lower left')
+        legend.get_frame().set_alpha(None)
+        legend.get_frame().set_facecolor((1, 1, 1, 0.45))
 
 
 def polar_plots(skd, output, attribute_name):

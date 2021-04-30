@@ -197,7 +197,7 @@ def field2name(field):
     return name
 
 
-def addStatistics(stats, best_idx, statistic_field, code, summary_file):
+def addStatistics(stats, best_idx, code, summary_file):
     """
     list statistics for best schedule
 
@@ -210,13 +210,6 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
     """
 
     Message.addMessage("\n")
-    stats_dict = dict()
-    for field in statistic_field:
-        if field in stats:
-            val = stats.loc[best_idx, field]
-            name = field2name(field)
-            stats_dict[name] = val
-            Message.addMessage("{}: {:.2f}".format(name, val))
 
     # number of scans per station
     nscans_sta = {}
@@ -273,21 +266,22 @@ def addStatistics(stats, best_idx, statistic_field, code, summary_file):
             Message.addMessage("    {:2d} source(s) observed in {} scans ".format(nscans_src[i], i))
 
     tlcs = "".join(tlcs)
-    stats_dict["stations"] = tlcs
     with open(summary_file, "r") as f:
         if f.read():
             summary = pd.read_csv(summary_file, index_col=0)
         else:
             summary = pd.DataFrame()
 
-    new = pd.DataFrame(index=[code], data=stats_dict)
+    new = stats.loc[best_idx,:].to_frame().T
+    new.index = [code]
+    new['stations'] = tlcs
     if code in summary.index:
         summary = summary.drop(code)
     summary = summary.append(new)
     summary.to_csv(summary_file)
 
     # reverse and output
-    Message.addMessage("\ncomparison with previous schedules:\n{}".format(summary[::-1].head(10).to_string()))
+    # Message.addMessage("\ncomparison with previous schedules:\n{}".format(summary[::-1].head(10).to_string()))
     return summary.tail(10)
 
 

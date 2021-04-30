@@ -249,7 +249,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             Message.addMessage("this session will NOT be uploaded!")
 
         summary_file = os.path.join(os.path.dirname(xml_dir), "summary.txt")
-        summary_df = Helper.addStatistics(stats, best_idx, statistic_field, session["code"].upper(), summary_file)
+        summary_df = Helper.addStatistics(stats, best_idx, session["code"].upper(), summary_file)
 
         # copy best schedule to selected folder
         version_pattern = "_v{:03d}".format(best_idx)
@@ -275,7 +275,8 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             skdFile = os.path.join(xml_dir_selected, "{}.skd".format(session["code"].lower()))
             skd = skd_parser.skdParser(skdFile)
             skd.parse()
-            Plotting.summary(summary_df, xml_dir_selected)
+            fields = settings[code].get("statistics").split(",")
+            Plotting.summary(summary_df, fields, xml_dir_selected)
             Plotting.polar_plots(skd, xml_dir_selected, "duration")
             Plotting.polar_plots(skd, xml_dir_selected, "start_time")
             Plotting.close_all()
