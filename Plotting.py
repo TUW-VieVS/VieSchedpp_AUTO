@@ -102,6 +102,33 @@ def plot_special_stats(ax, df, field):
     :param field: field
     """
     x = np.arange(df.shape[0])
+
+    ecs = [
+        '#1f77b4',
+        '#ff7f0e',
+        '#2ca02c',
+        '#d62728',
+        '#9467bd',
+        '#8c564b',
+        '#e377c2',
+        '#7f7f7f',
+        '#bcbd22',
+        '#17becf',
+    ]
+
+    fcs = [
+        '#51A9E6',
+        '#FFB140',
+        '#5ED25E',
+        '#FF595A',
+        '#C699EF',
+        '#BE887D',
+        '#FFA9F4',
+        '#B1B1B1',
+        '#EEEF54',
+        '#49F0FF',
+    ]
+
     if field == "n_scans_per_sta":
         storage = np.zeros((df.shape[0]))
         df_src_scans = df[[c for c in df.columns if c.endswith("station_scans")]].copy()
@@ -123,11 +150,15 @@ def plot_special_stats(ax, df, field):
             df_src_scans = df_src_scans.groupby(xx, axis=1).sum()
             df_src_scans.columns = cols
 
-        for c in df_src_scans.columns[::-1]:
+        for c, ec, fc in zip(df_src_scans.columns[::-1], ecs, fcs):
             s = df_src_scans[c]
             l = "-".join(c.split("-")[:-1])
-            ax.bar(x, s, label=l, bottom=storage, width=.6)
+            ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
+        undef_x = np.where((df_src_scans.sum(axis=1) == 0).values)[0]
+        undef_y = df.loc[df_src_scans.sum(axis=1) == 0,"n_scans"].values
+        ax.bar(undef_x, undef_y, label='undef', width=.6, ec='#252525', fc='#969696')
+
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='stations', loc='lower left')
         legend.get_frame().set_alpha(None)
@@ -135,8 +166,9 @@ def plot_special_stats(ax, df, field):
         ax.set_title("#scans per #stations")
 
     elif field == "n_scans_per_type":
-        ax.bar(x, df["n_single_source_scans"], label="standard", width=.6)
-        ax.bar(x, df["n_subnetting_scans"], bottom=df["n_single_source_scans"], label="subnetting", width=.6)
+        ax.bar(x, df["n_fillin-mode_scans"], label="fillin-mode", width=.6, hatch='//', ec=ecs[0], fc=fcs[0])
+        ax.bar(x, df["n_single_source_scans"], label="standard", width=.6, ec=ecs[0], fc=fcs[0])
+        ax.bar(x, df["n_subnetting_scans"], bottom=df["n_single_source_scans"], label="subnetting", width=.6, ec=ecs[1], fc=fcs[1])
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='type', loc='lower left')
         legend.get_frame().set_alpha(None)
@@ -219,15 +251,15 @@ def plot_special_stats(ax, df, field):
         field_system = df_field_system.mean(axis=1)
         std_field_system = df_field_system.std(axis=1)
 
-        ax.bar(x, obs, label='obs', bottom=storage, width=.6, yerr=std_obs)
+        ax.bar(x, obs, label='obs', bottom=storage, width=.6, yerr=std_obs, ec='#1F77B4', fc='#51A9E6', error_kw=dict(ecolor='#1F77B4',capsize=3))
         storage += obs
-        ax.bar(x, slew, label='slew', bottom=storage, width=.6)
+        ax.bar(x, slew, label='slew', bottom=storage, width=.6, yerr=std_slew, ec='#FF7F0E', fc='#FFB140', error_kw=dict(ecolor='#FF7F0E',capsize=3))
         storage += slew
-        ax.bar(x, preob, label='preob', bottom=storage, width=.6)
+        ax.bar(x, preob, label='preob', bottom=storage, width=.6, yerr=std_preob, ec='#2CA02C', fc='#5ED25E', error_kw=dict(ecolor='#2CA02C',capsize=3))
         storage += preob
-        ax.bar(x, field_system, label='field system', bottom=storage, width=.6)
+        ax.bar(x, field_system, label='field system', bottom=storage, width=.6, yerr=std_field_system, ec='#D62728', fc='#FF595A', error_kw=dict(ecolor='#D62728',capsize=3))
         storage += field_system
-        ax.bar(x, idle, label='idle', bottom=storage, width=.6, yerr=std_idle)
+        ax.bar(x, idle, label='idle', bottom=storage, width=.6, yerr=std_idle, ec='#9467BD', fc='#C699EF', error_kw=dict(ecolor='#9467BD',capsize=3))
         storage += idle
 
         handles, labels = ax.get_legend_handles_labels()
@@ -295,12 +327,11 @@ def plot_special_stats(ax, df, field):
 
         ax.set_title("#sources per #obs")
         storage = np.zeros((df_sources_obs.shape[0]))
-        for c in df_sources_obs.columns[::-1]:
+        for c, ec, fc in zip(df_sources_obs.columns[::-1], ecs, fcs):
             s = df_sources_obs[c]
             l = c[:-4]
-            ax.bar(x, s, label=l, bottom=storage, width=.6)
+            ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
-        ax.bar(x, df["n_sources"] - storage, bottom=storage, facecolor="#dddddd", label=0, width=.6)
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='obs', loc='lower left')
         legend.get_frame().set_alpha(None)
@@ -327,12 +358,12 @@ def plot_special_stats(ax, df, field):
 
         storage = np.zeros((df.shape[0]))
         df_src_scans = df[[c for c in df.columns if c.startswith('scans_')]]
-        for c in df_src_scans.columns[::-1]:
+
+        for c, ec, fc in zip(df_src_scans.columns[::-1], ecs, fcs):
             s = df_src_scans[c]
             l = c.split("_")[1]
-            ax.bar(x, s, label=l, bottom=storage, width=.6)
+            ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
-        ax.bar(x, df["n_sources"] - storage, bottom=storage, facecolor="#dddddd", label=0, width=.6)
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='scans', loc='lower left')
         legend.get_frame().set_alpha(None)
