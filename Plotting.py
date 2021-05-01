@@ -27,8 +27,6 @@ def summary(df, fields, output):
 
     n = len(codes)
 
-    df = df.drop(columns=["stations"])
-
     unique_networks = [*set(networks)]
     cat = [ unique_networks.index(net) for net in networks ]
 
@@ -92,12 +90,14 @@ def plot_summary_background(ax, cats):
     painted = []
 
     hs = []
-    for x, cat in enumerate(cats):
-        c = colors[cat]
-        h = ax.axvspan(x-.5, x+.5, alpha=0.25, color=c)
-        if c not in painted:
-            painted.append(c)
-            hs.append(h)
+    for i in range(10):
+        for x in range(len(cats)):
+            if cats[x] == i:
+                c = colors[i]
+                h = ax.axvspan(x-.5, x+.5, alpha=0.25, color=c)
+                if c not in painted:
+                    painted.append(c)
+                    hs.append(h)
     return hs
 
 
@@ -175,8 +175,8 @@ def plot_special_stats(ax, df, field):
         ax.set_title("#scans per #stations")
 
     elif field == "n_scans_per_type":
-        ax.bar(x, df["n_fillin-mode_scans"], label="fillin-mode", width=.6, hatch='//', ec=ecs[0], fc=fcs[0])
         ax.bar(x, df["n_single_source_scans"], label="standard", width=.6, ec=ecs[0], fc=fcs[0])
+        ax.bar(x, df["n_fillin-mode_scans"], label="fillin-mode", width=.6, hatch='//', ec=ecs[0], fc=fcs[0])
         ax.bar(x, df["n_subnetting_scans"], bottom=df["n_single_source_scans"], label="subnetting", width=.6, ec=ecs[1], fc=fcs[1])
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='type', loc='lower left')
@@ -329,14 +329,16 @@ def plot_special_stats(ax, df, field):
         if maxmax < 100:
             step = int(maxmax/10)+1
             bins = np.arange(1,maxmax+step,step,dtype=int).tolist()
-            bins.append(float('inf'))
         else:
             bins = [1, 34, 68, 101, 201, 301, 501, 701, 1301, float('inf')]
         s_obs = []
         header = []
         for s, e in zip(bins[0:-1], bins[1:]):
             s_obs.append(((df_src_obs >= s) & (df_src_obs < e)).sum(axis=1))
-            header.append(f"{s}-{e - 1} obs")
+            if s == e-1:
+                header.append(f"{s} obs")
+            else:
+                header.append(f"{s}-{e - 1} obs")
         df_sources_obs = pd.concat(s_obs, axis=1)
         df_sources_obs.columns = header
 
@@ -361,7 +363,6 @@ def plot_special_stats(ax, df, field):
         if maxmax < 100:
             step = int(maxmax/10)+1
             bins = np.arange(1,maxmax+step,step,dtype=int).tolist()
-            bins.append(float('inf'))
         else:
             bins = [1,5,10,15,20,30,40, float('inf')]
 
@@ -369,7 +370,10 @@ def plot_special_stats(ax, df, field):
         header = []
         for s, e in zip(bins[0:-1], bins[1:]):
             s_scans.append(((df_src >= s) & (df_src < e)).sum(axis=1))
-            header.append(f"{s}-{e - 1} obs")
+            if s == e-1:
+                header.append(f"{s} obs")
+            else:
+                header.append(f"{s}-{e - 1} obs")
         df_src_scans = pd.concat(s_scans, axis=1)
         df_src_scans.columns = header
 
