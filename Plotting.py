@@ -17,8 +17,16 @@ def summary(df, fields, output):
     :return: None
     """
     codes = df.index.tolist()
-    n = len(codes)
     networks = df["stations"].tolist()
+    networks_s = []
+    for n in networks:
+        tmp = [n[i:i+2] for i in range(0, len(n), 2)]
+        tmp.sort()
+        networks_s.append("".join(tmp))
+    networks = networks_s
+
+    n = len(codes)
+
     df = df.drop(columns=["stations"])
 
     unique_networks = [*set(networks)]
@@ -157,7 +165,8 @@ def plot_special_stats(ax, df, field):
             storage += s
         undef_x = np.where((df_src_scans.sum(axis=1) == 0).values)[0]
         undef_y = df.loc[df_src_scans.sum(axis=1) == 0,"n_scans"].values
-        ax.bar(undef_x, undef_y, label='undef', width=.6, ec='#252525', fc='#969696')
+        if len(undef_x)>0:
+            ax.bar(undef_x, undef_y, label='undef', width=.6, ec='#252525', fc='#969696')
 
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='stations', loc='lower left')
@@ -316,7 +325,13 @@ def plot_special_stats(ax, df, field):
     elif field == "sources_per_obs":
         n_src_obs = [c for c in df.columns if c.startswith('n_src_obs_')]
         df_src_obs = df[n_src_obs]
-        bins = [1, 34, 68, 101, 201, 301, 501, 701, 1301, float('inf')]
+        maxmax = df_src_obs.max().max()
+        if maxmax < 100:
+            step = int(maxmax/10)+1
+            bins = np.arange(1,maxmax+step,step,dtype=int).tolist()
+            bins.append(float('inf'))
+        else:
+            bins = [1, 34, 68, 101, 201, 301, 501, 701, 1301, float('inf')]
         s_obs = []
         header = []
         for s, e in zip(bins[0:-1], bins[1:]):
@@ -330,6 +345,7 @@ def plot_special_stats(ax, df, field):
         for c, ec, fc in zip(df_sources_obs.columns[::-1], ecs, fcs):
             s = df_sources_obs[c]
             l = c[:-4]
+            l = l.replace("-inf","+")
             ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
         handles, labels = ax.get_legend_handles_labels()
@@ -341,27 +357,28 @@ def plot_special_stats(ax, df, field):
         ax.set_title("#sources per #scans")
         n_src_scans = [c for c in df.columns if c.startswith('n_src_scans_')]
         df_src = df[n_src_scans]
-        s1 = ((df_src > 0) & (df_src <= 5)).sum(axis=1)
-        s2 = ((df_src > 5) & (df_src <= 10)).sum(axis=1)
-        s3 = ((df_src > 10) & (df_src <= 15)).sum(axis=1)
-        s4 = ((df_src > 15) & (df_src <= 20)).sum(axis=1)
-        s5 = ((df_src > 20) & (df_src <= 30)).sum(axis=1)
-        s6 = ((df_src > 30) & (df_src <= 40)).sum(axis=1)
-        s7 = ((df_src > 40) & (df_src <= 9999)).sum(axis=1)
-        df["scans_1-5"] = s1
-        df["scans_6-10"] = s2
-        df["scans_11-15"] = s3
-        df["scans_16-20"] = s4
-        df["scans_20-30"] = s5
-        df["scans_30-40"] = s6
-        df["scans_40+"] = s7
+        maxmax = df_src.max().max()
+        if maxmax < 100:
+            step = int(maxmax/10)+1
+            bins = np.arange(1,maxmax+step,step,dtype=int).tolist()
+            bins.append(float('inf'))
+        else:
+            bins = [1,5,10,15,20,30,40, float('inf')]
+
+        s_scans = []
+        header = []
+        for s, e in zip(bins[0:-1], bins[1:]):
+            s_scans.append(((df_src >= s) & (df_src < e)).sum(axis=1))
+            header.append(f"{s}-{e - 1} obs")
+        df_src_scans = pd.concat(s_scans, axis=1)
+        df_src_scans.columns = header
+
 
         storage = np.zeros((df.shape[0]))
-        df_src_scans = df[[c for c in df.columns if c.startswith('scans_')]]
-
         for c, ec, fc in zip(df_src_scans.columns[::-1], ecs, fcs):
             s = df_src_scans[c]
-            l = c.split("_")[1]
+            l = c[:-4]
+            l = l.replace("-inf","+")
             ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
         handles, labels = ax.get_legend_handles_labels()
