@@ -328,7 +328,7 @@ def plot_special_stats(ax, df, field):
         maxmax = df_src_obs.max().max()
         if maxmax < 100:
             step = int(maxmax/10)+1
-            bins = np.arange(1,maxmax+step,step,dtype=int).tolist()
+            bins = np.arange(1,maxmax+2*step,step,dtype=int).tolist()
         else:
             bins = [1, 34, 68, 101, 201, 301, 501, 701, 1301, float('inf')]
         s_obs = []
@@ -362,7 +362,7 @@ def plot_special_stats(ax, df, field):
         maxmax = df_src.max().max()
         if maxmax < 100:
             step = int(maxmax/10)+1
-            bins = np.arange(1,maxmax+step,step,dtype=int).tolist()
+            bins = np.arange(1,maxmax+2*step,step,dtype=int).tolist()
         else:
             bins = [1,5,10,15,20,30,40, float('inf')]
 
