@@ -282,13 +282,55 @@
 	<rules>
 		<calibration>
 			<block>
-				<startTime>600</startTime>
+				<startTime>1800</startTime>
 				<scans>2</scans>
 				<duration>600</duration>
 				<sources>__all__</sources>
 			</block>
 			<block>
-				<startTime>84600</startTime>
+				<startTime>10800</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>21600</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>32400</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>43200</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>54000</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>64800</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>75600</startTime>
+				<scans>2</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>82800</startTime>
 				<scans>2</scans>
 				<duration>600</duration>
 				<sources>__all__</sources>
