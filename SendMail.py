@@ -59,6 +59,66 @@ def writeMail_upload(code, emails):
         SendMail.send(msg)
 
 
+def missing_schedule(session, program, to):
+    if SendMail.flag_sendMail:
+        msg = MIMEMultipart()
+        msg['From'] = "VieSched++ AUTO"
+        try:
+            msg['To'] = ", ".join(to)
+        except:
+            msg['To'] = to
+
+        msg['Subject'] = f"[WARNING] [VieSched++ AUTO] {session['code']} schedule missing"
+        body = f"missing schedule for session {session['code']}\n\n" \
+               f"generate it using: \n" \
+               f"$ python VieSchedpp_AUTO -nu -p {program} -d {session['date'].date()}\n\n" \
+               f"after inspection, upload it manually or change date in `upload_scheduler.txt` file " \
+               f"to {datetime.date.today()} and execute: \n" \
+               f"$ python VieSchedpp_AUTO -ns"
+        msg.attach(MIMEText(body))
+
+        SendMail.send(msg)
+
+
+def network_changed(session, program, network, to):
+    if SendMail.flag_sendMail:
+        msg = MIMEMultipart()
+        msg['From'] = "VieSched++ AUTO"
+        try:
+            msg['To'] = ", ".join(to)
+        except:
+            msg['To'] = to
+
+        stations = set(network) | set(session["stations"])
+
+        skd_network = network
+        master_network = session["stations"]
+
+        msg['Subject'] = f"[WARNING] [VieSched++ AUTO] {session['code']} network changed"
+        body = f"network of session {session['code']} changed according to schedule master file\n\n" \
+               f"station  schedule master\n"
+
+        for sta in stations:
+            bool_skd = "False"
+            if sta in skd_network:
+                bool_skd = "True"
+            bool_master = "False"
+            if sta in master_network:
+                bool_master = "True"
+            body += f"{sta:<8s} {bool_skd:<8s} {bool_master:<8s}\n"
+
+        body += f"\n" \
+                f"regenerate schedule using: \n" \
+                f"$ python VieSchedpp_AUTO -nu -p {program} -d {session['date'].date()}\n\n" \
+                f"after inspection, upload it manually or change date in `upload_scheduler.txt` file " \
+                f"to {datetime.date.today()} and execute: \n" \
+                f"$ python VieSchedpp_AUTO -ns \n\n" \
+                f"also consider to contact the participating stations to ensure that they pick the correct schedule"
+        msg.attach(MIMEText(body))
+
+        SendMail.send(msg)
+
+
 def writeMail(path_str, emails, body=None, date=None):
     """
     write an email

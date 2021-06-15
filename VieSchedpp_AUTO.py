@@ -10,6 +10,7 @@ import subprocess
 import sys
 import traceback
 from string import Template
+from pathlib import Path
 
 import pandas as pd
 
@@ -379,6 +380,77 @@ def start_uploading(settings):
                 f.write(lout)
 
 
+def start_checking_master(settings):
+    today = datetime.date.today()
+
+    with open("tmp.txt", "w") as f:
+
+        for program in settings.sections():
+            if program == "general":
+                continue
+            if program not in args.observing_programs:
+                print("skipping scheduling observing program: {}".format(program))
+                continue
+
+            prefix = settings["general"].get("prefix_output_folder", "Schedules")
+            if os.sep == "\\":
+                prefix = prefix.replace("/", "\\")
+            prefix = Path(prefix) / program
+
+            f.write(f"program {program}\n")  # dummy log
+
+            s_program = settings[program]
+            pattern = re.compile(s_program["pattern"])
+            emails = Helper.read_emails(s_program, args.fallback_email)
+            delta_days = s_program.getint("schedule_date", 10)
+
+            for dt in range(delta_days + 1):
+                target_day = today + datetime.timedelta(days=dt)
+                year = target_day.year % 100
+                f.write(f"{target_day}\n")  # dummy log
+
+                # read master files
+                template_master = Template(s_program.get("master", "master$YY.txt"))
+                master = template_master.substitute(YY=str(year))
+
+                master = os.path.join("MASTER", master)
+                sessions = Helper.read_master(master)
+                if not sessions:
+                    f.write(f"no session \n")  # dummy log
+                    continue
+
+                sessions = [s for s in sessions if s["date"].date() == target_day and pattern.match(s["name"])]
+                for s in sessions:
+                    f.write(f"session {s['code']}\n")  # dummy log
+                    skd_path = prefix / s["code"] / "selected" / f"{s['code'].lower()}.skd"
+                    if skd_path.is_file():
+                        f.write(f"session found\n")  # dummy log
+                        skd = skd_parser.skdParser(skd_path)
+                        skd.parse()
+                        skd_stations = [s.name for s in skd.stations]
+
+                        network_same = True
+                        for sta in s["stations"]:
+                            if sta not in skd_stations:
+                                network_same = False
+                        for sta in skd_stations:
+                            if sta not in s["stations"]:
+                                network_same = False
+
+                        if not network_same:
+                            f.write(f"networks do not agree\n")  # dummy log
+                            SendMail.network_changed(s, skd_stations, s["stations"], emails)
+                        else:
+                            f.write(f"networks do agree\n")  # dummy log
+                            pass
+                        pass
+
+                    else:
+                        f.write(f"session missing\n")  # dummy log
+                        SendMail.missing_schedule(s, program, emails)
+                        pass
+
+
 def setup():
     settings = configparser.ConfigParser()
     if not os.path.exists("settings.ini"):
@@ -473,6 +545,8 @@ if __name__ == "__main__":
                         help="use this option if you do not want to upload any files (scheduling only)")
     parser.add_argument("-ns", "--no_scheduling", action="store_true",
                         help="use this option if you do not want generate any schedules (upload only)")
+    parser.add_argument("-nc", "--no_master_checks", action="store_true",
+                        help="use this option if you do not want to do checks of changes in the master file")
     parser.add_argument("-t", "--test_mode", action="store_true",
                         help="use this option if you want to quickly process all templates with one schedule")
     parser.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
@@ -501,6 +575,9 @@ if __name__ == "__main__":
         if not args.no_upload:
             print("===== START UPLOADING =====")
             start_uploading(settings)
+        if not args.no_master_checks:
+            print("===== START CHECKING MASTER SCHEDULE =====")
+            start_checking_master(settings)
         print("VieSched++ AUTO finished")
 
     except BaseException as err:
