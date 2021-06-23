@@ -391,6 +391,8 @@ def start_checking_master(settings):
             if program not in args.observing_programs:
                 print("skipping scheduling observing program: {}".format(program))
                 continue
+            if program.startswith("GOW"):
+                continue
 
             prefix = settings["general"].get("prefix_output_folder", "Schedules")
             if os.sep == "\\":
