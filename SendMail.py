@@ -71,10 +71,10 @@ def missing_schedule(session, program, to):
         msg['Subject'] = f"[WARNING] [VieSched++ AUTO] {session['code']} schedule missing"
         body = f"missing schedule for session {session['code']}\n\n" \
                f"generate it using: \n" \
-               f"$ python VieSchedpp_AUTO -nu -p {program} -d {session['date'].date()}\n\n" \
+               f"$ python VieSchedpp_AUTO.py -nu -p {program} -d {session['date'].date()}\n\n" \
                f"after inspection, upload it manually or change date in `upload_scheduler.txt` file " \
                f"to {datetime.date.today()} and execute: \n" \
-               f"$ python VieSchedpp_AUTO -ns"
+               f"$ python VieSchedpp_AUTO.py -ns"
         msg.attach(MIMEText(body))
 
         SendMail.send(msg)
@@ -109,10 +109,10 @@ def network_changed(session, program, network, to):
 
         body += f"\n" \
                 f"regenerate schedule using: \n" \
-                f"$ python VieSchedpp_AUTO -nu -p {program} -d {session['date'].date()}\n\n" \
+                f"$ python VieSchedpp_AUTO.py -nu -p {program} -d {session['date'].date()}\n\n" \
                 f"after inspection, upload it manually or change date in `upload_scheduler.txt` file " \
                 f"to {datetime.date.today()} and execute: \n" \
-                f"$ python VieSchedpp_AUTO -ns \n\n" \
+                f"$ python VieSchedpp_AUTO.py -ns \n\n" \
                 f"also consider to contact the participating stations to ensure that they pick the correct schedule"
         msg.attach(MIMEText(body))
 

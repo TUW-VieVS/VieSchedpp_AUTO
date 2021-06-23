@@ -39,8 +39,8 @@ class skdParser:
 
                         station.name1 = ant_info.group(1)
                         station.name = ant_info.group(2)
-                        station.c1 = int(ant_info.group(4))
-                        station.c2 = int(ant_info.group(8))
+                        station.c1 = float(ant_info.group(4))
+                        station.c2 = float(ant_info.group(8))
                         station.azmax = float(ant_info.group(5)) * np.pi / 180.
                         station.azmin = float(ant_info.group(6)) * np.pi / 180.
                         station.vaz = float(ant_info.group(3)) * np.pi / 180. / 60.  # [rad/s]
