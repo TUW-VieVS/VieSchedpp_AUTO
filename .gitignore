@@ -4,6 +4,8 @@ Schedules
 TEST
 venv
 settings.ini
+tmp_download/
+
 __pycache__
 /upload_scheduler.txt
 /VieSchedpp_AUTO.zip
@@ -11,3 +13,4 @@ __pycache__
 /GOW_ftp_pw.txt
 /OHG_plan.txt
 /email_function.txt
+tmp.txt

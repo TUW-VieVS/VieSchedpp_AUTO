@@ -272,7 +272,7 @@ def addStatistics(stats, best_idx, code, summary_file):
         else:
             summary = pd.DataFrame()
 
-    new = stats.loc[best_idx,:].to_frame().T
+    new = stats.loc[best_idx, :].to_frame().T
     new.index = [code]
     new['stations'] = tlcs
     if code in summary.index:

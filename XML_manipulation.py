@@ -418,4 +418,3 @@ def change_station_names_in_xml(session, tree):
                 node = etree.Element("variable", name=sta)
                 node.text = "0.0"
                 root.insert(len(root), node)
-

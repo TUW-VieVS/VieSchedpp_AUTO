@@ -59,9 +59,6 @@ def download_ftp():
     except ftp_errors as err:
         Message.addMessage("#### ERROR {} ####".format(err), dump="download")
         Message.addMessage(traceback.format_exc(), dump="download")
-    except:
-        Message.addMessage("#### ERROR ####", dump="download")
-        Message.addMessage(traceback.format_exc(), dump="download")
 
 
 def download_http():

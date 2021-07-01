@@ -20,7 +20,7 @@ def summary(df, fields, output):
     networks = df["stations"].tolist()
     networks_s = []
     for n in networks:
-        tmp = [n[i:i+2] for i in range(0, len(n), 2)]
+        tmp = [n[i:i + 2] for i in range(0, len(n), 2)]
         tmp.sort()
         networks_s.append("".join(tmp))
     networks = networks_s
@@ -28,7 +28,7 @@ def summary(df, fields, output):
     n = len(codes)
 
     unique_networks = [*set(networks)]
-    cat = [ unique_networks.index(net) for net in networks ]
+    cat = [unique_networks.index(net) for net in networks]
 
     n_col = len(fields)
     fig_r = math.floor(math.sqrt(n_col))
@@ -94,7 +94,7 @@ def plot_summary_background(ax, cats):
         for x in range(len(cats)):
             if cats[x] == i:
                 c = colors[i]
-                h = ax.axvspan(x-.5, x+.5, alpha=0.25, color=c)
+                h = ax.axvspan(x - .5, x + .5, alpha=0.25, color=c)
                 if c not in painted:
                     painted.append(c)
                     hs.append(h)
@@ -140,10 +140,10 @@ def plot_special_stats(ax, df, field):
     if field == "n_scans_per_sta":
         storage = np.zeros((df.shape[0]))
         df_src_scans = df[[c for c in df.columns if c.endswith("station_scans")]].copy()
-        df_src_scans.fillna(0,inplace=True)
+        df_src_scans.fillna(0, inplace=True)
 
         n = df_src_scans.shape[1]
-        groupby = int(n/10)+1
+        groupby = int(n / 10) + 1
         if groupby > 1:
             xx = np.arange(len(df_src_scans.columns)) // groupby
             cols = []
@@ -154,7 +154,7 @@ def plot_special_stats(ax, df, field):
                 if start == end:
                     cols.append("{}-station_scans".format(start))
                 else:
-                    cols.append("{}-{}-station_scans".format(start,end))
+                    cols.append("{}-{}-station_scans".format(start, end))
             df_src_scans = df_src_scans.groupby(xx, axis=1).sum()
             df_src_scans.columns = cols
 
@@ -164,8 +164,8 @@ def plot_special_stats(ax, df, field):
             ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
         undef_x = np.where((df_src_scans.sum(axis=1) == 0).values)[0]
-        undef_y = df.loc[df_src_scans.sum(axis=1) == 0,"n_scans"].values
-        if len(undef_x)>0:
+        undef_y = df.loc[df_src_scans.sum(axis=1) == 0, "n_scans"].values
+        if len(undef_x) > 0:
             ax.bar(undef_x, undef_y, label='undef', width=.6, ec='#252525', fc='#969696')
 
         handles, labels = ax.get_legend_handles_labels()
@@ -177,7 +177,8 @@ def plot_special_stats(ax, df, field):
     elif field == "n_scans_per_type":
         ax.bar(x, df["n_single_source_scans"], label="standard", width=.6, ec=ecs[0], fc=fcs[0])
         ax.bar(x, df["n_fillin-mode_scans"], label="fillin-mode", width=.6, hatch='//', ec=ecs[0], fc=fcs[0])
-        ax.bar(x, df["n_subnetting_scans"], bottom=df["n_single_source_scans"], label="subnetting", width=.6, ec=ecs[1], fc=fcs[1])
+        ax.bar(x, df["n_subnetting_scans"], bottom=df["n_single_source_scans"], label="subnetting", width=.6, ec=ecs[1],
+               fc=fcs[1])
         handles, labels = ax.get_legend_handles_labels()
         legend = ax.legend(reversed(handles), reversed(labels), title='type', loc='lower left')
         legend.get_frame().set_alpha(None)
@@ -260,15 +261,20 @@ def plot_special_stats(ax, df, field):
         field_system = df_field_system.mean(axis=1)
         std_field_system = df_field_system.std(axis=1)
 
-        ax.bar(x, obs, label='obs', bottom=storage, width=.6, yerr=std_obs, ec='#1F77B4', fc='#51A9E6', error_kw=dict(ecolor='#1F77B4',capsize=3))
+        ax.bar(x, obs, label='obs', bottom=storage, width=.6, yerr=std_obs, ec='#1F77B4', fc='#51A9E6',
+               error_kw=dict(ecolor='#1F77B4', capsize=3))
         storage += obs
-        ax.bar(x, slew, label='slew', bottom=storage, width=.6, yerr=std_slew, ec='#FF7F0E', fc='#FFB140', error_kw=dict(ecolor='#FF7F0E',capsize=3))
+        ax.bar(x, slew, label='slew', bottom=storage, width=.6, yerr=std_slew, ec='#FF7F0E', fc='#FFB140',
+               error_kw=dict(ecolor='#FF7F0E', capsize=3))
         storage += slew
-        ax.bar(x, preob, label='preob', bottom=storage, width=.6, yerr=std_preob, ec='#2CA02C', fc='#5ED25E', error_kw=dict(ecolor='#2CA02C',capsize=3))
+        ax.bar(x, preob, label='preob', bottom=storage, width=.6, yerr=std_preob, ec='#2CA02C', fc='#5ED25E',
+               error_kw=dict(ecolor='#2CA02C', capsize=3))
         storage += preob
-        ax.bar(x, field_system, label='field system', bottom=storage, width=.6, yerr=std_field_system, ec='#D62728', fc='#FF595A', error_kw=dict(ecolor='#D62728',capsize=3))
+        ax.bar(x, field_system, label='field system', bottom=storage, width=.6, yerr=std_field_system, ec='#D62728',
+               fc='#FF595A', error_kw=dict(ecolor='#D62728', capsize=3))
         storage += field_system
-        ax.bar(x, idle, label='idle', bottom=storage, width=.6, yerr=std_idle, ec='#9467BD', fc='#C699EF', error_kw=dict(ecolor='#9467BD',capsize=3))
+        ax.bar(x, idle, label='idle', bottom=storage, width=.6, yerr=std_idle, ec='#9467BD', fc='#C699EF',
+               error_kw=dict(ecolor='#9467BD', capsize=3))
         storage += idle
 
         handles, labels = ax.get_legend_handles_labels()
@@ -277,7 +283,6 @@ def plot_special_stats(ax, df, field):
         legend.get_frame().set_facecolor((1, 1, 1, 0.45))
         ax.set_title("spent time")
         ax.set_ylabel("[%]")
-
 
         pass
     elif field == "dUT1":
@@ -311,7 +316,8 @@ def plot_special_stats(ax, df, field):
         rep_sta = df_rep_sta.mean(axis=1)
         rep_sta_std = df_rep_sta.std(axis=1)
 
-        df_mfe_sta = df[[c for c in df.columns if c.startswith('sim_mean_formal_error_') and not c.endswith("]")]].copy()
+        df_mfe_sta = df[
+            [c for c in df.columns if c.startswith('sim_mean_formal_error_') and not c.endswith("]")]].copy()
         df_mfe_sta.drop("sim_mean_formal_error_n_sim", axis=1, inplace=True)
         mfe_sta = df_mfe_sta.mean(axis=1)
         mfe_sta_std = df_mfe_sta.std(axis=1)
@@ -327,15 +333,15 @@ def plot_special_stats(ax, df, field):
         df_src_obs = df[n_src_obs]
         maxmax = df_src_obs.max().max()
         if maxmax < 100:
-            step = int(maxmax/10)+1
-            bins = np.arange(1,maxmax+2*step,step,dtype=int).tolist()
+            step = int(maxmax / 10) + 1
+            bins = np.arange(1, maxmax + 2 * step, step, dtype=int).tolist()
         else:
             bins = [1, 34, 68, 101, 201, 301, 501, 701, 1301, float('inf')]
         s_obs = []
         header = []
         for s, e in zip(bins[0:-1], bins[1:]):
             s_obs.append(((df_src_obs >= s) & (df_src_obs < e)).sum(axis=1))
-            if s == e-1:
+            if s == e - 1:
                 header.append(f"{s} obs")
             else:
                 header.append(f"{s}-{e - 1} obs")
@@ -347,7 +353,7 @@ def plot_special_stats(ax, df, field):
         for c, ec, fc in zip(df_sources_obs.columns[::-1], ecs, fcs):
             s = df_sources_obs[c]
             l = c[:-4]
-            l = l.replace("-inf","+")
+            l = l.replace("-inf", "+")
             ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
         handles, labels = ax.get_legend_handles_labels()
@@ -361,28 +367,27 @@ def plot_special_stats(ax, df, field):
         df_src = df[n_src_scans]
         maxmax = df_src.max().max()
         if maxmax < 100:
-            step = int(maxmax/10)+1
-            bins = np.arange(1,maxmax+2*step,step,dtype=int).tolist()
+            step = int(maxmax / 10) + 1
+            bins = np.arange(1, maxmax + 2 * step, step, dtype=int).tolist()
         else:
-            bins = [1,5,10,15,20,30,40, float('inf')]
+            bins = [1, 5, 10, 15, 20, 30, 40, float('inf')]
 
         s_scans = []
         header = []
         for s, e in zip(bins[0:-1], bins[1:]):
             s_scans.append(((df_src >= s) & (df_src < e)).sum(axis=1))
-            if s == e-1:
+            if s == e - 1:
                 header.append(f"{s} obs")
             else:
                 header.append(f"{s}-{e - 1} obs")
         df_src_scans = pd.concat(s_scans, axis=1)
         df_src_scans.columns = header
 
-
         storage = np.zeros((df.shape[0]))
         for c, ec, fc in zip(df_src_scans.columns[::-1], ecs, fcs):
             s = df_src_scans[c]
             l = c[:-4]
-            l = l.replace("-inf","+")
+            l = l.replace("-inf", "+")
             ax.bar(x, s, label=l, bottom=storage, width=.6, ec=ec, fc=fc)
             storage += s
         handles, labels = ax.get_legend_handles_labels()
@@ -501,8 +506,10 @@ def close_all():
     """
     plt.close('all')
 
+
 if __name__ == "__main__":
     import skd_parser.skd as skd_parser
+
     skd = skd_parser.skdParser(r'C:/programming/q20348.skd')
     skd.parse()
     polar_plots(skd, 'C:/programming/', "duration")

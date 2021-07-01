@@ -1,7 +1,9 @@
 import argparse
-from pathlib import Path
 import shutil
+from pathlib import Path
+
 import pandas as pd
+
 
 def start(path_main):
     shutil.copy(path_main / "summary.txt", path_main / "summary.txt.old_format_5")
@@ -25,7 +27,7 @@ def start(path_main):
                     break
 
         df = pd.read_csv(p / "merged_statistics.csv")
-        l = df.loc[df["version"] == v,:].copy()
+        l = df.loc[df["version"] == v, :].copy()
 
         # number of observations per baseline
         tlcs = set()
@@ -50,7 +52,6 @@ def start(path_main):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-p")
 

@@ -80,8 +80,10 @@ def missing_schedule(session, program, to):
         SendMail.send(msg)
 
 
-def network_changed(session, program, network, to):
+def network_changed(session, program, skd_network, to):
     if SendMail.flag_sendMail:
+        master_network = session["stations"]
+
         msg = MIMEMultipart()
         msg['From'] = "VieSched++ AUTO"
         try:
@@ -89,10 +91,7 @@ def network_changed(session, program, network, to):
         except:
             msg['To'] = to
 
-        stations = set(network) | set(session["stations"])
-
-        skd_network = network
-        master_network = session["stations"]
+        stations = set(skd_network) | set(master_network)
 
         msg['Subject'] = f"[WARNING] [VieSched++ AUTO] {session['code']} network changed"
         body = f"network of session {session['code']} changed according to schedule master file\n\n" \
@@ -102,9 +101,11 @@ def network_changed(session, program, network, to):
             bool_skd = "False"
             if sta in skd_network:
                 bool_skd = "True"
+
             bool_master = "False"
             if sta in master_network:
                 bool_master = "True"
+
             body += f"{sta:<8s} {bool_skd:<8s} {bool_master:<8s}\n"
 
         body += f"\n" \
@@ -235,6 +236,7 @@ def send_bkg(message):
 
 def undefined():
     print("ERROR: email is undefined!")
+
 
 class SendMail:
     flag_sendMail = True
