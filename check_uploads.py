@@ -26,7 +26,7 @@ def check_uploads(settings, fallback_email=""):
         s_program = settings[program]
         pattern = re.compile(s_program["pattern"])
         emails = read_emails(s_program, fallback_email)
-        delta_days = s_program.getint("schedule_date", 10)
+        delta_days = s_program.getint("upload_date", 10)
 
         for dt in range(delta_days + 1):
             target_day = today + datetime.timedelta(days=dt)
