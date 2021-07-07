@@ -28,7 +28,7 @@ def check_uploads(settings, fallback_email=""):
         emails = read_emails(s_program, fallback_email)
         delta_days = s_program.getint("upload_date", 10)
 
-        for dt in range(delta_days + 1):
+        for dt in range(delta_days):
             target_day = today + datetime.timedelta(days=dt)
             year = target_day.year % 100
 
