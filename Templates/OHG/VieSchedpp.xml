@@ -122,7 +122,7 @@
 				<maxSlewtime>1200</maxSlewtime>
 				<maxSlewDistance>175</maxSlewDistance>
 				<minSlewDistance>0</minSlewDistance>
-				<maxWait>1200</maxWait>
+				<maxWait>9999</maxWait>
 				<minElevation>5</minElevation>
 				<maxNumberOfScans>9999</maxNumberOfScans>
 				<maxTotalObsTime>999999</maxTotalObsTime>
@@ -268,14 +268,80 @@
 	<rules>
 		<calibration>
 			<block>
-				<startTime>600</startTime>
-				<scans>2</scans>
+				<startTime>1800</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>7200</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>14400</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>21600</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>21600</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>36000</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>43200</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>50400</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>57600</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>64800</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>72000</startTime>
+				<scans>1</scans>
+				<duration>600</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>79200</startTime>
+				<scans>1</scans>
 				<duration>600</duration>
 				<sources>__all__</sources>
 			</block>
 			<block>
 				<startTime>84600</startTime>
-				<scans>2</scans>
+				<scans>1</scans>
 				<duration>600</duration>
 				<sources>__all__</sources>
 			</block>
