@@ -188,9 +188,9 @@
     <optimization>
         <combination>and</combination>
         <maxNumberOfIterations>10</maxNumberOfIterations>
-        <numberOfGentleSourceReductions>2</numberOfGentleSourceReductions>
+        <numberOfGentleSourceReductions>4</numberOfGentleSourceReductions>
         <minNumberOfSourcesToReduce>3</minNumberOfSourcesToReduce>
-        <percentageGentleSourceReduction>50</percentageGentleSourceReduction>
+        <percentageGentleSourceReduction>25</percentageGentleSourceReduction>
         <condition>
             <members>__all__</members>
             <minScans>3</minScans>
