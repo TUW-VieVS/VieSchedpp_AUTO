@@ -185,6 +185,7 @@
         </general_focus_corner_switch_cadence>
         <maxNumber>512</maxNumber>
         <pick_random>true</pick_random>
+        <seed>42</seed>
         <genetic>
             <evolutions>5</evolutions>
             <population_size>128</population_size>

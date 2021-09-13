@@ -250,6 +250,7 @@
         </station_weight>
         <maxNumber>300</maxNumber>
         <pick_random>true</pick_random>
+        <seed>42</seed>
         <genetic>
             <evolutions>15</evolutions>
             <population_size>120</population_size>
