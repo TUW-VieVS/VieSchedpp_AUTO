@@ -180,6 +180,7 @@
         </weight_factor_duration>
         <maxNumber>512</maxNumber>
         <pick_random>true</pick_random>
+        <seed>42</seed>
         <genetic>
             <evolutions>5</evolutions>
             <population_size>128</population_size>

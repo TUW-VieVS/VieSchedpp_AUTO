@@ -176,26 +176,27 @@
 			<value>0</value>
 			<value>1</value>
 		</weight_factor_sky-coverage>
-		<weight_factor_duration>
-			<value>0</value>
-			<value>1</value>
-		</weight_factor_duration>
-		<general_focus_corner_switch_cadence>
-			<value>600</value>
-			<value>1200</value>
-		</general_focus_corner_switch_cadence>
-		<maxNumber>512</maxNumber>
-		<pick_random>true</pick_random>
-		<genetic>
-			<evolutions>5</evolutions>
-			<population_size>128</population_size>
+        <weight_factor_duration>
+            <value>0</value>
+            <value>1</value>
+        </weight_factor_duration>
+        <general_focus_corner_switch_cadence>
+            <value>600</value>
+            <value>1200</value>
+        </general_focus_corner_switch_cadence>
+        <maxNumber>512</maxNumber>
+        <pick_random>true</pick_random>
+        <seed>42</seed>
+        <genetic>
+            <evolutions>5</evolutions>
+            <population_size>128</population_size>
             <select_best_percent>20</select_best_percent>
             <select_random_percent>5</select_random_percent>
             <mutation_acceleration>0.4</mutation_acceleration>
             <min_mutation_percent>5</min_mutation_percent>
-			<parents_for_crossover>2</parents_for_crossover>
-		</genetic>
-	</multisched>
+            <parents_for_crossover>2</parents_for_crossover>
+        </genetic>
+    </multisched>
 	<multiCore>
 		<threads>auto</threads>
 		<jobScheduling>auto</jobScheduling>
