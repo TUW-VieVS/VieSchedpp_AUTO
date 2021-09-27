@@ -160,6 +160,8 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             if offset > 0:
                 Message.addMessage("no \"next\" schedule in master - checking {} days earlier".format(offset),
                                    dump="program")
+            if offset > 360:
+                return
             for s in master:
                 if s["date"].date() < today - datetime.timedelta(days=offset):
                     continue
