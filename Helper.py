@@ -112,7 +112,7 @@ def read_master(paths):
                     hour, min = [int(s) for s in tmp[5].split(":")]
                     date = datetime.datetime(year, 1, 1, hour, min, 0)
                     date = date + datetime.timedelta(days=doy - 1)
-                    dur = int(tmp[6])
+                    dur = float(tmp[6])
                     stations_tlc = tmp[7].strip().split()[0]
                     stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
 
