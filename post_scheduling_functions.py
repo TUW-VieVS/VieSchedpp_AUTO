@@ -96,10 +96,20 @@ def _vlba_vex_adjustments(**kwargs):
         return
 
     cwd = Path.cwd()
+    p_path_script = Path(path_script)
+    stations = kwargs["session"]["stations"]
 
     try:
-        Message.addMessage("    - change dir to {}".format(Path(path_script).parent), dump="session")
-        os.chdir(Path(path_script).parent)
+        Message.addMessage("    - change dir to {}".format(p_path_script.parent), dump="session")
+        os.chdir(p_path_script.parent)
+        if "ISHIOKA" in stations:
+            p_path_script = p_path_script.parent / "vlba_vex_correct_modified_for_IS"
+            path_script = str(p_path_script)
+
+        if not p_path_script.is_file():
+            Message.addMessage(f"[ERROR] failed to execute \"vlba_vex_correct\" script with IS - script not found {p_path_script}",
+                               dump="session")
+            return
 
         Message.addMessage("    - execute {} {}".format(path_script, path_to_vex), dump="session")
         p = subprocess.run([path_script, path_to_vex], capture_output=True, text=True)
