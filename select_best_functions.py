@@ -47,9 +47,9 @@ def select_best_ohg(df, **kwargs):
 
     nobs = df["n_observations"]
     sky_cov = df["sky-coverage_average_25_areas_60_min"]
-    avg_rep = df["sim_repeatability_average_3d_coordinates_[mm]"]
+    avg_rep = df["sim_repeatability_average_3d_station_coord._[mm]"]
     ohg_rep = df["sim_repeatability_OHIGGINS"]
-    avg_mfe = df["sim_mean_formal_error_average_3d_coordinates_[mm]"]
+    avg_mfe = df["sim_mean_formal_error_average_3d_station_coord._[mm]"]
     ohg_mfe = df["sim_mean_formal_error_OHIGGINS"]
     # data = pd.concat([nobs, sky_cov, avg_rep, ohg_rep, avg_mfe, ohg_mfe], axis=1)
 
@@ -82,8 +82,8 @@ def select_best_24h(df, **kwargs):
     nobs = df["n_observations"]
     # sky_cov = df["sky-coverage_average_25_areas_60_min"]
 
-    avg_rep = df["sim_repeatability_average_3d_coordinates_[mm]"]
-    avg_mfe = df["sim_mean_formal_error_average_3d_coordinates_[mm]"]
+    avg_rep = df["sim_repeatability_average_3d_station_coord._[mm]"]
+    avg_mfe = df["sim_mean_formal_error_average_3d_station_coord._[mm]"]
 
     dut1_rep = df["sim_repeatability_dUT1_[mus]"]
     dut1_mfe = df["sim_mean_formal_error_dUT1_[mus]"]
@@ -148,8 +148,8 @@ def select_best_24h_focus_EOP(df, **kwargs):
     nobs = df["n_observations"]
     # sky_cov = df["sky-coverage_average_25_areas_60_min"]
 
-    avg_rep = df["sim_repeatability_average_3d_coordinates_[mm]"]
-    avg_mfe = df["sim_mean_formal_error_average_3d_coordinates_[mm]"]
+    avg_rep = df["sim_repeatability_average_3d_station_coord._[mm]"]
+    avg_mfe = df["sim_mean_formal_error_average_3d_station_coord._[mm]"]
 
     dut1_rep = df["sim_repeatability_dUT1_[mus]"]
     dut1_mfe = df["sim_mean_formal_error_dUT1_[mus]"]

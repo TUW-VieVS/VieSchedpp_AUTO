@@ -33,7 +33,7 @@ contact = mschartner@ethz.ch
 # define function that should be used to select best schedule
 function = select_best_24h
 # key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 # location to upload schedule: IVS, No, or list of email addresses (separated with ",")
 upload = No
 
@@ -101,7 +101,7 @@ schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
 function = select_best_ohg
-statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
+statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
 upload = No
 
 [T2]
@@ -113,7 +113,7 @@ schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
 function = select_best_24h
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_average_13_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_average_13_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 upload = No
 
 [AUA]
@@ -124,7 +124,7 @@ schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
 function = select_best_24h
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 upload = No
 
 [R4]
@@ -135,7 +135,7 @@ schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
 function = select_best_24h_focus_EOP
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 upload = No
 
 [R1]
@@ -146,7 +146,7 @@ schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
 function = select_best_24h_focus_EOP
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_coordinates_[mm],sim_mean_formal_error_average_3d_coordinates_[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 upload = No
 
 [CRF]
@@ -210,5 +210,5 @@ schedule_date = 12
 upload_date = 9
 contact = mschartner@ethz.ch
 function = select_best_local_tie
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_30_min,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_mean_formal_error_average_3d_coordinates_[mm],sim_repeatability_average_3d_coordinates_[mm]
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_30_min,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_mean_formal_error_average_3d_station_coord._[mm],sim_repeatability_average_3d_station_coord._[mm]
 upload = No
