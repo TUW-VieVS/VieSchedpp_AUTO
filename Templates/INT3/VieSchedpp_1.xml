@@ -74,7 +74,7 @@
 	</output>
 	<catalogs>
         <antenna>../../CATALOGS/antenna.cat</antenna>
-        <equip>./equip.cat</equip>
+        <equip>../../equip.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
