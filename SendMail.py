@@ -32,7 +32,7 @@ def delegate_send(slot):
         SendMail.send = send_bkg
         print("Send mails via [BKG]")
     else:
-        Message.addMessage("ERROR: SMTP server slot \"{:}\" not found".format(slot))
+        Message.addMessage(f"ERROR: SMTP server slot \"{slot:}\" not found")
 
 
 def writeMail_upload(code, emails):
@@ -54,7 +54,7 @@ def writeMail_upload(code, emails):
         msg['From'] = "VieSched++ AUTO"
         msg['To'] = ", ".join(emails)
         today = datetime.date.today()
-        msg['Subject'] = "[upload] [VieSched++ AUTO] {} ({:%B %d, %Y})".format(code, today)
+        msg['Subject'] = f"[upload] [VieSched++ AUTO] {code} ({today:%B %d, %Y})"
         msg.attach(MIMEText(body))
         SendMail.send(msg)
 
@@ -155,9 +155,9 @@ def writeMail(path_str, emails, body=None, date=None):
         msg['To'] = ", ".join(emails)
         sessionCode = path.parent.name
         program = path.parents[1].name
-        subject = "[VieSched++ AUTO] [{}] {}".format(program, sessionCode)
+        subject = f"[VieSched++ AUTO] [{program}] {sessionCode}"
         if date is not None:
-            subject += " ({:%B %d, %Y})".format(date)
+            subject += f" ({date:%B %d, %Y})"
         msg['Subject'] = subject
 
         msg.attach(MIMEText(body))
@@ -166,7 +166,7 @@ def writeMail(path_str, emails, body=None, date=None):
             with open(f, "rb") as fil:
                 part = MIMEApplication(fil.read(), Name=f.name)
             # After the file is closed
-            part['Content-Disposition'] = 'attachment; filename="%s"' % f.name
+            part['Content-Disposition'] = f'attachment; filename="{f.name}"'
             msg.attach(part)
 
         SendMail.send(msg)
@@ -188,7 +188,7 @@ def writeErrorMail(to):
             msg['To'] = to
 
         today = datetime.date.today()
-        msg['Subject'] = "[ERROR] [VieSched++ AUTO] {:%B %d, %Y}".format(today)
+        msg['Subject'] = f"[ERROR] [VieSched++ AUTO] {today:%B %d, %Y}"
         body = Message.msg_header + "\n" + \
                Message.msg_program + "\n" + \
                Message.msg_session + "\n" + \

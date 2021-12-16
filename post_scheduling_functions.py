@@ -22,7 +22,7 @@ def _vex_in_sked_format(**kwargs):
     # create backup of original .vex file
     path_to_vex = (Path(path_selected) / name_vex).absolute()
     backup_vex = Path(path_selected) / (code + ".vex.orig.VieSchedpp")
-    Message.addMessage("    - generate backup of {} to {}".format(path_to_vex, backup_vex), dump="session")
+    Message.addMessage(f"    - generate backup of {path_to_vex} to {backup_vex}", dump="session")
     shutil.copy(str(path_to_vex), str(backup_vex))
 
     settings = configparser.ConfigParser()
@@ -39,17 +39,17 @@ def _vex_in_sked_format(**kwargs):
                            dump="session")
         return
 
-    Message.addMessage("    - copy {} to {}".format(path_to_skd, Path(path_sked) / name_skd), dump="session")
+    Message.addMessage(f"    - copy {path_to_skd} to {Path(path_sked) / name_skd}", dump="session")
     shutil.copy(str(path_to_skd), str(Path(path_sked) / name_skd))
 
     cwd = Path.cwd()
     try:
-        Message.addMessage("    - change dir to {}".format(path_sked), dump="session")
+        Message.addMessage(f"    - change dir to {path_sked}", dump="session")
         os.chdir(path_sked)
         if Path(name_vex).is_file():
-            Message.addMessage("    - delete existing .vex file {}".format(name_vex), dump="session")
+            Message.addMessage(f"    - delete existing .vex file {name_vex}", dump="session")
             Path(name_vex).unlink()
-        Message.addMessage("    - execute sked to parse .vex file".format(path_sked), dump="session")
+        Message.addMessage(f"    - execute sked to parse .vex file {path_sked}", dump="session")
         child = pexpect.spawn(sked_executable + " " + name_skd)
         child.expect(r'\?')
         child.sendline("vwc " + name_vex)
@@ -58,14 +58,14 @@ def _vex_in_sked_format(**kwargs):
         child.close()
 
         newVex = Path(path_sked) / name_vex
-        Message.addMessage("    - copy new .vex file from {} to {}".format(newVex, path_to_vex), dump="session")
+        Message.addMessage(f"    - copy new .vex file from {newVex} to {path_to_vex}", dump="session")
         shutil.copy(str(newVex), str(path_to_vex))
     except:
         Message.addMessage("[ERROR] failed to generate .vex file in \"sked\" format", dump="session")
         Message.addMessage(traceback.format_exc(), dump="session")
 
     finally:
-        Message.addMessage("    - change dir to {}".format(cwd), dump="session")
+        Message.addMessage(f"    - change dir to {cwd}", dump="session")
         os.chdir(str(cwd))
 
     with open(path_to_vex) as f:
@@ -100,18 +100,19 @@ def _vlba_vex_adjustments(**kwargs):
     stations = kwargs["session"]["stations"]
 
     try:
-        Message.addMessage("    - change dir to {}".format(p_path_script.parent), dump="session")
+        Message.addMessage(f"    - change dir to {p_path_script.parent}", dump="session")
         os.chdir(p_path_script.parent)
         if "ISHIOKA" in stations:
             p_path_script = p_path_script.parent / "vlba_vex_correct_modified_for_IS"
             path_script = str(p_path_script)
 
         if not p_path_script.is_file():
-            Message.addMessage(f"[ERROR] failed to execute \"vlba_vex_correct\" script with IS - script not found {p_path_script}",
-                               dump="session")
+            Message.addMessage(
+                f"[ERROR] failed to execute \"vlba_vex_correct\" script with IS - script not found {p_path_script}",
+                dump="session")
             return
 
-        Message.addMessage("    - execute {} {}".format(path_script, path_to_vex), dump="session")
+        Message.addMessage(f"    - execute {path_script} {path_to_vex}", dump="session")
         p = subprocess.run([path_script, path_to_vex], capture_output=True, text=True)
         log = p.stdout
         if log:
@@ -124,7 +125,7 @@ def _vlba_vex_adjustments(**kwargs):
         Message.addMessage("[ERROR] failed to execute \"vlba_vex_correct\" script - returns error", dump="session")
         Message.addMessage(traceback.format_exc(), dump="session")
     finally:
-        Message.addMessage("    - change dir to {}".format(cwd), dump="session")
+        Message.addMessage(f"    - change dir to {cwd}", dump="session")
         os.chdir(str(cwd))
 
 
@@ -170,7 +171,7 @@ def VGOS_Broadband_block_512_8192_4096(**kwargs):
 
     broadband_string = "$BROADBAND\n"
     for sta in stations:
-        broadband_string += "{:8s}   512.00    8192       4096\n".format(sta)
+        broadband_string += f"{sta:8s}   512.00    8192       4096\n"
 
     skd_file = next(Path(path).glob("*.skd"))
     with open(skd_file, 'r') as f:

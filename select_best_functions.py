@@ -203,8 +203,8 @@ def select_best_CRF(df, **kwargs):
         return df.index[0]
 
     template_path = kwargs["template_path"]
-    target = Helper.read_sources(Path(template_path) / "source.cat.target")[0]
-    calib = Helper.read_sources(Path(template_path) / "source.cat.calib")[0]
+    target = Helper.read_sources(template_path / "source.cat.target")[0]
+    calib = Helper.read_sources(template_path / "source.cat.calib")[0]
 
     df_src = df.filter(like='n_src_scans_', axis=1)
 

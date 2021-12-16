@@ -1,9 +1,9 @@
 import datetime
 import inspect
-import os
 import re
 import traceback
 from collections import defaultdict
+from pathlib import Path
 
 import pandas as pd
 
@@ -55,7 +55,7 @@ class Message:
             elif dump == "download":
                 Message.msg_download += str
             else:
-                print("message dump place \"{}\" not recognized".format(dump))
+                print(f"message dump place \"{dump}\" not recognized")
 
     @staticmethod
     def clearMessage(type):
@@ -83,17 +83,17 @@ def read_master(paths):
     :param paths: path to session master file (list of paths or single string)
     :return: list of all sessions
     """
-    if isinstance(paths, str):
+    if isinstance(paths, Path):
         paths = [paths]
 
     sessions = []
     for path in paths:
-        if not os.path.exists(path):
-            Message.addMessage("[Error] reading session master file: {}".format(path), dump="header")
+        if not path.is_file():
+            Message.addMessage(f"[Error] reading session master file: {path}", dump="header")
             return
 
         # extract year
-        year = [int(s) for s in re.findall(r'\d{2}', os.path.basename(path))]
+        year = [int(s) for s in re.findall(r'\d{2}', path.name)]
         if len(year) != 1:
             return
         else:
@@ -128,7 +128,7 @@ def read_master(paths):
                         missing = [tlc not in tlc2name for tlc in stations_tlc]
                         for i, flag in enumerate(missing):
                             if flag:
-                                Message.addMessage("Antenna {} not found in antenna.cat file".format(stations_tlc[i]),
+                                Message.addMessage(f"Antenna {stations_tlc[i]} not found in antenna.cat file",
                                                    dump="header")
                         continue
 
@@ -142,7 +142,7 @@ def read_master(paths):
                                      "correlator": tmp[9].strip()})
 
                 except:
-                    Message.addMessage("#### ERROR reading session: {} from file: {} ####".format(line, path),
+                    Message.addMessage(f"#### ERROR reading session: {line} from file: {path} ####",
                                        dump="header")
                     Message.addMessage(traceback.format_exc(), dump="header")
 
@@ -156,7 +156,7 @@ def antennaLookupTable(reverse=False):
     :return: dictionary["TLC"] -> "antenna_name"
     """
     dict = {}
-    with open(os.path.join("CATALOGS", "antenna.cat")) as f:
+    with open(Path("CATALOGS") / "antenna.cat") as f:
         for line in f:
 
             # skip comments
@@ -227,10 +227,10 @@ def addStatistics(stats, best_idx, code, summary_file):
 
     # output station dependent statistics
     nsta = len(nscans_sta)
-    Message.addMessage("\nparticipating stations: {}".format(nsta))
+    Message.addMessage(f"\nparticipating stations: {nsta}")
     for stas in nscans_sta.keys():
         Message.addMessage(
-            "    {:8} ({:d} scans, {:d} obs)".format(stas, int(round(nscans_sta[stas])), int(round(nobs_sta[stas]))))
+            f"    {stas:8} ({int(round(nscans_sta[stas])):d} scans, {int(round(nobs_sta[stas])):d} obs)")
 
     # number of observations per baseline
     nobs_bl = {}
@@ -250,7 +250,7 @@ def addStatistics(stats, best_idx, code, summary_file):
         sta2 = n[1]
         nobs_perBaseline.loc[sta1, sta2] = e
     nobs_perBaseline = "    " + str(nobs_perBaseline).replace("NaN", "   ").replace("\n", "\n    ")
-    Message.addMessage("\nnumber of observations per baseline:\n{}".format(nobs_perBaseline))
+    Message.addMessage(f"\nnumber of observations per baseline:\n{nobs_perBaseline}")
 
     # number of scans per source
     nscans_src = defaultdict(int)
@@ -263,7 +263,7 @@ def addStatistics(stats, best_idx, code, summary_file):
     Message.addMessage("\nnumber of scans per source")
     for i in range(1, max(nscans_src.keys()) + 1):
         if nscans_src[i] > 0:
-            Message.addMessage("    {:2d} source(s) observed in {} scans ".format(nscans_src[i], i))
+            Message.addMessage(f"    {nscans_src[i]:2d} source(s) observed in {i} scans ")
 
     tlcs = "".join(tlcs)
     with open(summary_file, "r") as f:
@@ -281,12 +281,11 @@ def addStatistics(stats, best_idx, code, summary_file):
     summary.to_csv(summary_file)
 
     # reverse and output
-    # Message.addMessage("\ncomparison with previous schedules:\n{}".format(summary[::-1].head(10).to_string()))
     return summary.tail(10)
 
 
 def update_uploadScheduler(path, delta_days, upload=False):
-    path = os.path.dirname(path)
+    path = path.parent
 
     today = datetime.date.today()
     target_day = today + datetime.timedelta(days=delta_days)
@@ -303,7 +302,7 @@ def update_uploadScheduler(path, delta_days, upload=False):
             if not l.startswith(path):
                 txt += l
 
-    txt += "{} {} {}\n".format(path, target_day, flag)
+    txt += f"{path} {target_day} {flag}\n"
 
     with open("upload_scheduler.txt", "w") as f:
         f.write(txt)
@@ -319,6 +318,8 @@ def scale(s, minIsGood=True):
         q = s.quantile(.25)
         r = (s - q) / (s.max() - q)
         r.loc[r < 0] = 0
+    if r.isna().all():
+        r = r.fillna(0)
     return r
 
 
@@ -343,7 +344,7 @@ def find_function(module, function_names):
         if len(functions_list) == 1:
             f.append(functions_list[0])
         else:
-            Message.addMessage("[ERROR] function \"{}\" not found".format(function_name), dump="header")
+            Message.addMessage(f"[ERROR] function \"{function_name}\" not found", dump="header")
     return f
 
 

@@ -1,7 +1,7 @@
 import configparser
 import datetime
-import os
 from itertools import combinations
+from pathlib import Path
 
 from lxml import etree
 
@@ -32,8 +32,7 @@ def add_downtime_intensives(**kwargs):
         pad = 10
 
     year = session["date"].year % 100
-    master_ivs = os.path.join("MASTER", "master{:02d}-int.txt".format(year))
-    # master_si = os.path.join("MASTER", "master{:02d}-int-SI.txt".format(year))
+    master_ivs = Path("MASTER") / f"master{year:02d}-int.txt"
     intensives = read_master([master_ivs])
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
@@ -58,14 +57,11 @@ def adjust_INT_observing_mode_VLBA_256_8_RDV(**kwargs):
         mode = "256-8(RDV)"
         tree.find("./mode/skdMode").text = mode
         # catalogs to absolut path
-        cwd = os.getcwd()
-        os.chdir(folder)
-        tree.find("./catalogs/freq").text = os.path.abspath("./freq.cat")
-        tree.find("./catalogs/rx").text = os.path.abspath("./rx.cat")
-        tree.find("./catalogs/tracks").text = os.path.abspath("./tracks.cat")
-        os.chdir(cwd)
+        tree.find("./catalogs/freq").text = str((folder / "freq.cat").resolve())
+        tree.find("./catalogs/rx").text = str((folder / "./rx.cat").resolve())
+        tree.find("./catalogs/tracks").text = str((folder / "./tracks.cat").resolve())
 
-        Message.addMessage("Changing observing mode to \"{}\"".format(mode))
+        Message.addMessage(f"Changing observing mode to \"{mode}\"")
         Message.addMessage("Changing freq, tracks and rx catalogs")
 
 
@@ -78,7 +74,7 @@ def adjust_R1_observing_mode(**kwargs):
     """
     tree = kwargs["tree"]
     session = kwargs["session"]
-    mediamaster = os.path.join("MASTER", "mediamaster{:02d}.txt".format(session["date"].year % 100))
+    mediamaster = Path("MASTER") / f"mediamaster{session['date'].year % 100:02d}.txt"
 
     flag_512 = False
     with open(mediamaster) as f:
@@ -94,15 +90,15 @@ def adjust_R1_observing_mode(**kwargs):
                     if g_module == len(stations):
                         flag_512 = True
                     elif g_module > 0:
-                        Message.addMessage("WARNING: undefined observing mode! {:d} stations with 512 Mbps, "
-                                           "{:d} stations with 256 Mbps".format(g_module, len(stations) - g_module),
+                        Message.addMessage(f"WARNING: undefined observing mode! {g_module:d} stations with 512 Mbps, "
+                                           f"{len(stations - g_module):d} stations with 256 Mbps",
                                            dump="header")
                     break
 
     if flag_512:
         mode = "512-16(CONT11)"
         tree.find("./mode/skdMode").text = mode
-        Message.addMessage("Changing observing mode to \"{}\"".format(mode))
+        Message.addMessage(f"Changing observing mode to \"{mode}\"")
 
 
 def sefd_based_snr(**kwargs):
@@ -120,9 +116,9 @@ def sefd_based_snr(**kwargs):
     add_group(tree.find("./baseline"), "high_low", high_low)
     add_group(tree.find("./baseline"), "low_low", low_low)
     Message.addMessage("add baseline SEFD based SNR targets")
-    Message.addMessage("    new baseline group \"{:2}\" with {:d} members".format("high_high", len(high_high)))
-    Message.addMessage("    new baseline group \"{:2}\" with {:d} members".format("high_low", len(high_low)))
-    Message.addMessage("    new baseline group \"{:2}\" with {:d} members".format("low_low", len(low_low)))
+    Message.addMessage(f"    new baseline group \"{'high_high':2}\" with {len(high_high):d} members")
+    Message.addMessage(f"    new baseline group \"{'high_low':2}\" with {len(high_low):d} members")
+    Message.addMessage(f"    new baseline group \"{'low_low':2}\" with {len(low_low):d} members")
 
     add_parameter(tree.find("./baseline/parameters"), "low_snr", ["minSNR", "minSNR"], ["18", "13"],
                   [("band", "X"), ("band", "S")])
@@ -147,12 +143,12 @@ def prepare_source_list_crf(**kwargs):
     session = kwargs["session"]
     folder = kwargs["folder"]
 
-    target, target_list, _ = read_sources(os.path.join(folder, "source.cat.target"), session["name"])
-    calib, calib_list, _ = read_sources(os.path.join(folder, "source.cat.calib"), session["name"])
+    target, target_list, _ = read_sources(folder / "source.cat.target", session["name"])
+    calib, calib_list, _ = read_sources(folder / "source.cat.calib", session["name"])
     add_group(tree.find("./source"), "target", target)
     add_group(tree.find("./source"), "calib", calib)
 
-    source_list = os.path.join(folder, "source.cat.{}".format(session["code"]))
+    source_list = folder / f"source.cat.{session['code']}"
     with open(source_list, 'w') as f:
         f.write("* targets:\n")
         for l in target_list:
@@ -161,7 +157,7 @@ def prepare_source_list_crf(**kwargs):
         for l in calib_list:
             f.write(l + "\n")
 
-    tree.find("./catalogs/source").text = os.path.abspath(source_list)
+    tree.find("./catalogs/source").text = source_list.resolve()
 
 
 def test_mode(**kwargs):
@@ -222,10 +218,10 @@ def get_baseline_sensitivity_groups(stations, threshold=5000):
         tlc2_c = tlc2[0] + tlc2[1].lower()
 
         if tlc1 in high and tlc2 in high:
-            high_high.append("{}-{}".format(tlc1_c, tlc2_c))
+            high_high.append(f"{tlc1_c}-{tlc2_c}")
         elif tlc1 in low and tlc2 in low:
-            low_low.append("{}-{}".format(tlc1_c, tlc2_c))
+            low_low.append(f"{tlc1_c}-{tlc2_c}")
         elif (tlc1 in high and tlc2 in low) or (tlc1 in low and tlc2 in high):
-            high_low.append("{}-{}".format(tlc1_c, tlc2_c))
+            high_low.append(f"{tlc1_c}-{tlc2_c}")
 
     return high_high, high_low, low_low

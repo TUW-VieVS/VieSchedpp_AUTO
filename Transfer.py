@@ -1,10 +1,12 @@
 import datetime
 import glob
+from pathlib import Path
 import os
 import time
 import traceback
 from ftplib import FTP
 from ftplib import all_errors as ftp_errors
+
 
 import requests
 
@@ -19,22 +21,21 @@ def download_ftp():
     """
 
     # master files are stored in "MASTER" directory
-    path = "MASTER"
-    if not os.path.exists(path):
-        os.makedirs(path)
+    path = Path("MASTER")
+    path.mkdir(exist_ok=True, parents=True)
 
     # define files do download
     now = datetime.datetime.now()
     year = now.year % 100
-    names = ["master{:02d}.txt".format(year),
-             "master{:02d}-int.txt".format(year),
-             "mediamaster{:02d}.txt".format(year)]
+    names = [f"master{year:02d}.txt",
+             f"master{year:02d}-int.txt",
+             f"mediamaster{year:02d}.txt"]
 
     # also download master file for next year in case today is December
     if now.month == 12:
-        names.append("master{:02d}.txt".format(year + 1))
-        names.append("master{:02d}-int.txt".format(year + 1))
-        names.append("mediamaster{:02d}.txt".format(year + 1))
+        names.append(f"master{year + 1:02d}.txt")
+        names.append(f"master{year + 1:02d}-int.txt")
+        names.append(f"mediamaster{year + 1:02d}.txt")
 
     try:
         # connect to FTP server
@@ -47,17 +48,17 @@ def download_ftp():
 
         # download all files from FTP server
         for name in names:
-            Message.addMessage("FTP download: {}... ".format(name), dump="download", endLine=False)
+            Message.addMessage(f"FTP download: {name}... ", dump="download", endLine=False)
             # skip files which are not present
             if name not in ftp_files:
                 Message.addMessage("file not found", dump="download")
                 continue
-            out = os.path.join(path, name)
+            out = path / name
             msg = ftp.retrbinary("RETR " + name, open(out, 'wb').write)
-            Message.addMessage("msg: {}".format(msg), dump="download")
+            Message.addMessage(f"msg: {msg}", dump="download")
 
     except ftp_errors as err:
-        Message.addMessage("#### ERROR {} ####".format(err), dump="download")
+        Message.addMessage(f"#### ERROR {err} ####", dump="download")
         Message.addMessage(traceback.format_exc(), dump="download")
 
 
@@ -67,9 +68,8 @@ def download_http():
 
     :return: None
     """
-    path = "MASTER"
-    if not os.path.exists(path):
-        os.makedirs(path)
+    path = Path("MASTER")
+    path.mkdir(exist_ok=True, parents=True)
     now = datetime.datetime.now()
     year = now.year % 100
     masters = []
@@ -79,24 +79,22 @@ def download_http():
     for cat in masters:
         url_response(cat)
 
-    path = "CATALOGS"
-    if not os.path.exists(path):
-        os.makedirs(path)
+    path = Path("STP")
+    path.mkdir(exist_ok=True, parents=True)
 
-    # catalogs = [(os.path.join(path, "antenna.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
-    #             (os.path.join(path, "equip.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
-    #             (os.path.join(path, "flux.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/flux.cat"),
-    #             (os.path.join(path, "freq.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/freq.cat"),
-    #             (os.path.join(path, "hdpos.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/hdpos.cat"),
-    #             (os.path.join(path, "loif.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/loif.cat"),
-    #             (os.path.join(path, "mask.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/mask.cat"),
-    #             (os.path.join(path, "modes.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/modes.cat"),
-    #             (os.path.join(path, "position.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/position.cat"),
-    #             (os.path.join(path, "rec.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rec.cat"),
-    #             (os.path.join(path, "rx.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rx.cat"),
-    #             (os.path.join(path, "source.cat.geodetic.good"),
-    #              "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/source.cat.geodetic.good"),
-    #             (os.path.join(path, "tracks.cat"), "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/tracks.cat")]
+    # catalogs = [(path / "antenna.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
+    #             (path / "equip.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
+    #             (path / "flux.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/flux.cat"),
+    #             (path / "freq.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/freq.cat"),
+    #             (path / "hdpos.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/hdpos.cat"),
+    #             (path / "loif.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/loif.cat"),
+    #             (path / "mask.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/mask.cat"),
+    #             (path / "modes.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/modes.cat"),
+    #             (path / "position.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/position.cat"),
+    #             (path / "rec.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rec.cat"),
+    #             (path / "rx.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rx.cat"),
+    #             (path / "source.cat.geodetic.good", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/source.cat.geodetic.good"),
+    #             (path /"tracks.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/tracks.cat")]
 
     catalogs = []
 
@@ -118,14 +116,14 @@ def url_response(cat):
     path, url = cat
 
     # only download file if current file was last modified longer than 23 hours ago
-    Message.addMessage("HTTPS download: {}... ".format(os.path.basename(path)), dump="download", endLine=False)
-    if os.path.exists(path):
+    Message.addMessage(f"HTTPS download: {path.name}... ", dump="download", endLine=False)
+    if path.is_file():
         last_update = os.path.getmtime(path)
         now = datetime.datetime.now()
         new_update = time.mktime(now.timetuple())
         diff = new_update - last_update
         if diff < 23 * 3600:
-            Message.addMessage("up to date (last modified {:.2f} hours ago) -> no download".format(diff / 3600.0),
+            Message.addMessage(f"up to date (last modified {diff / 3600.0:.2f} hours ago) -> no download",
                                dump="download")
             return
 
@@ -141,7 +139,7 @@ def url_response(cat):
             Message.addMessage("ERROR", dump="download")
 
     except requests.exceptions.RequestException as err:
-        Message.addMessage("#### ERROR {} ####".format(err), dump="download")
+        Message.addMessage(f"#### ERROR {err} ####", dump="download")
         Message.addMessage(traceback.format_exc(), dump="download")
 
 
@@ -153,18 +151,18 @@ def upload(path):
     :return: None
     """
     flag = True
-    path = os.path.join(path, "selected")
-    code = os.path.basename(os.path.dirname(path))
+    path = path / "selected"
+    code = path.parent.name
 
-    skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
-    txtFile = os.path.splitext(skdFile)[0] + ".txt"
-    vexFile = os.path.splitext(skdFile)[0] + ".vex"
+    skdFile = Path(glob.glob(path / "*.skd")[0])
+    txtFile = Path(skdFile.stem + ".txt")
+    vexFile = Path(skdFile.stem + ".vex")
 
     today = datetime.date.today()
-    Message.addMessage("##### {} #####\n".format(code), dump="download")
+    Message.addMessage(f"##### {code} #####\n", dump="download")
     Message.addMessage("connecting to: ivs.bkg.bund.de\n", dump="download")
 
-    pw = read_pw_from_file("BKG_pw.txt")
+    pw = read_pw_from_file(Path("BKG_pw.txt"))
     if pw is not None:
         ftp = FTP("ivs.bkg.bund.de")
 
@@ -182,9 +180,9 @@ def upload(path):
 
         Message.addMessage("\nuploading:", dump="download")
         for file in [skdFile, txtFile, vexFile]:
-            Message.addMessage("    {}... ".format(file), endLine=False, dump="download")
+            Message.addMessage(f"    {file}... ", endLine=False, dump="download")
             with open(file, 'rb') as f:
-                msg = ftp.storbinary('STOR {}'.format(os.path.basename(file)), f)
+                msg = ftp.storbinary(f'STOR {file.name}', f)
             Message.addMessage(msg, dump="download")
 
         # get a list of all files at FTP server
@@ -207,15 +205,15 @@ def upload_GOW_ftp(path):
     :return: None
     """
     flag = True
-    path = os.path.join(path, "selected")
-    code = os.path.basename(os.path.dirname(path))
+    path = path / "selected"
+    code = path.parent.name
 
-    skdFile = glob.glob(os.path.join(path, "*.skd"))[0]
-    txtFile = os.path.splitext(skdFile)[0] + ".txt"
-    vexFile = os.path.splitext(skdFile)[0] + ".vex"
+    skdFile = Path(glob.glob(path / "*.skd")[0])
+    txtFile = Path(skdFile.stem + ".txt")
+    vexFile = Path(skdFile.stem + ".vex")
 
     today = datetime.date.today()
-    Message.addMessage("##### {} #####\n".format(code), dump="download")
+    Message.addMessage(f"##### {code} #####\n", dump="download")
     Message.addMessage("connecting to: 141.74.2.12\n", dump="download")
 
     pw = read_pw_from_file("GOW_ftp_pw.txt")
@@ -237,9 +235,9 @@ def upload_GOW_ftp(path):
         ftp.mkd(code)
         ftp.cwd(code)
         for file in [skdFile, txtFile, vexFile]:
-            Message.addMessage("    {}... ".format(file), endLine=False, dump="download")
+            Message.addMessage(f"    {file}... ", endLine=False, dump="download")
             with open(file, 'rb') as f:
-                msg = ftp.storbinary('STOR {}'.format(os.path.basename(file)), f)
+                msg = ftp.storbinary(f'STOR {file.name}', f)
             Message.addMessage(msg, dump="download")
         ftp.cwd("..")
 
@@ -256,7 +254,7 @@ def upload_GOW_ftp(path):
 
 
 def read_pw_from_file(file):
-    if os.path.exists(file):
+    if file.is_file():
         with open(file) as f:
             return f.read().strip()
     else:

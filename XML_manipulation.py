@@ -1,7 +1,7 @@
 import configparser
 import datetime
-import os
 import re
+from pathlib import Path
 
 from lxml import etree
 
@@ -17,43 +17,39 @@ def adjust_xml(template, session, pre_scheduling_functions):
     :return: adjusted xml tree
     """
     parser = etree.XMLParser(remove_blank_text=True)
-    tree = etree.parse(template, parser)
+    tree = etree.parse(str(template), parser)
 
     # adjust general parameters
-    tree.find("./created/time").text = "{:%Y.%m.%d %H:%M:%S}".format(datetime.datetime.now())
+    tree.find("./created/time").text = f"{datetime.datetime.now():%Y.%m.%d %H:%M:%S}"
     tree.find("./created/name").text = "VieSched++ AUTO"
     tree.find("./general/experimentName").text = session["code"]
-    tree.find("./general/startTime").text = "{:%Y.%m.%d %H:%M:%S}".format(session["date"])
-    tree.find("./general/endTime").text = "{:%Y.%m.%d %H:%M:%S}".format(
-        session["date"] + datetime.timedelta(hours=session["duration"]))
+    tree.find("./general/startTime").text = f"{session['date']:%Y.%m.%d %H:%M:%S}"
+    tree.find("./general/endTime").text = f"{session['date'] + datetime.timedelta(hours=session['duration']):%Y.%m.%d %H:%M:%S}"
     tree.find("./output/experimentDescription").text = session["name"]
     tree.find("./output/scheduler").text = session["scheduler"]
     tree.find("./output/correlator").text = session["correlator"]
 
     # catalogs to absolut path
-    cwd = os.getcwd()
-    folder = os.path.dirname(template)
-    os.chdir(folder)
-    tree.find("./catalogs/antenna").text = os.path.abspath(tree.find("./catalogs/antenna").text)
-    tree.find("./catalogs/equip").text = os.path.abspath(tree.find("./catalogs/equip").text)
-    tree.find("./catalogs/flux").text = os.path.abspath(tree.find("./catalogs/flux").text)
-    tree.find("./catalogs/freq").text = os.path.abspath(tree.find("./catalogs/freq").text)
-    tree.find("./catalogs/hdpos").text = os.path.abspath(tree.find("./catalogs/hdpos").text)
-    tree.find("./catalogs/loif").text = os.path.abspath(tree.find("./catalogs/loif").text)
-    tree.find("./catalogs/mask").text = os.path.abspath(tree.find("./catalogs/mask").text)
-    tree.find("./catalogs/modes").text = os.path.abspath(tree.find("./catalogs/modes").text)
-    tree.find("./catalogs/position").text = os.path.abspath(tree.find("./catalogs/position").text)
-    tree.find("./catalogs/rec").text = os.path.abspath(tree.find("./catalogs/rec").text)
-    tree.find("./catalogs/rx").text = os.path.abspath(tree.find("./catalogs/rx").text)
-    tree.find("./catalogs/source").text = os.path.abspath(tree.find("./catalogs/source").text)
-    tree.find("./catalogs/tracks").text = os.path.abspath(tree.find("./catalogs/tracks").text)
-    os.chdir(cwd)
+    folder = template.parent
+    tree.find("./catalogs/antenna").text = str((folder / tree.find("./catalogs/antenna").text).resolve())
+    tree.find("./catalogs/equip").text = str((folder / tree.find("./catalogs/equip").text).resolve())
+    tree.find("./catalogs/flux").text = str((folder / tree.find("./catalogs/flux").text).resolve())
+    tree.find("./catalogs/freq").text = str((folder / tree.find("./catalogs/freq").text).resolve())
+    tree.find("./catalogs/hdpos").text = str((folder / tree.find("./catalogs/hdpos").text).resolve())
+    tree.find("./catalogs/loif").text = str((folder / tree.find("./catalogs/loif").text).resolve())
+    tree.find("./catalogs/mask").text = str((folder / tree.find("./catalogs/mask").text).resolve())
+    tree.find("./catalogs/modes").text = str((folder / tree.find("./catalogs/modes").text).resolve())
+    tree.find("./catalogs/position").text = str((folder / tree.find("./catalogs/position").text).resolve())
+    tree.find("./catalogs/rec").text = str((folder / tree.find("./catalogs/rec").text).resolve())
+    tree.find("./catalogs/rx").text = str((folder / tree.find("./catalogs/rx").text).resolve())
+    tree.find("./catalogs/source").text = str((folder / tree.find("./catalogs/source").text).resolve())
+    tree.find("./catalogs/tracks").text = str((folder / tree.find("./catalogs/tracks").text).resolve())
 
     # add parameters
     add_parameter(tree.find("./station/parameters"), "tagalong", ["tagalong"], ["1"])
     add_parameter(tree.find("./station/parameters"), "down", ["available"], ["0"])
     for f in pre_scheduling_functions:
-        f(tree=tree, session=session, folder=os.path.dirname(template))
+        f(tree=tree, session=session, folder=template.parent)
 
     # change setup for tagalong mode
     add_tagalong_time(session, tree)
@@ -95,9 +91,9 @@ def add_oh_downtime(session, tree):
         pad = settings["general"].getint("Oh_down_extra_min", 5)
     else:
         pad = 5
-    path = settings["general"].get("Oh_down")
-    if not path or not os.path.exists(path):
-        Message.addMessage("WARNING: OH down time file \"{}\" not found!".format(path))
+    path = Path(settings["general"].get("Oh_down"))
+    if not path or not path.is_file():
+        Message.addMessage(f"WARNING: OH down time file \"{path}\" not found!")
         return
 
     s_start = session["date"]
@@ -218,9 +214,9 @@ def insert_setup_node(session, member, root, parameter_name, p_start=None, p_end
     node = etree.Element("setup")
     etree.SubElement(node, tag).text = member
     if p_start != s_start:
-        etree.SubElement(node, "start").text = "{:%Y.%m.%d %H:%M:%S}".format(p_start)
+        etree.SubElement(node, "start").text = f"{p_start:%Y.%m.%d %H:%M:%S}"
     if p_end != s_end:
-        etree.SubElement(node, "end").text = "{:%Y.%m.%d %H:%M:%S}".format(p_end)
+        etree.SubElement(node, "end").text = f"{p_end:%Y.%m.%d %H:%M:%S}"
     etree.SubElement(node, "parameter").text = parameter_name
     etree.SubElement(node, "transition").text = "hard"
     root.insert(len(root), node)
@@ -348,8 +344,8 @@ def add_comment(station, p_start, p_end, parameter_name, comment=""):
     :param comment: optional comment
     :return: None
     """
-    start_str = "{:%Y.%m.%d %H:%M:%S}".format(p_start)
-    end_str = "{:%Y.%m.%d %H:%M:%S}".format(p_end)
+    start_str = f"{p_start:%Y.%m.%d %H:%M:%S}"
+    end_str = f"{p_end:%Y.%m.%d %H:%M:%S}"
     dur = (p_end - p_start).total_seconds() / 60
     if comment:
         comment = "- " + comment
@@ -357,8 +353,8 @@ def add_comment(station, p_start, p_end, parameter_name, comment=""):
     if parameter_name == "down":
         parameter_name = "downtime"
 
-    Message.addMessage("   add {}: {:8s} {:s} {:s} ({:.0f} minutes) {:s}".format(
-        parameter_name, station, start_str, end_str, dur, comment))
+    Message.addMessage(
+        f"   add {parameter_name}: {station:8s} {start_str:s} {end_str:s} ({dur:.0f} minutes) {comment:s}")
 
 
 def add_parameter(root, parameter_name, fieldnames, values, attriutes=None):

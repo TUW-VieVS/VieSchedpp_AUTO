@@ -1,6 +1,5 @@
 import itertools
 import math
-import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -64,14 +63,14 @@ def summary(df, fields, output):
     for net in unique_networks:
         n = len(net) / 2
         if (n > 6):
-            labels.append("({:.0f}) {:12.12}...".format(n, net))
+            labels.append(f"({n:.0f}) {net:12.12}...")
         else:
-            labels.append("({:.0f}) {}".format(n, net))
+            labels.append(f"({n:.0f}) {net}")
 
     axes.flat[first_empty].legend(hs, labels, loc='lower left')
     plt.tight_layout()
     # fig.subplots_adjust(left=0.1, right=0.975, bottom=0.15, top=0.95, wspace=0.2, hspace=0.15)
-    plt.savefig(os.path.join(output, "summary.png"), dpi=150)
+    plt.savefig(output / "summary.png", dpi=150)
 
 
 def plot_summary_background(ax, cats):
@@ -152,9 +151,9 @@ def plot_special_stats(ax, df, field):
                 start = c[0].split("-")[0]
                 end = c[-1].split("-")[0]
                 if start == end:
-                    cols.append("{}-station_scans".format(start))
+                    cols.append(f"{start}-station_scans")
                 else:
-                    cols.append("{}-{}-station_scans".format(start, end))
+                    cols.append(f"{start}-{end}-station_scans")
             df_src_scans = df_src_scans.groupby(xx, axis=1).sum()
             df_src_scans.columns = cols
 
@@ -444,7 +443,7 @@ def polar_plots(skd, output, attribute_name):
             this_h.set_clim(vmin, vmax)
         cbar_ax.set_xlabel("time since observation start [h]")
 
-    plt.savefig(os.path.join(output, "{:s}.png".format(attribute_name)), dpi=150)
+    plt.savefig(output / f"{attribute_name:s}.png", dpi=150)
 
 
 def polar_plot_per_station(all_obs, station, ax, attribute_name):
