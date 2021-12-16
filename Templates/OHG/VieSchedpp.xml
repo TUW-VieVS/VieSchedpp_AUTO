@@ -292,7 +292,7 @@
 				<sources>__all__</sources>
 			</block>
 			<block>
-				<startTime>21600</startTime>
+				<startTime>28800</startTime>
 				<scans>1</scans>
 				<duration>600</duration>
 				<sources>__all__</sources>
