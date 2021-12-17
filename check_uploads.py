@@ -37,7 +37,7 @@ def check_uploads(settings, fallback_email=""):
             master = template_master.substitute(YY=str(year))
 
             master = Path("MASTER") / master
-            sessions = read_master(str(master))
+            sessions = read_master(master)
             if not sessions:
                 continue
 
