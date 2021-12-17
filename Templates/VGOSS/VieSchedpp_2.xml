@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VieSchedpp>
+	<software>
+		<name>VieSched++ GUI</name>
+		<GUI_version>5d0b912809d7f5c201357e164fd61b50e694c274</GUI_version>
+	</software>
+	<created>
+		<time>2021.12.16 20:48:51</time>
+		<name>Matthias Schartner</name>
+		<email>mschartner@ethz.ch</email>
+	</created>
+	<general>
+		<experimentName>S21355</experimentName>
+		<startTime>2021.12.21 19:45:00</startTime>
+		<endTime>2021.12.21 20:45:00</endTime>
+		<subnetting>false</subnetting>
+		<stations>
+			<station>MACGO12M</station>
+			<station>WETTZ13S</station>
+		</stations>
+		<scanAlignment>start</scanAlignment>
+		<logSeverityConsole>info</logSeverityConsole>
+		<logSeverityFile>info</logSeverityFile>
+		<doNotObserveSourcesWithinMinRepeat>false</doNotObserveSourcesWithinMinRepeat>
+		<ignore_successive_scans_same_source>true</ignore_successive_scans_same_source>
+        <versionOffset>100</versionOffset>
+	</general>
+	<output>
+		<experimentDescription>VG221-355</experimentDescription>
+		<scheduler>DACH</scheduler>
+		<correlator>WETZ</correlator>
+		<initializer_log>true</initializer_log>
+		<iteration_log>true</iteration_log>
+		<createSummary>false</createSummary>
+		<createNGS>true</createNGS>
+		<createSKD>true</createSKD>
+		<createVEX>true</createVEX>
+		<createSnrTable>true</createSnrTable>
+		<createOperationsNotes>true</createOperationsNotes>
+		<createSourceGroupStatistics>false</createSourceGroupStatistics>
+		<createSlewFile>false</createSlewFile>
+		<createTimeTable>true</createTimeTable>
+	</output>
+	<catalogs>
+		<antenna>./antenna.cat.vgos</antenna>
+		<equip>./equip.cat.VGOS</equip>
+		<flux>../../CATALOGS/flux.cat</flux>
+		<freq>../../CATALOGS/freq.cat</freq>
+		<hdpos>../../CATALOGS/hdpos.cat</hdpos>
+		<loif>../../CATALOGS/loif.cat</loif>
+		<mask>../../CATALOGS/mask.cat</mask>
+		<modes>../../CATALOGS/modes.cat</modes>
+		<position>../../CATALOGS/position.cat</position>
+		<rec>../../CATALOGS/rec.cat</rec>
+		<rx>../../CATALOGS/rx.cat</rx>
+		<satellite/>
+		<source>./source.cat.vgos.cont</source>
+		<tracks>../../CATALOGS/tracks.cat</tracks>
+		<stp_dir>../../STP</stp_dir>
+	</catalogs>
+	<station>
+		<setup>
+			<member>__all__</member>
+			<parameter>default</parameter>
+			<transition>hard</transition>
+		</setup>
+		<parameters>
+			<parameter name="default">
+				<available> 1</available>
+				<availableForFillinmode> 1</availableForFillinmode>
+				<weight> 1</weight>
+				<minScan> 30</minScan>
+				<maxScan> 600</maxScan>
+				<minSlewtime> 9</minSlewtime>
+				<maxSlewtime> 600</maxSlewtime>
+				<maxSlewDistance> 175</maxSlewDistance>
+				<minSlewDistance> 0</minSlewDistance>
+				<maxWait> 600</maxWait>
+				<minElevation> 5</minElevation>
+				<maxNumberOfScans> 9999</maxNumberOfScans>
+				<maxTotalObsTime> 999999</maxTotalObsTime>
+				<preob> 3</preob>
+				<midob> 0</midob>
+				<systemDelay> 0</systemDelay>
+			</parameter>
+			<parameter name="down">
+				<available> 0</available>
+			</parameter>
+		</parameters>
+		<cableWrapBuffers>
+			<cableWrapBuffer member="__all__">
+				<axis1LowOffset>5</axis1LowOffset>
+				<axis1UpOffset>5</axis1UpOffset>
+				<axis2LowOffset>0</axis2LowOffset>
+				<axis2UpOffset>0</axis2UpOffset>
+			</cableWrapBuffer>
+		</cableWrapBuffers>
+	</station>
+	<source>
+		<setup>
+			<member>__all__</member>
+			<parameter>default</parameter>
+			<transition>hard</transition>
+		</setup>
+		<parameters>
+			<parameter name="default">
+				<available> 1</available>
+				<availableForFillinmode> 1</availableForFillinmode>
+				<weight> 1</weight>
+				<minElevation> 0</minElevation>
+				<minSunDistance> 4</minSunDistance>
+				<minNumberOfStations> 2</minNumberOfStations>
+				<minRepeat> 1080</minRepeat>
+				<minFlux> 0.05</minFlux>
+				<maxNumberOfScans> 999</maxNumberOfScans>
+				<fixedScanDuration>30</fixedScanDuration>
+			</parameter>
+		</parameters>
+	</source>
+	<baseline>
+		<setup>
+			<member>__all__</member>
+			<parameter>default</parameter>
+			<transition>hard</transition>
+		</setup>
+		<parameters>
+			<parameter name="default">
+				<ignore> 0</ignore>
+				<minScan> 0</minScan>
+				<maxScan> 9999</maxScan>
+				<weight> 1</weight>
+			</parameter>
+		</parameters>
+	</baseline>
+	<skyCoverage>
+		<influenceDistance>30</influenceDistance>
+		<influenceInterval>3600</influenceInterval>
+		<maxTwinTelecopeDistance>0</maxTwinTelecopeDistance>
+		<interpolationDistance>cosine</interpolationDistance>
+		<interpolationTime>cosine</interpolationTime>
+	</skyCoverage>
+	<weightFactor>
+		<skyCoverage>0.02</skyCoverage>
+		<duration>1</duration>
+	</weightFactor>
+    <multisched>
+        <weight_factor_sky-coverage>
+            <value>0</value>
+            <value>0.20000000000000001</value>
+            <value>0.40000000000000002</value>
+            <value>0.59999999999999998</value>
+            <value>0.80000000000000004</value>
+            <value>1</value>
+        </weight_factor_sky-coverage>
+        <weight_factor_duration>
+            <value>0</value>
+            <value>0.20000000000000001</value>
+            <value>0.40000000000000002</value>
+            <value>0.59999999999999998</value>
+            <value>0.80000000000000004</value>
+            <value>1</value>
+        </weight_factor_duration>
+    </multisched>
+    <multiCore>
+        <threads>auto</threads>
+        <jobScheduling>auto</jobScheduling>
+    </multiCore>
+	<mode>
+		<simple>
+			<sampleRate>1024</sampleRate>
+			<bits>2</bits>
+			<efficiencyFactor>0.60629999999999995</efficiencyFactor>
+			<bands>
+				<band name="A">
+					<wavelength>0.092062540842648311</wavelength>
+					<channels>1</channels>
+				</band>
+				<band name="B">
+					<wavelength>0.054543420784513498</wavelength>
+					<channels>1</channels>
+				</band>
+				<band name="C">
+					<wavelength>0.045310509944985186</wavelength>
+					<channels>1</channels>
+				</band>
+				<band name="D">
+					<wavelength>0.028670714395011666</wavelength>
+					<channels>1</channels>
+				</band>
+			</bands>
+		</simple>
+		<bandPolicies>
+			<bandPolicy name="A">
+				<minSNR>15</minSNR>
+				<station>
+					<tag>required</tag>
+					<backup_value>0</backup_value>
+				</station>
+				<source>
+					<tag>optional</tag>
+					<backup_internalModel/>
+				</source>
+			</bandPolicy>
+			<bandPolicy name="B">
+				<minSNR>15</minSNR>
+				<station>
+					<tag>required</tag>
+					<backup_value>0</backup_value>
+				</station>
+				<source>
+					<tag>optional</tag>
+					<backup_internalModel/>
+				</source>
+			</bandPolicy>
+			<bandPolicy name="C">
+				<minSNR>15</minSNR>
+				<station>
+					<tag>required</tag>
+					<backup_value>0</backup_value>
+				</station>
+				<source>
+					<tag>optional</tag>
+					<backup_internalModel/>
+				</source>
+			</bandPolicy>
+			<bandPolicy name="D">
+				<minSNR>15</minSNR>
+				<station>
+					<tag>required</tag>
+					<backup_value>0</backup_value>
+				</station>
+				<source>
+					<tag>optional</tag>
+					<backup_internalModel/>
+				</source>
+			</bandPolicy>
+		</bandPolicies>
+	</mode>
+	<rules>
+		<calibration>
+			<block>
+				<startTime>360</startTime>
+				<scans>1</scans>
+				<duration>120</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>1800</startTime>
+				<scans>1</scans>
+				<duration>120</duration>
+				<sources>__all__</sources>
+			</block>
+			<block>
+				<startTime>3240</startTime>
+				<scans>1</scans>
+				<duration>120</duration>
+				<sources>__all__</sources>
+			</block>
+		</calibration>
+	</rules>
+	<simulator>
+		<number_of_simulations>1000</number_of_simulations>
+		<station name="__all__">
+			<wn>17.68</wn>
+			<clockASD>1</clockASD>
+			<clockDur>50</clockDur>
+			<tropo_Cn>1.8</tropo_Cn>
+			<tropo_H>2000</tropo_H>
+			<tropo_dH>200</tropo_dH>
+			<tropo_dHseg>2</tropo_dHseg>
+			<tropo_ve>8</tropo_ve>
+			<tropo_vn>0</tropo_vn>
+			<tropo_wzd0>150</tropo_wzd0>
+		</station>
+		<output>
+			<obs_minus_comp>false</obs_minus_comp>
+		</output>
+	</simulator>
+	<solver>
+		<EOP>
+			<dUT1>
+				<interval>1</interval>
+				<constraint>0.0001</constraint>
+			</dUT1>
+		</EOP>
+		<station name="__all__">
+			<coordinates>true</coordinates>
+			<datum>true</datum>
+			<linear_clock>true</linear_clock>
+			<quadratic_clock>true</quadratic_clock>
+			<PWL_clock>
+				<interval>60</interval>
+				<constraint>1.3</constraint>
+			</PWL_clock>
+			<PWL_ZWD>
+				<interval>30</interval>
+				<constraint>1.5</constraint>
+			</PWL_ZWD>
+			<PWL_NGR>
+				<interval>180</interval>
+				<constraint>0.050000000000000003</constraint>
+			</PWL_NGR>
+			<PWL_EGR>
+				<interval>180</interval>
+				<constraint>0.050000000000000003</constraint>
+			</PWL_EGR>
+		</station>
+		<source>
+			<minScans>3</minScans>
+			<minObs>5</minObs>
+			<minObs_datum>25</minObs_datum>
+			<estimate>__none__</estimate>
+			<datum>__all__</datum>
+		</source>
+		<output>
+			<A>false</A>
+			<P>false</P>
+			<l>false</l>
+		</output>
+	</solver>
+	<priorities>
+		<fraction>70</fraction>
+		<percentile>0.75</percentile>
+		<variable name="#obs">0.50000000000000011</variable>
+		<variable name="XPO">0</variable>
+		<variable name="YPO">0</variable>
+		<variable name="dUT1">1</variable>
+		<variable name="NUTX">0</variable>
+		<variable name="NUTY">0</variable>
+		<variable name="MACGO12M">0</variable>
+		<variable name="WETTZ13S">0</variable>
+		<variable name="0016+731">0</variable>
+		<variable name="0048-097">0</variable>
+		<variable name="0054+161">0</variable>
+		<variable name="0059+581">0</variable>
+		<variable name="0115-214">0</variable>
+		<variable name="0119+041">0</variable>
+		<variable name="0133+476">0</variable>
+		<variable name="0237-027">0</variable>
+		<variable name="0340+362">0</variable>
+		<variable name="0347-211">0</variable>
+		<variable name="0400-319">0</variable>
+		<variable name="0420+022">0</variable>
+		<variable name="0446+112">0</variable>
+		<variable name="0454-234">0</variable>
+		<variable name="0458-020">0</variable>
+		<variable name="0529+483">0</variable>
+		<variable name="0536+145">0</variable>
+		<variable name="0537-286">0</variable>
+		<variable name="0552+398">0</variable>
+		<variable name="0556+238">0</variable>
+		<variable name="0602+673">0</variable>
+		<variable name="0656+082">0</variable>
+		<variable name="0657+172">0</variable>
+		<variable name="0714+457">0</variable>
+		<variable name="0716+714">0</variable>
+		<variable name="0718+792">0</variable>
+		<variable name="0727-115">0</variable>
+		<variable name="0748+126">0</variable>
+		<variable name="0800+618">0</variable>
+		<variable name="0804+499">0</variable>
+		<variable name="0851+202">0</variable>
+		<variable name="0912+029">0</variable>
+		<variable name="0955+476">0</variable>
+		<variable name="1040+244">0</variable>
+		<variable name="1101+384">0</variable>
+		<variable name="1144+402">0</variable>
+		<variable name="1149-084">0</variable>
+		<variable name="1156+295">0</variable>
+		<variable name="1228+126">0</variable>
+		<variable name="1243-160">0</variable>
+		<variable name="1300+580">0</variable>
+		<variable name="1324+224">0</variable>
+		<variable name="1351-018">0</variable>
+		<variable name="1357+769">0</variable>
+		<variable name="1417+385">0</variable>
+		<variable name="1520+319">0</variable>
+		<variable name="1546+027">0</variable>
+		<variable name="1606+106">0</variable>
+		<variable name="1637+826">0</variable>
+		<variable name="1636+473">0</variable>
+		<variable name="1638+398">0</variable>
+		<variable name="1639-062">0</variable>
+		<variable name="1705+018">0</variable>
+		<variable name="1732+389">0</variable>
+		<variable name="1741-038">0</variable>
+		<variable name="1749+096">0</variable>
+		<variable name="1807+698">0</variable>
+		<variable name="1846+322">0</variable>
+		<variable name="1908-201">0</variable>
+		<variable name="1909+161">0</variable>
+		<variable name="2008-159">0</variable>
+		<variable name="2059+034">0</variable>
+		<variable name="2113+293">0</variable>
+		<variable name="2127-096">0</variable>
+		<variable name="2141+175">0</variable>
+		<variable name="2143-156">0</variable>
+		<variable name="2149+056">0</variable>
+		<variable name="2209+236">0</variable>
+		<variable name="2214+350">0</variable>
+		<variable name="2215+150">0</variable>
+		<variable name="2227-088">0</variable>
+		<variable name="2229+695">0</variable>
+		<variable name="2250+194">0</variable>
+		<variable name="2255-282">0</variable>
+		<variable name="2318+049">0</variable>
+		<variable name="2355-106">0</variable>
+		<variable name="2356+385">0</variable>
+		<variable name="0454+844">0</variable>
+		<variable name="0821+394">0</variable>
+		<variable name="2254+074">0</variable>
+		<variable name="0920+390">0</variable>
+		<variable name="2319+317">0</variable>
+		<variable name="0749+540">0</variable>
+		<variable name="0355+508">0</variable>
+		<variable name="1656-075">0</variable>
+		<variable name="2013+163">0</variable>
+		<variable name="0738+491">0</variable>
+		<variable name="1145+268">0</variable>
+		<variable name="1849+670">0</variable>
+		<variable name="0307+380">0</variable>
+		<variable name="0537-441">0</variable>
+		<variable name="2126-158">0</variable>
+		<variable name="1958-179">0</variable>
+		<variable name="0434-188">0</variable>
+		<variable name="1652+398">0</variable>
+		<variable name="2335-027">0</variable>
+		<variable name="0322+222">0</variable>
+		<variable name="0544+273">0</variable>
+		<variable name="1923+210">0</variable>
+		<variable name="2144+092">0</variable>
+		<variable name="1746+470">0</variable>
+		<variable name="0506+101">0</variable>
+		<variable name="1059+282">0</variable>
+		<variable name="1745+624">0</variable>
+		<variable name="0808+019">0</variable>
+		<variable name="0235+164">0</variable>
+		<variable name="0736+017">0</variable>
+		<variable name="0854-108">0</variable>
+		<variable name="1053+704">0</variable>
+		<variable name="1555+001">0</variable>
+		<variable name="1803+784">0</variable>
+		<variable name="0743+277">0</variable>
+		<variable name="0805+410">0</variable>
+		<variable name="0019+058">0</variable>
+		<variable name="0202+319">0</variable>
+		<variable name="1639+230">0</variable>
+		<variable name="1751+288">0</variable>
+		<variable name="2223-052">0</variable>
+		<variable name="0646-306">0</variable>
+		<variable name="1144-379">0</variable>
+		<variable name="2000+472">0</variable>
+		<variable name="0613+570">0</variable>
+		<variable name="1243-072">0</variable>
+		<variable name="1244-255">0</variable>
+		<variable name="0109+224">0</variable>
+		<variable name="1502+036">0</variable>
+		<variable name="1504+377">0</variable>
+		<variable name="0606-223">0</variable>
+		<variable name="0215+015">0</variable>
+		<variable name="1424-418">0</variable>
+		<variable name="1030+415">0</variable>
+		<variable name="scale">0</variable>
+	</priorities>
+</VieSchedpp>

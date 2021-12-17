@@ -5,6 +5,7 @@ TEST
 venv
 settings.ini
 tmp_download/
+STP
 
 __pycache__
 /upload_scheduler.txt

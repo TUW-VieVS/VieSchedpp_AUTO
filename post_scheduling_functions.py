@@ -1,4 +1,5 @@
 import configparser
+import datetime
 import os
 import re
 import shutil
@@ -10,6 +11,109 @@ import pexpect
 
 from Helper import read_sources, Message
 
+
+def fill_vex_template(**kwargs):
+    session = kwargs["session"]
+    path_selected = kwargs["path"]
+    version = kwargs["version"]
+    code = kwargs["session"]["code"].lower()
+    name_vex = code + ".vex"
+    path_to_vex = (Path(path_selected) / name_vex).resolve()
+
+    # generate backup of vex file
+    backup_vex = Path(path_selected) / (code + ".vex.orig.VieSchedpp")
+    Message.addMessage(f"    - generate backup of {path_to_vex} to {backup_vex}", dump="session")
+    shutil.copy(path_to_vex, backup_vex)
+
+    # copy .vex template
+    path_to_vex.unlink()
+    program_code = kwargs["program_code"]
+    path_vex_template = Path("Templates") / program_code / "vex.tmpl"
+    shutil.copy(path_vex_template, path_to_vex)
+
+    with open(path_to_vex, "r") as f:
+        vex_new = f.read()
+    vex_new = vex_new.replace("__@EXP_CODE@__", session["code"])
+    vex_new = vex_new.replace("__@NOMINAL_START@__", f"{session['date']}")
+    vex_new = vex_new.replace("__@DURATION@__", f"{session['duration']:.1f}")
+    vex_new = vex_new.replace("__@EXP_DESCR@__", f"{session['name']}")
+    vex_new = vex_new.replace("__@DATE_START@__", f"{session['date']:%Yy%jd%Hh%Mm%Ss}")
+    vex_new = vex_new.replace("__@SCHEDULE_REVISION@__", f"{version}")
+    vex_new = vex_new.replace("__@DATE_STOP@__",
+                              f"{session['date'] + datetime.timedelta(hours=session['duration']):%Yy%jd%Hh%Mm%Ss}")
+    vex_new = vex_new.replace("__@SCHEDULER_NAME@__", "Matthias Schartner")
+    vex_new = vex_new.replace("__@SCHEDULER_EMAIL@__", "mschartner@ethz.ch")
+    vex_new = vex_new.replace("__@HDS@__", "v01")
+
+    additional_blocks = ["$SCHED", "$SOURCE"]
+    additional_text = []
+    append = False
+    with open(backup_vex, "r") as f:
+        for l in f:
+            if any([l.startswith(s) for s in additional_blocks]):
+                append = True
+            elif l.startswith("$"):
+                append = False
+
+            if append:
+                additional_text.append(l)
+
+    vex_new = "".join([vex_new, *additional_text])
+
+    with open(path_to_vex, "w") as f:
+        f.write(vex_new)
+
+    pass
+
+
+def fill_skd_template(**kwargs):
+    path_selected = kwargs["path"]
+    code = kwargs["session"]["code"].lower()
+    name_skd = code + ".skd"
+    path_to_skd = (Path(path_selected) / name_skd).resolve()
+
+    # generate backup of skd file
+    backup_skd = Path(path_selected) / (code + ".skd.orig.VieSchedpp")
+    Message.addMessage(f"    - generate backup of {path_to_skd} to {backup_skd}", dump="session")
+    shutil.copy(path_to_skd, backup_skd)
+
+    # copy .skd template
+    path_to_skd.unlink()
+    program_code = kwargs["program_code"]
+    path_skd_template = Path("Templates") / program_code / "skd.tmpl"
+    shutil.copy(path_skd_template, path_to_skd)
+
+    with open(path_to_skd, "r") as f:
+        skd_new = f.read()
+
+    additional_blocks = ["$CATALOGS_USED", "$SOURCES", "$SKED", "$FLUX"]
+    additional_text = {}
+    append = False
+    with open(backup_skd, "r") as f:
+        for l in f:
+            if any([l.startswith(s) for s in additional_blocks]):
+                if append == True:
+                    skd_new = skd_new.replace(key, "".join(txt))
+                key = l
+                txt = []
+                append = True
+            elif l.startswith("$") and append == True:
+                append = False
+                skd_new = skd_new.replace(key, "".join(txt))
+
+            if append:
+                txt.append(l)
+
+    new_lines = skd_new.split("\n")
+    with open(backup_skd, "r") as f:
+        old_lines = f.read()
+    old_lines = old_lines.split("\n")
+    new_lines[:15] = old_lines[:15]
+
+    skd_new = "\n".join(new_lines)
+
+    with open(path_to_skd, "w") as f:
+        f.write(skd_new)
 
 def _vex_in_sked_format(**kwargs):
     Message.addMessage("\nconvert .vex file to \"sked\" format for external parsers", dump="session")
@@ -23,7 +127,7 @@ def _vex_in_sked_format(**kwargs):
     path_to_vex = (Path(path_selected) / name_vex).absolute()
     backup_vex = Path(path_selected) / (code + ".vex.orig.VieSchedpp")
     Message.addMessage(f"    - generate backup of {path_to_vex} to {backup_vex}", dump="session")
-    shutil.copy(str(path_to_vex), str(backup_vex))
+    shutil.copy(path_to_vex, backup_vex)
 
     settings = configparser.ConfigParser()
     settings.read("settings.ini")
@@ -40,7 +144,7 @@ def _vex_in_sked_format(**kwargs):
         return
 
     Message.addMessage(f"    - copy {path_to_skd} to {Path(path_sked) / name_skd}", dump="session")
-    shutil.copy(str(path_to_skd), str(Path(path_sked) / name_skd))
+    shutil.copy(path_to_skd, Path(path_sked) / name_skd)
 
     cwd = Path.cwd()
     try:
@@ -59,7 +163,7 @@ def _vex_in_sked_format(**kwargs):
 
         newVex = Path(path_sked) / name_vex
         Message.addMessage(f"    - copy new .vex file from {newVex} to {path_to_vex}", dump="session")
-        shutil.copy(str(newVex), str(path_to_vex))
+        shutil.copy(newVex, path_to_vex)
     except:
         Message.addMessage("[ERROR] failed to generate .vex file in \"sked\" format", dump="session")
         Message.addMessage(traceback.format_exc(), dump="session")

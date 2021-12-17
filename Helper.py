@@ -340,6 +340,8 @@ def find_function(module, function_names):
 
     for function_name in function_names.split(","):
         function_name = function_name.strip()
+        if not function_name:
+            continue
         functions_list = [f for n, f in inspect.getmembers(module) if inspect.isfunction(f) and n == function_name]
         if len(functions_list) == 1:
             f.append(functions_list[0])

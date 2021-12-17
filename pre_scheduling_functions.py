@@ -157,7 +157,7 @@ def prepare_source_list_crf(**kwargs):
         for l in calib_list:
             f.write(l + "\n")
 
-    tree.find("./catalogs/source").text = source_list.resolve()
+    tree.find("./catalogs/source").text = str(source_list.resolve())
 
 
 def test_mode(**kwargs):

@@ -6,7 +6,7 @@ import time
 import traceback
 from ftplib import FTP
 from ftplib import all_errors as ftp_errors
-
+from bs4 import BeautifulSoup
 
 import requests
 
@@ -81,6 +81,16 @@ def download_http():
 
     path = Path("STP")
     path.mkdir(exist_ok=True, parents=True)
+    archive_url = "http://astrogeo.org/cont/stp/"
+    main_r = requests.get(archive_url)
+    main_soup = BeautifulSoup(main_r.content, 'html5lib')
+    astrogeo_links = main_soup.findAll('a')
+    stp_links = [archive_url + l['href'] for l in astrogeo_links if l['href'].endswith(".stp")]
+
+    Message.addMessage(f"HTTPS download of stp files", dump="download")
+    for link in stp_links:
+        name = link.split("/")[-1]
+        url_response((path / name, link), False)
 
     # catalogs = [(path / "antenna.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
     #             (path / "equip.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
@@ -104,27 +114,30 @@ def download_http():
         url_response(cat)
 
 
-def url_response(cat):
+def url_response(cat, message_flag=True):
     """
     download a single file from https and store
 
     primarily used to download the CATALOG files
 
     :param cat: (output_path, download_url)
+    :param message_flag: output message (default = True)
     :return: None
     """
     path, url = cat
 
     # only download file if current file was last modified longer than 23 hours ago
-    Message.addMessage(f"HTTPS download: {path.name}... ", dump="download", endLine=False)
+    if message_flag:
+        Message.addMessage(f"HTTPS download: {path.name}... ", dump="download", endLine=False)
     if path.is_file():
         last_update = os.path.getmtime(path)
         now = datetime.datetime.now()
         new_update = time.mktime(now.timetuple())
         diff = new_update - last_update
         if diff < 23 * 3600:
-            Message.addMessage(f"up to date (last modified {diff / 3600.0:.2f} hours ago) -> no download",
-                               dump="download")
+            if message_flag:
+                Message.addMessage(f"up to date (last modified {diff / 3600.0:.2f} hours ago) -> no download",
+                                   dump="download")
             return
 
     try:
@@ -134,7 +147,8 @@ def url_response(cat):
             with open(path, 'wb') as f:
                 for ch in r:
                     f.write(ch)
-                Message.addMessage("successful", dump="download")
+                if message_flag:
+                    Message.addMessage("successful", dump="download")
         else:
             Message.addMessage("ERROR", dump="download")
 
