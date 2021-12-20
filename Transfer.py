@@ -167,8 +167,8 @@ def upload(path):
     code = path.parent.name
 
     skdFile = list(path.glob("*.skd"))[0]
-    txtFile = Path(skdFile.stem + ".txt")
-    vexFile = Path(skdFile.stem + ".vex")
+    txtFile = skdFile.parent / (skdFile.stem + ".txt")
+    vexFile = skdFile.parent / (skdFile.stem + ".vex")
 
     today = datetime.date.today()
     Message.addMessage(f"##### {code} #####\n", dump="download")
@@ -221,8 +221,8 @@ def upload_GOW_ftp(path):
     code = path.parent.name
 
     skdFile = list(path.glob("*.skd"))[0]
-    txtFile = Path(skdFile.stem + ".txt")
-    vexFile = Path(skdFile.stem + ".vex")
+    txtFile = skdFile.parent / (skdFile.stem + ".txt")
+    vexFile = skdFile.parent / (skdFile.stem + ".vex")
 
     today = datetime.date.today()
     Message.addMessage(f"##### {code} #####\n", dump="download")
