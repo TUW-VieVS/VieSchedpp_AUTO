@@ -166,7 +166,7 @@ def upload(path):
     path = path / "selected"
     code = path.parent.name
 
-    skdFile = path.glob("*.skd")[0]
+    skdFile = list(path.glob("*.skd"))[0]
     txtFile = Path(skdFile.stem + ".txt")
     vexFile = Path(skdFile.stem + ".vex")
 
@@ -220,7 +220,7 @@ def upload_GOW_ftp(path):
     path = path / "selected"
     code = path.parent.name
 
-    skdFile = path.glob("*.skd")[0]
+    skdFile = list(path.glob("*.skd"))[0]
     txtFile = Path(skdFile.stem + ".txt")
     vexFile = Path(skdFile.stem + ".vex")
 
