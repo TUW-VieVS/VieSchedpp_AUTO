@@ -1,5 +1,4 @@
 import datetime
-import glob
 from pathlib import Path
 import os
 import time
@@ -164,11 +163,10 @@ def upload(path):
     :param path: path to session
     :return: None
     """
-    flag = True
     path = path / "selected"
     code = path.parent.name
 
-    skdFile = Path(glob.glob(path / "*.skd")[0])
+    skdFile = path.glob("*.skd")[0]
     txtFile = Path(skdFile.stem + ".txt")
     vexFile = Path(skdFile.stem + ".vex")
 
@@ -222,7 +220,7 @@ def upload_GOW_ftp(path):
     path = path / "selected"
     code = path.parent.name
 
-    skdFile = Path(glob.glob(path / "*.skd")[0])
+    skdFile = path.glob("*.skd")[0]
     txtFile = Path(skdFile.stem + ".txt")
     vexFile = Path(skdFile.stem + ".vex")
 
