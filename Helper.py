@@ -299,7 +299,7 @@ def update_uploadScheduler(path, delta_days, upload=False):
         for l in f:
             if not l.strip():
                 continue
-            if not l.startswith(path):
+            if not l.startswith(str(path)):
                 txt += l
 
     txt += f"{path} {target_day} {flag}\n"
