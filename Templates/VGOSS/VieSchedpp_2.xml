@@ -142,7 +142,14 @@
 	<weightFactor>
 		<skyCoverage>0.02</skyCoverage>
 		<duration>1</duration>
+		<weightDeclination>0.5</weightDeclination>
+		<declinationStartWeight>40</declinationStartWeight>
+		<declinationFullWeight>10</declinationFullWeight>
 	</weightFactor>
+	<focusCorners>
+		<cadence>600</cadence>
+		<nscans>2</nscans>
+	</focusCorners>
     <multisched>
         <weight_factor_sky-coverage>
             <value>0</value>
@@ -198,7 +205,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_internalModel/>
+					<backup_value>0.14999999999999999</backup_value>
 				</source>
 			</bandPolicy>
 			<bandPolicy name="B">
@@ -209,7 +216,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_internalModel/>
+					<backup_value>0.14999999999999999</backup_value>
 				</source>
 			</bandPolicy>
 			<bandPolicy name="C">
@@ -220,7 +227,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_internalModel/>
+					<backup_value>0.14999999999999999</backup_value>
 				</source>
 			</bandPolicy>
 			<bandPolicy name="D">
@@ -231,7 +238,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_internalModel/>
+					<backup_value>0.14999999999999999</backup_value>
 				</source>
 			</bandPolicy>
 		</bandPolicies>
