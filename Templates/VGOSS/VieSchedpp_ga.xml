@@ -142,7 +142,7 @@
 	<weightFactor>
 		<skyCoverage>0.02</skyCoverage>
 		<duration>1</duration>
-		<weightDeclination>0.5</weightDeclination>
+		<weightDeclination>0.75</weightDeclination>
 		<declinationStartWeight>40</declinationStartWeight>
 		<declinationFullWeight>10</declinationFullWeight>
 	</weightFactor>
