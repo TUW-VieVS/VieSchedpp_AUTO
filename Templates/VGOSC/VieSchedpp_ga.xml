@@ -180,6 +180,7 @@
     </weightFactor>
     <focusCorners>
         <cadence>900</cadence>
+ 		<nscans>2</nscans>
     </focusCorners>
     <multisched>
         <weight_factor_sky-coverage>

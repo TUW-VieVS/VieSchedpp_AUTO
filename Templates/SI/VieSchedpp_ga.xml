@@ -165,6 +165,10 @@
         <skyCoverage>0.02</skyCoverage>
         <duration>1</duration>
     </weightFactor>
+    <focusCorners>
+        <cadence>900</cadence>
+ 		<nscans>2</nscans>
+    </focusCorners>
     <multisched>
         <general_focus_corner_switch_cadence>
             <value>600</value>
