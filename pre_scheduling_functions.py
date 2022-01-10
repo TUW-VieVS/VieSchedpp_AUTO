@@ -65,6 +65,19 @@ def adjust_INT_observing_mode_VLBA_256_8_RDV(**kwargs):
         Message.addMessage("Changing freq, tracks and rx catalogs")
 
 
+def adjust_INT1_observing_mode(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+
+
+    flag = "ISHIOKA" in session["stations"]
+
+    if flag:
+        tree.find("./catalogs/rec").text = str((folder / "./rec.cat").resolve())
+        Message.addMessage("Changing rec cat to include ISHIOKA")
+
+
 def adjust_R1_observing_mode(**kwargs):
     """
     change target SNR based on baseline sensitivity
