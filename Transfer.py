@@ -78,18 +78,21 @@ def download_http():
     for cat in masters:
         url_response(cat)
 
-    path = Path("STP")
-    path.mkdir(exist_ok=True, parents=True)
-    archive_url = "http://astrogeo.org/cont/stp/"
-    main_r = requests.get(archive_url)
-    main_soup = BeautifulSoup(main_r.content, 'html5lib')
-    astrogeo_links = main_soup.findAll('a')
-    stp_links = [archive_url + l['href'] for l in astrogeo_links if l['href'].endswith(".stp")]
-
     Message.addMessage(f"HTTPS download of stp files", dump="download")
-    for link in stp_links:
-        name = link.split("/")[-1]
-        url_response((path / name, link), False)
+    try:
+        path = Path("STP")
+        path.mkdir(exist_ok=True, parents=True)
+        archive_url = "http://astrogeo.org/cont/stp/"
+        main_r = requests.get(archive_url)
+        main_soup = BeautifulSoup(main_r.content, 'html5lib')
+        astrogeo_links = main_soup.findAll('a')
+        stp_links = [archive_url + l['href'] for l in astrogeo_links if l['href'].endswith(".stp")]
+
+        for link in stp_links:
+            name = link.split("/")[-1]
+            url_response((path / name, link), False)
+    except Exception as e:
+        Message.addMessage(f"ERROR downloading STP files from astrogeo.org {e}")
 
     # catalogs = [(path / "antenna.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
     #             (path / "equip.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
