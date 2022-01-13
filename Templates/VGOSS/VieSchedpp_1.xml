@@ -53,7 +53,7 @@
 		<rec>../../CATALOGS/rec.cat</rec>
 		<rx>../../CATALOGS/rx.cat</rx>
 		<satellite/>
-		<source>./source.cat.vgos.cont</source>
+		<source>./source.cat.vgoss</source>
 		<tracks>../../CATALOGS/tracks.cat</tracks>
 		<stp_dir>../../STP</stp_dir>
 	</catalogs>
@@ -68,8 +68,8 @@
 				<available> 1</available>
 				<availableForFillinmode> 1</availableForFillinmode>
 				<weight> 1</weight>
-				<minScan> 30</minScan>
-				<maxScan> 600</maxScan>
+				<minScan> 15</minScan>
+				<maxScan> 30</maxScan>
 				<minSlewtime> 9</minSlewtime>
 				<maxSlewtime> 600</maxSlewtime>
 				<maxSlewDistance> 175</maxSlewDistance>
@@ -112,7 +112,6 @@
 				<minRepeat> 1080</minRepeat>
 				<minFlux> 0.05</minFlux>
 				<maxNumberOfScans> 999</maxNumberOfScans>
-				<fixedScanDuration>30</fixedScanDuration>
 			</parameter>
 		</parameters>
 	</source>
@@ -210,7 +209,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_value>0.14999999999999999</backup_value>
+					<backup_internalModel/>
 				</source>
 			</bandPolicy>
 			<bandPolicy name="B">
@@ -221,7 +220,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_value>0.14999999999999999</backup_value>
+					<backup_internalModel/>
 				</source>
 			</bandPolicy>
 			<bandPolicy name="C">
@@ -232,7 +231,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_value>0.14999999999999999</backup_value>
+					<backup_internalModel/>
 				</source>
 			</bandPolicy>
 			<bandPolicy name="D">
@@ -243,7 +242,7 @@
 				</station>
 				<source>
 					<tag>optional</tag>
-					<backup_value>0.14999999999999999</backup_value>
+					<backup_internalModel/>
 				</source>
 			</bandPolicy>
 		</bandPolicies>
@@ -268,6 +267,7 @@
 				<duration>120</duration>
 				<sources>__all__</sources>
 			</block>
+			<intent>FRINGE_FINDER</intent>
 		</calibration>
 	</rules>
 	<simulator>
