@@ -312,12 +312,16 @@ def plot_special_stats(ax, df, field):
     elif field == "COORD":
         df_rep_sta = df[[c for c in df.columns if c.startswith('sim_repeatability_') and not c.endswith("]")]].copy()
         df_rep_sta.drop("sim_repeatability_n_sim", axis=1, inplace=True)
+        df_rep_sta = df_rep_sta.replace(9999, np.nan)
+        df_rep_sta.dropna(axis=1, inplace=True)
         rep_sta = df_rep_sta.mean(axis=1)
         rep_sta_std = df_rep_sta.std(axis=1)
 
         df_mfe_sta = df[
             [c for c in df.columns if c.startswith('sim_mean_formal_error_') and not c.endswith("]")]].copy()
         df_mfe_sta.drop("sim_mean_formal_error_n_sim", axis=1, inplace=True)
+        df_mfe_sta = df_mfe_sta.replace(9999, np.nan)
+        df_mfe_sta.dropna(axis=1, inplace=True)
         mfe_sta = df_mfe_sta.mean(axis=1)
         mfe_sta_std = df_mfe_sta.std(axis=1)
 
