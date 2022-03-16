@@ -76,7 +76,7 @@
         <antenna>../../CATALOGS/antenna.cat</antenna>
         <equip>../../CATALOGS/equip.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
-        <freq>../../CATALOGS/freq.cat</freq>
+        <freq>./freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
         <loif>../../CATALOGS/loif.cat</loif>
         <mask>../../CATALOGS/mask.cat</mask>
