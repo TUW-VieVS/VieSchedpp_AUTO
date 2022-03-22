@@ -287,6 +287,25 @@ def VGOS_Broadband_block_512_8192_4096(**kwargs):
         f.write(skd_content)
 
 
+def VGOS_Broadband_block_512_8192_8192(**kwargs):
+    path = kwargs["path"]
+    session = kwargs["session"]
+    stations = session["stations"]
+
+    broadband_string = "$BROADBAND\n"
+    for sta in stations:
+        broadband_string += f"{sta:8s}   512.00    8192       4096\n"
+
+    skd_file = next(Path(path).glob("*.skd"))
+    with open(skd_file, 'r') as f:
+        skd_content = f.read()
+
+    skd_content = skd_content.replace("$BROADBAND\n", broadband_string)
+
+    with open(skd_file, 'w') as f:
+        f.write(skd_content)
+
+
 def VGOS_fake_256mbps_mode(**kwargs):
     path = kwargs["path"]
     session = kwargs["session"]
@@ -299,7 +318,7 @@ def VGOS_fake_256mbps_mode(**kwargs):
     with open(skd_file, 'r') as f:
         skd_content = f.read()
 
-    skd_content = skd_content.replace("* no sked observind mode used! \n", codes)
+    skd_content = skd_content.replace("* no sked observing mode used! \n", codes)
     skd_content = re.sub(r'A\s+\d+\.?\d?\s+B\s+\d+\.?\d?\s+C\s+\d+\.?\d?\s+D\s+\d+\.?\d?', "X 2500.0 S 2500.0",
                          skd_content)
     skd_content = skd_content + "$PROCS\n$DUMMY\n"
