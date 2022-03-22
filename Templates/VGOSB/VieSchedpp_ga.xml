@@ -107,7 +107,7 @@
                 <maxTotalObsTime>999999</maxTotalObsTime>
                 <preob>4</preob>
                 <midob>0</midob>
-                <systemDelay>2</systemDelay>
+                <systemDelay>0</systemDelay>
             </parameter>
             <parameter name="down">
                 <available>0</available>
