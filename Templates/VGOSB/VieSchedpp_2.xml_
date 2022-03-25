@@ -226,7 +226,7 @@
         </simple>
         <bandPolicies>
             <bandPolicy name="A">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -237,7 +237,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="B">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -248,7 +248,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="C">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -259,7 +259,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="D">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>

@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VieSchedpp>
-	<rules>
-		<calibration>
-			<block>
-				<startTime>450</startTime>
-				<scans>1</scans>
-				<duration>300</duration>
-				<sources>__all__</sources>
-			</block>
-		</calibration>
-	</rules>
     <software>
         <name>VieSched++ GUI</name>
         <GUI_version>b64510b4dfa3dfe53aaf243e1315c0d36158bbae</GUI_version>
@@ -39,7 +29,7 @@
         <logSeverityConsole>error</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-        <versionOffset>200</versionOffset>
+        <versionOffset>1000</versionOffset>
     </general>
     <output>
         <experimentDescription>VGOS-B0329</experimentDescription>
@@ -105,7 +95,7 @@
                 <available>1</available>
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
-                <minScan>15</minScan>
+                <minScan>10</minScan>
                 <maxScan>30</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
@@ -117,7 +107,7 @@
                 <maxTotalObsTime>999999</maxTotalObsTime>
                 <preob>4</preob>
                 <midob>0</midob>
-                <systemDelay>2</systemDelay>
+                <systemDelay>0</systemDelay>
             </parameter>
             <parameter name="down">
                 <available>0</available>
@@ -149,8 +139,16 @@
                 <minRepeat>1200</minRepeat>
                 <minFlux>0.15</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
+                <forceSameObservingDuration>1</forceSameObservingDuration>
             </parameter>
         </parameters>
+        <groups>
+            <group name="calib">
+                <member>0355+508</member>
+                <member>0552+398</member>
+                <member>0059+581</member>
+            </group>
+        </groups>
     </source>
     <baseline>
         <setup>
@@ -177,6 +175,12 @@
     <weightFactor>
         <skyCoverage>1</skyCoverage>
         <duration>1</duration>
+        <weightDeclination>1</weightDeclination>
+        <declinationStartWeight>15</declinationStartWeight>
+        <declinationFullWeight>0</declinationFullWeight>
+        <weightLowElevation>1</weightLowElevation>
+        <lowElevationStartWeight>25</lowElevationStartWeight>
+        <lowElevationFullWeight>15</lowElevationFullWeight>
     </weightFactor>
     <focusCorners>
         <cadence>900</cadence>
@@ -191,9 +195,17 @@
             <value>0</value>
             <value>1</value>
         </weight_factor_duration>
+        <weight_factor_low_declination>
+            <value>0</value>
+            <value>1</value>
+        </weight_factor_low_declination>
+        <weight_factor_low_elevation>
+            <value>0</value>
+            <value>1</value>
+        </weight_factor_low_elevation>
         <general_focus_corner_switch_cadence>
             <value>300</value>
-            <value>1200</value>
+            <value>900</value>
         </general_focus_corner_switch_cadence>
         <maxNumber>384</maxNumber>
         <pick_random>true</pick_random>
@@ -238,7 +250,7 @@
         </simple>
         <bandPolicies>
             <bandPolicy name="A">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -249,7 +261,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="B">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -260,7 +272,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="C">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -271,7 +283,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="D">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -283,6 +295,22 @@
             </bandPolicy>
         </bandPolicies>
     </mode>
+    <rules>
+        <calibration>
+            <block>
+                <startTime>600</startTime>
+                <scans>1</scans>
+                <duration>60</duration>
+                <sources>calib</sources>
+            </block>
+            <block>
+                <startTime>3000</startTime>
+                <scans>1</scans>
+                <duration>60</duration>
+                <sources>calib</sources>
+            </block>
+        </calibration>
+    </rules>
     <simulator>
         <number_of_simulations>1000</number_of_simulations>
         <station name="__all__">
