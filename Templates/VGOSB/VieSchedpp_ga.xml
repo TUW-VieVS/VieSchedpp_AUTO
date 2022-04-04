@@ -136,7 +136,7 @@
                 <minElevation>0</minElevation>
                 <minSunDistance>4</minSunDistance>
                 <minNumberOfStations>3</minNumberOfStations>
-                <minRepeat>1200</minRepeat>
+                <minRepeat>900</minRepeat>
                 <minFlux>0.15</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
                 <forceSameObservingDuration>1</forceSameObservingDuration>
@@ -155,6 +155,11 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
+            <setup>
+                <member>Oe-Ow</member>
+                <parameter>ignore</parameter>
+                <transition>hard</transition>
+            </setup>
         </setup>
         <parameters>
             <parameter name="default">
@@ -162,6 +167,9 @@
                 <minScan>0</minScan>
                 <maxScan>9999</maxScan>
                 <weight>1</weight>
+            </parameter>
+            <parameter name="ignore">
+                <ignore>1</ignore>
             </parameter>
         </parameters>
     </baseline>
