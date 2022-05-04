@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 import time
 import traceback
-from ftplib import FTP
+from ftplib import FTP, FTP_TLS
 from ftplib import all_errors as ftp_errors
 from bs4 import BeautifulSoup
 
@@ -177,11 +177,11 @@ def upload(path):
     Message.addMessage(f"##### {code} #####\n", dump="download")
     Message.addMessage("connecting to: ivs.bkg.bund.de\n", dump="download")
 
-    pw = read_pw_from_file(Path("BKG_pw.txt"))
+    user, pw = read_pw_from_file(Path("BKG_pw.txt"))
     if pw is not None:
-        ftp = FTP("ivs.bkg.bund.de")
+        ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
 
-        ftp.login("ivsincoming", pw)  # *** INSERT PASSWORD HERE (replace pw) ***
+        ftp.login("ivsincoming", pw)  # *** INSERT USER AND PASSWORD HERE (replace user, pw) ***
         ftp.set_pasv(True)
 
         Message.addMessage("uploading files to BKG server", dump="download")
@@ -207,8 +207,9 @@ def upload(path):
         for l2 in content:
             Message.addMessage(l2, dump="log")
     else:
-        Message.addMessage("No password for IVS BKG server was provided. Please store password in a \"BKG_pw.txt\" "
-                           "file or insert password in source code (See file \"Transfer.py\" line with comment "
+        Message.addMessage("No password for IVS BKG server was provided. Please store username and password in a "
+                           "\"BKG_pw.txt\" file  (seperated by a whitespace) or insert password in source code "
+                           "(See file \"Transfer.py\" line with comment "
                            "\"*** INSERT PASSWORD HERE (replace pw) ***\"", dump="log")
 
 
@@ -231,10 +232,10 @@ def upload_GOW_ftp(path):
     Message.addMessage(f"##### {code} #####\n", dump="download")
     Message.addMessage("connecting to: 141.74.2.12\n", dump="download")
 
-    pw = read_pw_from_file("GOW_ftp_pw.txt")
+    user, pw = read_pw_from_file("GOW_ftp_pw.txt")
     if pw is not None:
         ftp = FTP("141.74.1.12")
-        ftp.login("vlbi", pw)  # *** INSERT PASSWORD HERE (replace pw) ***
+        ftp.login(user, pw)  # *** INSERT USER AND PASSWORD HERE (replace user, pw) ***
         ftp.set_pasv(True)
 
         Message.addMessage("uploading files to GOW ftp server", dump="download")
@@ -271,6 +272,21 @@ def upload_GOW_ftp(path):
 def read_pw_from_file(file):
     if file.is_file():
         with open(file) as f:
-            return f.read().strip()
+            return f.read().strip().split()
     else:
-        return None
+        return ("", "")
+
+
+if __name__ == "__main__":
+    user, pw = read_pw_from_file(Path("BKG_pw.txt"))
+    ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
+    content = []
+    ftp.retrlines('LIST', content.append)
+
+    for file in [Path("/home/mschartner/tmp/s22130.skd")]:
+        with open(file, 'rb') as f:
+            msg = ftp.storbinary(f'STOR {file.name}', f)
+
+    content2 = []
+    ftp.retrlines('LIST', content2.append)
+    pass
