@@ -181,7 +181,7 @@ def upload(path):
     if pw is not None:
         ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
 
-        ftp.login("ivsincoming", pw)  # *** INSERT USER AND PASSWORD HERE (replace user, pw) ***
+        ftp.login(user, pw)  # *** INSERT USER AND PASSWORD HERE (replace user, pw) ***
         ftp.set_pasv(True)
 
         Message.addMessage("uploading files to BKG server", dump="download")
