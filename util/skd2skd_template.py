@@ -9,7 +9,7 @@ def skd2skd_template(path_source, path_template):
     working .skd file (the template - e.g. an old successful session) and want to add the new schedule into this
     template. In particular, it will exchange parts of the $EXPER and $PARA block, as well as the full $SOURCES,
     $FLUX and $SKED blocks. The original schedule file will be overwritten by this function, but a backup is generated
-    in the same folder named "{path_source}.skd.old"
+    in the same folder named "{path_source}.skd.orig"
 
     Parameters
     ----------
@@ -35,7 +35,7 @@ def skd2skd_template(path_source, path_template):
         template = f.read()
 
     # make a backup of the original schedule
-    shutil.copy(path_source, path_source + ".old")
+    shutil.copy(path_source, path_source + ".orig")
 
     # read the schedule
     with open(path_source) as f:
@@ -79,11 +79,15 @@ def skd2skd_template(path_source, path_template):
 if __name__ == "__main__":
     doc = "Replaces some elements in the $EXPER and $PARA block, as well as the full $SOURCES, $FLUX and $SKED " \
           "blocks in the template with the values from the source. The original skd file will get renamed to " \
-          "session.skd.old. The merged schedule is stored in the source location."
+          "session.skd.orig. The merged schedule is stored in the source location."
 
     parser = argparse.ArgumentParser(description=doc)
     parser.add_argument("-s", "--source", help="path to input skd file")
     parser.add_argument("-t", "--template", help="path to template skd file")
 
     args = parser.parse_args()
+    from pathlib import Path
+
+    if Path(args.source + ".orig").is_file():
+        shutil.copy(args.source + ".orig", args.source)
     skd2skd_template(args.source, args.template)
