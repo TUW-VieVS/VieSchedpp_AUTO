@@ -149,11 +149,11 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
-            <setup_>
+            <setup>
                 <member>Oe-Ow</member>
                 <parameter>ignore</parameter>
                 <transition>hard</transition>
-            </setup_>
+            </setup>
         </setup>
         <parameters>
             <parameter name="default">
