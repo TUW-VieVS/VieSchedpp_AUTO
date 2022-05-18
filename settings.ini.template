@@ -48,6 +48,16 @@ function = select_best_intensives
 statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
 upload = No
 
+[V2]
+master = master$YY-int.txt
+post_scheduling_functions = fill_skd_template
+pattern = VGOS-2\d{4}
+schedule_date = 12
+upload_date = 9
+contact = mschartner@ethz.ch
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
+upload = No
 
 [VGOSS]
 master = master$YY-int.txt

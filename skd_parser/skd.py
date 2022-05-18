@@ -7,6 +7,9 @@ from skd_parser.observation import Observation, ObservationList
 from skd_parser.scan import Scan, ScanList
 from skd_parser.source import Source, SourceList
 from skd_parser.station import Station, StationList
+from skd_parser.equip import Equip, Equip_el
+from skd_parser.mask import Step, Line
+from skd_parser.flux import B, M
 
 
 class skdParser:
@@ -17,8 +20,16 @@ class skdParser:
         self.sources = SourceList()
         self.times = {}
         self.session_name = None
+        self.data_rate = {"x": 0, "s": 0}
+        self.obs_mode_eta = 0
+        self.maxscan = 0
+        self.snr = {"X": 0, "S": 0}
 
     def parse_stations(self):
+
+        equip2sta = dict()
+        mask2sta = dict()
+
         with open(self.filename, 'r') as f:
             station_section = False
             for line in f.readlines():
@@ -27,7 +38,7 @@ class skdParser:
                 if station_section:
                     ant_info = re.search(
                         r'^A\s+(\S+)\s+(\S+)\s+\S+\s+\S+\s+(\S+)\s+(\S+)\s+'
-                        r'(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+\S+\s+\S+\s+\S+',
+                        r'(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)',
                         line)
                     pos_info = re.search(r'^P\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+\S+\s+(\S+)\s+(\S+)', line)
 
@@ -39,6 +50,9 @@ class skdParser:
 
                         station.name1 = ant_info.group(1)
                         station.name = ant_info.group(2)
+                        equip2sta[ant_info.groups()[-2].lower()] = station.name
+                        mask2sta[ant_info.groups()[-1].lower()] = station.name
+
                         station.c1 = float(ant_info.group(4))
                         station.c2 = float(ant_info.group(8))
                         station.azmax = float(ant_info.group(5)) * np.pi / 180.
@@ -61,6 +75,42 @@ class skdParser:
                         station.z = float(pos_info.group(5))
                         station.lon = np.pi / 180. * (360 - float(pos_info.group(6)))
                         station.lat = np.pi / 180. * float(pos_info.group(7))
+
+                    if line.startswith("H"):
+                        tmp = line.split()
+                        mask = [float(x) for x in tmp[2:]]
+                        if len(mask) % 2 == 0:
+                            mask = Line(mask)
+                        else:
+                            mask = Step(mask)
+                        station = self.stations.get_station_by_name(mask2sta[tmp[1].lower()])
+                        station.mask = mask
+
+                    if line.startswith("T"):
+                        tmp = line.split()
+                        sefd_x = float(tmp[6])
+                        sefd_s = float(tmp[8])
+                        if len(tmp) == 11:
+                            eq = Equip(sefd_x, sefd_s)
+                        elif len(tmp) == 19:
+                            band_a = tmp[9]
+                            coef_a = [float(a) for a in tmp[10:13]]
+                            band_b = tmp[13]
+                            coef_b = [float(a) for a in tmp[14:17]]
+                            if band_a.lower() == "x":
+                                coef_x = coef_a
+                                coef_s = coef_b
+                            else:
+                                coef_x = coef_b
+                                coef_s = coef_a
+
+                            eq = Equip_el(sefd_x, sefd_s, coef_x, coef_s)
+                        else:
+                            eq = Equip(1, 1)
+                            print("failed to parse equip block (not critical)")
+
+                        station = self.stations.get_station_by_name(equip2sta[tmp[1].lower()])
+                        station.equip = eq
 
     def parse_sources(self):
         with open(self.filename, 'r') as f:
@@ -160,14 +210,93 @@ class skdParser:
                             stations_last_obs[station] = observation
                             scan.observations.append(observation)
 
+    def parse_flux(self):
+        try:
+            with open(self.filename, 'r') as f:
+                flux_section = False
+                for line in f.readlines():
+                    if line.startswith("$"):
+                        flux_section = line.startswith("$FLUX")
+                        continue
+                    if flux_section:
+                        tmp = line.split()
+                        name = tmp[0]
+                        band = tmp[1].lower()
+                        type = tmp[2]
+                        src = self.sources.get_source_by_name(name)
+                        if src.flux is None:
+                            if type == "M":
+                                src.flux = M()
+                            elif type == "B":
+                                src.flux = B()
+                            else:
+                                Exception("ERROR parsing flux block")
+                        coef = [float(a) for a in tmp[3:]]
+                        src.flux.add(band, coef)
+                        pass
+        except Exception as e:
+            print(e)
+
+    def parse_codes(self):
+        try:
+            with open(self.filename, 'r') as f:
+                codes_section = False
+                bits = 2
+                bit2effic = {1: 0.6366 * 0.97, 2: 0.625 * 0.97}
+                chan_x = 0
+                chan_s = 0
+                count_F = 0
+                for line in f.readlines():
+                    if line.startswith("$"):
+                        codes_section = line.startswith("$CODES")
+                        continue
+                    if codes_section:
+                        if line.startswith("F"):
+                            count_F += 1
+
+                        if line.startswith("C") and count_F == 1:
+                            tmp = line.split()
+                            tracks = len(list(filter(None, tmp[-1].split(","))))
+                            bits = min(tracks, bits)
+                            freq = tmp[3]
+                            if freq.startswith("8"):
+                                chan_x += tracks
+                            elif freq.startswith("2"):
+                                chan_s += tracks
+                            else:
+                                print(f"cannot assign band to {line}")
+                        if line.startswith("R"):
+                            sample_rate = float(line.split()[-1])
+                            self.data_rate["x"] = chan_x * sample_rate
+                            self.data_rate["s"] = chan_s * sample_rate
+
+                            eta = bit2effic[bits]
+                            self.obs_mode_eta = eta
+                            break
+        except Exception as e:
+            print(e)
+
     def parse(self):
         with open(self.filename, 'r') as f:
             for line in f.readlines():
                 times = re.search(r"^SETUP\s+(\d+) SOURCE\s+(\d+) TAPETM\s+(\d+)", line)
+                maxscan = re.search(r"MAXSCAN\s+(\d+)", line)
+                first_snr = True
+                snr = re.search(r"SNR\s+\S+\s+(X|S)\s+(\S+)\s+\S+\s+(X|S)\s+(\S+)", line)
                 if times:
                     self.times['setup'] = int(times.group(1))
                     self.times['source'] = int(times.group(2))
                     self.times['tapetm'] = int(times.group(3))
+                if maxscan:
+                    self.maxscan = float(maxscan.group(1))
+                if first_snr and snr:
+                    band_a = snr.group(1).lower()
+                    snr_a = float(snr.group(2))
+                    band_b = snr.group(3).lower()
+                    snr_b = float(snr.group(4))
+                    self.snr[band_a] = snr_a
+                    self.snr[band_b] = snr_b
+
                 name = re.search(r"^\$EXPER (\S+)", line)
                 if name:
                     self.session_name = name.group(1)
@@ -175,6 +304,15 @@ class skdParser:
         self.parse_sources()
         self.parse_stations()
         self.parse_observations()
+        self.parse_flux()
+        self.parse_codes()
 
     def getScanList(self):
         return self.scans
+
+
+if __name__ == "__main__":
+    # skd = skdParser('/home/mschartner/Downloads/t2153.skd')
+    skd = skdParser('/home/mschartner/Downloads/z22129.skd')
+    skd.parse()
+    pass

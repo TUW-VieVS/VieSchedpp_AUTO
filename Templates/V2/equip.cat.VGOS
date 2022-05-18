@@ -1,0 +1,4 @@
+*Antenna    ID  DAT_Name  Heads Tape_len  X  SEFD   S SEFD  SEFD param/Equip
+*                         den/spd ft/min     (Jy)      (Jy)
+KOKEE12M   K2  KOKEE12M   2x56000  17640  A  2800.0   B  2300.0  C  2300.0   D  2800.0   DBBC MARK6
+WETTZ13S   WS  WETTZ13S   2x56000  17640  A  2000.0   B  2000.0  C  1700.0   D  2000.0   DBBC MARK6

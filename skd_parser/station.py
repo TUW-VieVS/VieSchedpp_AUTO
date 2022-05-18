@@ -1,5 +1,6 @@
 import operator
 from collections import OrderedDict
+from skd_parser.mask import Step
 
 import numpy as np
 
@@ -48,7 +49,12 @@ class Station:
 
         self.el_k = 0
         self.el_d = 0
+        self.mask = Step([0, 5, 360])
+        self.equip = None
         self.pw = OrderedDict()
+
+    def visible(self, az, el):
+        return self.mask.visible(az, el)
 
     def __repr__(self):
         return self.name

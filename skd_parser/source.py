@@ -4,6 +4,7 @@ class Source:
         self.ra = ra
         self.de = de
         self.altname = altname
+        self.flux = None
 
 
 class SourceList:
