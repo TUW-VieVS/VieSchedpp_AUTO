@@ -1,0 +1,4 @@
+*Antenna    ID  DAT_Name  Heads Tape_len  X  SEFD   S SEFD  SEFD param/Equip
+*                         den/spd ft/min     (Jy)      (Jy)
+GGAO12M    Gs  GGAO12M    2x56000  17640  A  3400.0   B  3200.0  C  2600.0   D  3700.0   RDBE MARK6
+RAEGYEB    Yj  RAEGYEB    2x56000  17640  A  2600.0   B  3000.0  C  3000.0   D  2400.0   DBBC MARK6

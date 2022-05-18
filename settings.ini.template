@@ -59,6 +59,17 @@ function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
+[VGYG]
+master = master$YY-int.txt
+post_scheduling_functions = fill_skd_template
+pattern = VGYG-\d{5}
+schedule_date = 12
+upload_date = 9
+contact = mschartner@ethz.ch
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
+upload = No
+
 [VGOSS]
 master = master$YY-int.txt
 post_scheduling_functions = fill_vex_template,fill_skd_template
