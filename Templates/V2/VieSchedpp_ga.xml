@@ -155,11 +155,6 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
-            <setup_>
-                <member>Oe-Ow</member>
-                <parameter>ignore</parameter>
-                <transition>hard</transition>
-            </setup_>
         </setup>
         <parameters>
             <parameter name="default">
