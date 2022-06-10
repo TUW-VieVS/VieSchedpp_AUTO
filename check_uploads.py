@@ -2,7 +2,7 @@ import datetime
 import re
 from string import Template
 from pathlib import Path
-from ftplib import FTP
+from ftplib import FTP_TLS
 from ftplib import all_errors as ftp_errors
 from SendMail import missing_schedule, network_changed
 import skd_parser.skd as skd_parser
@@ -50,8 +50,9 @@ def check_uploads(settings, fallback_email=""):
                 # download skd file
                 try:
                     # connect to FTP server
-                    ftp = FTP("ivs.bkg.bund.de")
-                    ftp.login()
+                    ftp = FTP_TLS("ivs.bkg.bund.de", user="anonymous", passwd="anonymous")
+                    ftp.prot_p()
+                    ftp.set_pasv(True)
 
                     ftp.cwd(folder)
 
