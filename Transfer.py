@@ -38,7 +38,7 @@ def download_ftp():
 
     try:
         # connect to FTP server
-        ftp = FTP("ivs.bkg.bund.de")
+        ftp = FTP("ivsopar.obspm.fr")
         ftp.login()
         ftp.cwd("pub/vlbi/ivscontrol")
 
