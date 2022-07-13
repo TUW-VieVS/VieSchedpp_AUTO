@@ -278,7 +278,16 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, program_code=code, version=best_idx)
 
         SendMail.writeMail(xml_dir_selected, emails, date=session["date"])
+        delete_files(xml_dir)
 
+
+def delete_files(folder):
+    for f in folder.iterdir():
+        if "VieSchedpp" in f.name or f.is_dir() or f.suffix == ".csv":
+            continue
+        else:
+            f.unlink()
+        pass
 
 def adjust_template(output_path:Path, session, templates, pre_scheduling_functions):
     """
