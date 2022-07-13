@@ -1,7 +1,6 @@
 from ftplib import FTP_TLS
 from pathlib import Path
 import argparse
-from Transfer import read_pw_from_file
 
 
 def upload(folder, force):
@@ -55,8 +54,15 @@ def _upload(skdFile, txtFile, vexFile):
         print("No password for IVS BKG server was provided. Please store username and password in a "
               "\"BKG_pw.txt\" file  (seperated by a whitespace) or insert password in source code "
               "(See file \"Transfer.py\" line with comment "
-              "\"*** INSERT PASSWORD HERE (replace pw) ***\"", dump="log")
+              "\"*** INSERT PASSWORD HERE (replace pw) ***\"")
 
+
+def read_pw_from_file(file):
+    if file.is_file():
+        with open(file) as f:
+            return f.read().strip().split()
+    else:
+        return ("", "")
 
 if __name__ == "__main__":
     doc = "upload all files in this folder."
