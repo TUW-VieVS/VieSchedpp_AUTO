@@ -94,21 +94,23 @@ def download_http():
     except Exception as e:
         Message.addMessage(f"ERROR downloading STP files from astrogeo.org {e}")
 
-    # catalogs = [(path / "antenna.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/antenna.cat"),
-    #             (path / "equip.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/equip.cat"),
-    #             (path / "flux.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/flux.cat"),
-    #             (path / "freq.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/freq.cat"),
-    #             (path / "hdpos.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/hdpos.cat"),
-    #             (path / "loif.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/loif.cat"),
-    #             (path / "mask.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/mask.cat"),
-    #             (path / "modes.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/modes.cat"),
-    #             (path / "position.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/position.cat"),
-    #             (path / "rec.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rec.cat"),
-    #             (path / "rx.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/rx.cat"),
-    #             (path / "source.cat.geodetic.good", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/source.cat.geodetic.good"),
-    #             (path /"tracks.cat", "https://ivscc.gsfc.nasa.gov/IVS_AC/sked_cat/tracks.cat")]
+    path = Path("CATALOGS")
+    catalogs = [(path / "antenna.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/antenna.cat"),
+                (path / "equip.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/equip.cat"),
+                (path / "flux.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/flux.cat"),
+                (path / "freq.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/freq.cat"),
+                (path / "hdpos.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/hdpos.cat"),
+                (path / "loif.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/loif.cat"),
+                (path / "mask.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/mask.cat"),
+                (path / "modes.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/modes.cat"),
+                (path / "position.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/position.cat"),
+                (path / "rec.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/rec.cat"),
+                (path / "rx.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/rx.cat"),
+                (path / "source.cat.geodetic.good",
+                 "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/source.cat.geodetic.good"),
+                (path / "tracks.cat", "https://raw.githubusercontent.com/nvi-inc/sked_catalogs/main/tracks.cat")]
 
-    catalogs = []
+    # catalogs = []
 
     # ThreadPool(13).imap_unordered(url_response, catalogs)
 
