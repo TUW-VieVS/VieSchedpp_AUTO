@@ -27,7 +27,7 @@
         <logSeverityConsole>error</logSeverityConsole>
         <logSeverityFile>info</logSeverityFile>
         <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
-        <versionOffset>300</versionOffset>
+        <versionOffset>1000</versionOffset>
     </general>
     <output>
         <experimentDescription>IN120-176</experimentDescription>
@@ -62,14 +62,14 @@
         <createNGS>true</createNGS>
         <createSKD>true</createSKD>
         <createVEX>true</createVEX>
-        <createSnrTable>false</createSnrTable>
+        <createSnrTable>true</createSnrTable>
         <createOperationsNotes>true</createOperationsNotes>
         <createSourceGroupStatistics>false</createSourceGroupStatistics>
         <createSkyCoverage>false</createSkyCoverage>
     </output>
     <catalogs>
         <antenna>../../CATALOGS/antenna.cat</antenna>
-        <equip>../../CATALOGS/equip.cat</equip>
+        <equip>./equip_Ag.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
@@ -135,8 +135,8 @@
                 <minSunDistance>4</minSunDistance>
                 <minScan>0</minScan>
                 <maxScan>9999</maxScan>
-                <minNumberOfStations>3</minNumberOfStations>
-                <minRepeat>1200</minRepeat>
+                <minNumberOfStations>2</minNumberOfStations>
+                <minRepeat>900</minRepeat>
                 <minFlux>0.05</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
             </parameter>
@@ -182,8 +182,8 @@
             <value>1</value>
         </weight_factor_duration>
         <general_focus_corner_switch_cadence>
-            <value>600</value>
-            <value>1200</value>
+            <value>450</value>
+            <value>1500</value>
         </general_focus_corner_switch_cadence>
         <maxNumber>512</maxNumber>
         <pick_random>true</pick_random>
@@ -206,7 +206,7 @@
         <skdMode>1024-16(AU)</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
-                <minSNR>20</minSNR>
+                <minSNR>30</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -217,7 +217,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="S">
-                <minSNR>15</minSNR>
+                <minSNR>22</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -229,6 +229,36 @@
             </bandPolicy>
         </bandPolicies>
     </mode>
+    <rules>
+        <calibration>
+            <block>
+                <startTime>1800</startTime>
+                <scans>1</scans>
+                <duration>600</duration>
+                <sources>__all__</sources>
+            </block>
+            <block>
+                <startTime>3600</startTime>
+                <scans>1</scans>
+                <duration>600</duration>
+                <sources>__all__</sources>
+            </block>
+            <block>
+                <startTime>5400</startTime>
+                <scans>1</scans>
+                <duration>600</duration>
+                <sources>__all__</sources>
+            </block>
+            <numberOfObservations_factor>5</numberOfObservations_factor>
+            <numberOfObservations_offset>0</numberOfObservations_offset>
+            <averageStations_factor>100</averageStations_factor>
+            <averageStations_offset>1</averageStations_offset>
+            <averageBaseline_factor>0</averageBaseline_factor>
+            <averageBaseline_offset>1</averageBaseline_offset>
+            <duration_factor>2</duration_factor>
+            <duration_offset>1</duration_offset>
+        </calibration>
+    </rules>
     <simulator>
         <number_of_simulations>1000</number_of_simulations>
         <station name="__all__">
@@ -247,7 +277,7 @@
     <solver>
         <EOP>
             <dUT1>
-                <interval>6</interval>
+                <interval>2</interval>
                 <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
@@ -257,7 +287,7 @@
             <linear_clock>true</linear_clock>
             <quadratic_clock>false</quadratic_clock>
             <PWL_ZWD>
-                <interval>300</interval>
+                <interval>120</interval>
                 <constraint>1.5</constraint>
             </PWL_ZWD>
         </station>
