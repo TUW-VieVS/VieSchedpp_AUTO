@@ -61,14 +61,14 @@
         <createNGS>true</createNGS>
         <createSKD>true</createSKD>
         <createVEX>true</createVEX>
-        <createSnrTable>false</createSnrTable>
+        <createSnrTable>true</createSnrTable>
         <createOperationsNotes>true</createOperationsNotes>
         <createSourceGroupStatistics>false</createSourceGroupStatistics>
         <createSkyCoverage>false</createSkyCoverage>
     </output>
     <catalogs>
         <antenna>../../CATALOGS/antenna.cat</antenna>
-        <equip>../../CATALOGS/equip.cat</equip>
+        <equip>./equip_Ag.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
@@ -134,8 +134,8 @@
                 <minSunDistance>4</minSunDistance>
                 <minScan>0</minScan>
                 <maxScan>9999</maxScan>
-                <minNumberOfStations>3</minNumberOfStations>
-                <minRepeat>1680</minRepeat>
+                <minNumberOfStations>2</minNumberOfStations>
+                <minRepeat>900</minRepeat>
                 <minFlux>0.05</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
             </parameter>
@@ -185,27 +185,36 @@
             <value>0.14999999999999999</value>
             <value>0.20000000000000001</value>
         </weight_factor_sky-coverage>
-    </multisched>
-    <multiCore>
-        <threads>auto</threads>
-        <jobScheduling>auto</jobScheduling>
-    </multiCore>
-    <mode>
-        <skdMode>1024-16(AU)</skdMode>
-        <bandPolicies>
-            <bandPolicy name="X">
-                <minSNR>20</minSNR>
-                <station>
-                    <tag>required</tag>
-                    <backup_value>0</backup_value>
-                </station>
-                <source>
+        <value>1200</value>
+        <value>900</value>
+        <value>600</value>
+    </general_focus_corner_switch_cadence>
+    <station_max_scan_time member="__all__">
+        <value>200</value>
+        <value>300</value>
+        <value>400</value>
+    </station_max_scan_time>
+</multisched>
+<multiCore>
+<threads>auto</threads>
+<jobScheduling>auto</jobScheduling>
+</multiCore>
+<mode>
+<skdMode>1024-16(AU)</skdMode>
+<bandPolicies>
+    <bandPolicy name="X">
+        <minSNR>30</minSNR>
+        <station>
+            <tag>required</tag>
+            <backup_value>0</backup_value>
+        </station>
+        <source>
                     <tag>required</tag>
                     <backup_internalModel/>
                 </source>
             </bandPolicy>
             <bandPolicy name="S">
-                <minSNR>15</minSNR>
+                <minSNR>22</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -215,28 +224,58 @@
                     <backup_internalModel/>
                 </source>
             </bandPolicy>
-        </bandPolicies>
-    </mode>
-    <simulator>
-        <number_of_simulations>1000</number_of_simulations>
-        <station name="__all__">
-            <wn>17.68</wn>
-            <clockASD>1</clockASD>
-            <clockDur>50</clockDur>
-            <tropo_Cn>1.8</tropo_Cn>
-            <tropo_H>2000</tropo_H>
-            <tropo_dH>200</tropo_dH>
-            <tropo_dHseg>2</tropo_dHseg>
-            <tropo_ve>8</tropo_ve>
-            <tropo_vn>0</tropo_vn>
-            <tropo_wzd0>150</tropo_wzd0>
-        </station>
-    </simulator>
-    <solver>
-        <EOP>
-            <dUT1>
-                <interval>6</interval>
-                <constraint>0.0001</constraint>
+</bandPolicies>
+</mode>
+<rules>
+<calibration>
+    <block>
+        <startTime>1800</startTime>
+        <scans>1</scans>
+        <duration>600</duration>
+        <sources>__all__</sources>
+    </block>
+    <block>
+        <startTime>3600</startTime>
+        <scans>1</scans>
+        <duration>600</duration>
+        <sources>__all__</sources>
+    </block>
+    <block>
+        <startTime>5400</startTime>
+        <scans>1</scans>
+        <duration>600</duration>
+        <sources>__all__</sources>
+    </block>
+    <numberOfObservations_factor>5</numberOfObservations_factor>
+    <numberOfObservations_offset>0</numberOfObservations_offset>
+    <averageStations_factor>100</averageStations_factor>
+    <averageStations_offset>1</averageStations_offset>
+    <averageBaseline_factor>0</averageBaseline_factor>
+    <averageBaseline_offset>1</averageBaseline_offset>
+    <duration_factor>2</duration_factor>
+    <duration_offset>1</duration_offset>
+</calibration>
+</rules>
+<simulator>
+<number_of_simulations>1000</number_of_simulations>
+<station name="__all__">
+    <wn>17.68</wn>
+    <clockASD>1</clockASD>
+    <clockDur>50</clockDur>
+    <tropo_Cn>1.8</tropo_Cn>
+    <tropo_H>2000</tropo_H>
+    <tropo_dH>200</tropo_dH>
+    <tropo_dHseg>2</tropo_dHseg>
+    <tropo_ve>8</tropo_ve>
+    <tropo_vn>0</tropo_vn>
+    <tropo_wzd0>150</tropo_wzd0>
+</station>
+</simulator>
+<solver>
+<EOP>
+    <dUT1>
+        <interval>2</interval>
+        <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
         <station name="__all__">
@@ -245,7 +284,7 @@
             <linear_clock>true</linear_clock>
             <quadratic_clock>false</quadratic_clock>
             <PWL_ZWD>
-                <interval>300</interval>
+                <interval>120</interval>
                 <constraint>1.5</constraint>
             </PWL_ZWD>
         </station>
