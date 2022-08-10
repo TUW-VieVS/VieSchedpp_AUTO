@@ -18,7 +18,7 @@
         <subnettingMinNStaAllBut>1</subnettingMinNStaAllBut>
         <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
         <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
-        <idleToObservingTime>true</idleToObservingTime>
+        <idleToObservingTime>false</idleToObservingTime>
         <stations>
             <station>KOKEE</station>
             <station>WETTZELL</station>
