@@ -185,16 +185,17 @@
             <value>0.14999999999999999</value>
             <value>0.20000000000000001</value>
         </weight_factor_sky-coverage>
-        <value>1200</value>
-        <value>900</value>
-        <value>600</value>
-    </general_focus_corner_switch_cadence>
-    <station_max_scan_time member="__all__">
-        <value>200</value>
-        <value>300</value>
-        <value>400</value>
-    </station_max_scan_time>
-</multisched>
+        <general_focus_corner_switch_cadence>
+            <value>1200</value>
+            <value>900</value>
+            <value>600</value>
+        </general_focus_corner_switch_cadence>
+        <station_max_scan_time member="__all__">
+            <value>200</value>
+            <value>300</value>
+            <value>400</value>
+        </station_max_scan_time>
+    </multisched>
 <multiCore>
 <threads>auto</threads>
 <jobScheduling>auto</jobScheduling>
