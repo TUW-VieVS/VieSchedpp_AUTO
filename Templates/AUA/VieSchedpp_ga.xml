@@ -132,6 +132,12 @@
                 <axis2UpOffset>0</axis2UpOffset>
             </cableWrapBuffer>
         </cableWrapBuffers>
+        <sefdAdjustment>
+            <fixed member="HOBART12">
+                <band name="S">5700</band>
+                <band name="X">5300</band>
+            </fixed>
+        </sefdAdjustment>
     </station>
     <source>
         <setup>
