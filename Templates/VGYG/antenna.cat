@@ -1,0 +1,6 @@
+*
+*ID Name    Axis  Offset   Rate1 C1  Lim1   Lim1   Rate2  C2  Lim2  Lim2  Diam  PO EQ  MS 
+*
+ G GGAO12M  AZEL   0.00000 293.0   5  180.0  720.0   70.0   3   6.5  88.0  12.0 Gs Gs  Gs
+ R RAEGSMAR AZEL   0.00000 720.0   3    0.0  420.0  360.0   3   5.0  89.0  13.2 Sa Sa  Sa
+ R RAEGYEB  AZEL   0.00000 720.0   3  300.0  780.0  360.0   3   5.0  89.0  13.2 Yj Yj  --
