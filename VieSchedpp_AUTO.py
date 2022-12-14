@@ -68,7 +68,8 @@ def start_scheduling(settings):
             try:
                 target_day = datetime.datetime.strptime(args.date, '%Y-%m-%d')
                 delta_days = (target_day.date() - today).days
-                year = target_day.year % 100
+                syear = target_day.year % 100
+                year = target_day.year
             except ValueError:
                 print(f"ERROR while interpreting target date (-d option): {args.date}")
                 print("    must be in format \"yyyy-mm-dd\" (e.g.: 2020-01-31)")
@@ -77,15 +78,18 @@ def start_scheduling(settings):
             try:
                 target_day = datetime.datetime.strptime(delta_days, '%Y-%m-%d')
                 delta_days = (target_day.date() - today).days
-                year = target_day.year % 100
+                syear = target_day.year % 100
+                year = target_day.year
             except ValueError:
                 if delta_days.isnumeric():
                     delta_days = int(delta_days)
                     target_day = today + datetime.timedelta(days=delta_days)
-                    year = target_day.year % 100
+                    syear = target_day.year % 100
+                    year = target_day.year
                 else:
                     delta_days = delta_days.lower()
-                    year = today.year % 100
+                    syear = today.year % 100
+                    year = today.year
 
         delta_days_upload = s_program.getint("upload_date", 7)
         statistic_field = s_program.get("statistics").split(",")
@@ -95,7 +99,7 @@ def start_scheduling(settings):
 
         # read master files
         template_master = Template(s_program.get("master", "master$YY.txt"))
-        master = Path("MASTER") / template_master.substitute(YY=str(year))
+        master = Path("MASTER") / template_master.substitute(YY=str(syear), YYYY=str(year))
 
         sessions = Helper.read_master(master)
 
@@ -159,7 +163,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
             for s in master:
                 if s["date"].date() < today - datetime.timedelta(days=offset):
                     continue
-                if pattern.match(s["name"]):
+                if s["type"] == code or pattern.match(s["name"]):
                     sessions.append(s)
                     break
             offset += 30
@@ -168,7 +172,8 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         target_day = today + datetime.timedelta(days=delta_days)
         Message.addMessage(f"date offset: {delta_days} days", dump="program")
         Message.addMessage(f"target start time: {target_day:%B %d, %Y}", dump="program")
-        sessions = [s for s in master if pattern.match(s["name"]) if s["date"].date() == target_day]
+        sessions = [s for s in master if (s["type"] == code or pattern.match(s["name"]))
+                    and s["date"].date() == target_day]
     Message.addMessage(f"{len(sessions)} session(s) will be processed", dump="program")
 
     # get list of templates

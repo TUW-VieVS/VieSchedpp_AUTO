@@ -76,6 +76,122 @@ class Message:
             Message.msg_log = ""
 
 
+def read_master_v1(path):
+    sessions = []
+    # extract year
+    year = [int(s) for s in re.findall(r'\d{2}', path.name)]
+    if len(year) != 1:
+        return
+    else:
+        year = year[0] + 2000
+
+    tlc2name = antennaLookupTable()
+
+    with open(path) as f:
+        for line in f:
+            if not line.startswith("|"):
+                continue
+            try:
+                tmp = line.split('|')
+
+                doy = int(tmp[4])
+                hour, min = [int(s) for s in tmp[5].split(":")]
+                date = datetime.datetime(year, 1, 1, hour, min, 0)
+                date = date + datetime.timedelta(days=doy - 1)
+                dur = float(tmp[6])
+                stations_tlc = tmp[7].strip().split()[0]
+                stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
+
+                for tlc in stations_tlc:
+                    if tlc == "VA":
+                        stations_tlc.remove("VA")
+                        stations_tlc += ["BR", "FD", "HN", "KP", "LA", "MK", "NL", "OV", "PT", "SC"]
+                        break
+
+                if all(tlc in tlc2name for tlc in stations_tlc):
+                    stations_name = [tlc2name[tlc] for tlc in stations_tlc]
+                else:
+                    missing = [tlc not in tlc2name for tlc in stations_tlc]
+                    for i, flag in enumerate(missing):
+                        if flag:
+                            Message.addMessage(f"Antenna {stations_tlc[i]} not found in antenna.cat file",
+                                               dump="header")
+                    continue
+
+                sessions.append({"name": tmp[1].strip(),
+                                 "code": tmp[2].strip(),
+                                 "type": "unknown",
+                                 "date": date,
+                                 "duration": dur,
+                                 "stations_tlc": stations_tlc,
+                                 "stations": stations_name,
+                                 "scheduler": tmp[8].strip(),
+                                 "correlator": tmp[9].strip()})
+
+            except:
+                Message.addMessage(f"#### ERROR reading session: {line} from file: {path} ####",
+                                   dump="header")
+                Message.addMessage(traceback.format_exc(), dump="header")
+    return sessions
+
+
+def read_master_v2(path):
+    sessions = []
+    # extract year
+    year = [int(s) for s in re.findall(r'\d{4}', path.name)]
+    if len(year) != 1:
+        return
+    else:
+        year = year[0]
+
+    tlc2name = antennaLookupTable()
+
+    with open(path) as f:
+        for line in f:
+            if not line.startswith("|"):
+                continue
+            try:
+                tmp = line.split('|')
+                date = datetime.datetime.strptime(f"{tmp[2]} {tmp[5]}", "%Y%m%d %H:%M")
+
+                dur_hour, dur_min = [int(s) for s in tmp[6].split(":")]
+                dur = dur_hour + dur_min / 60
+                stations_tlc = tmp[7].strip().split()[0]
+                stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
+
+                for tlc in stations_tlc:
+                    if tlc == "VA":
+                        stations_tlc.remove("VA")
+                        stations_tlc += ["BR", "FD", "HN", "KP", "LA", "MK", "NL", "OV", "PT", "SC"]
+                        break
+
+                if all(tlc in tlc2name for tlc in stations_tlc):
+                    stations_name = [tlc2name[tlc] for tlc in stations_tlc]
+                else:
+                    missing = [tlc not in tlc2name for tlc in stations_tlc]
+                    for i, flag in enumerate(missing):
+                        if flag:
+                            Message.addMessage(f"Antenna {stations_tlc[i]} not found in antenna.cat file",
+                                               dump="header")
+                    continue
+
+                sessions.append({"name": tmp[3].strip(),
+                                 "code": tmp[3].strip(),
+                                 "type": tmp[1].strip(),
+                                 "date": date,
+                                 "duration": dur,
+                                 "stations_tlc": stations_tlc,
+                                 "stations": stations_name,
+                                 "scheduler": tmp[8].strip(),
+                                 "correlator": tmp[9].strip()})
+
+            except:
+                Message.addMessage(f"#### ERROR reading session: {line} from file: {path} ####",
+                                   dump="header")
+                Message.addMessage(traceback.format_exc(), dump="header")
+    return sessions
+
+
 def read_master(paths):
     """
     read session master
@@ -92,59 +208,16 @@ def read_master(paths):
             Message.addMessage(f"[Error] reading session master file: {path}", dump="header")
             return
 
-        # extract year
-        year = [int(s) for s in re.findall(r'\d{2}', path.name)]
-        if len(year) != 1:
-            return
-        else:
-            year = year[0] + 2000
-
-        tlc2name = antennaLookupTable()
-
         with open(path) as f:
-            for line in f:
-                if not line.startswith("|"):
-                    continue
-                try:
-                    tmp = line.split('|')
-
-                    doy = int(tmp[4])
-                    hour, min = [int(s) for s in tmp[5].split(":")]
-                    date = datetime.datetime(year, 1, 1, hour, min, 0)
-                    date = date + datetime.timedelta(days=doy - 1)
-                    dur = float(tmp[6])
-                    stations_tlc = tmp[7].strip().split()[0]
-                    stations_tlc = [stations_tlc[i:i + 2].upper() for i in range(0, len(stations_tlc), 2)]
-
-                    for tlc in stations_tlc:
-                        if tlc == "VA":
-                            stations_tlc.remove("VA")
-                            stations_tlc += ["BR", "FD", "HN", "KP", "LA", "MK", "NL", "OV", "PT", "SC"]
-                            break
-
-                    if all(tlc in tlc2name for tlc in stations_tlc):
-                        stations_name = [tlc2name[tlc] for tlc in stations_tlc]
-                    else:
-                        missing = [tlc not in tlc2name for tlc in stations_tlc]
-                        for i, flag in enumerate(missing):
-                            if flag:
-                                Message.addMessage(f"Antenna {stations_tlc[i]} not found in antenna.cat file",
-                                                   dump="header")
-                        continue
-
-                    sessions.append({"name": tmp[1].strip(),
-                                     "code": tmp[2].strip(),
-                                     "date": date,
-                                     "duration": dur,
-                                     "stations_tlc": stations_tlc,
-                                     "stations": stations_name,
-                                     "scheduler": tmp[8].strip(),
-                                     "correlator": tmp[9].strip()})
-
-                except:
-                    Message.addMessage(f"#### ERROR reading session: {line} from file: {path} ####",
-                                       dump="header")
-                    Message.addMessage(traceback.format_exc(), dump="header")
+            l = f.readline()
+            if l.startswith("## Master file format version 1.0"):
+                sessions += read_master_v1(path)
+            elif l.startswith("## Master file format version 2.0"):
+                sessions += read_master_v2(path)
+            else:
+                Message.addMessage(f"#### ERROR reading master: {path} unknown format ####",
+                                   dump="header")
+                Message.addMessage(traceback.format_exc(), dump="header")
 
     return sessions
 
