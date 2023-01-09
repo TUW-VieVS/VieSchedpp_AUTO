@@ -427,6 +427,167 @@ cable=getmeas
 enddef
 END RAEGYEB
 BEGIN RAEGSMAR
+define  setupbb
+pcalon
+tpicd=stop
+core3hbb=$
+core3hV
+dbbcbb
+ifdbb
+cont_cal=on,2
+tpicd=no,100
+tpicd
+enddef
+define  core3hV
+dbbc3=core3h=1,vsi_bitmask 0x0 0x0 0x0 0x33333333
+dbbc3=core3h=2,vsi_bitmask 0x0 0x0 0x0 0x33333333
+dbbc3=core3h=3,vsi_bitmask 0x0 0x0 0x0 0xcccccccc
+dbbc3=core3h=4,vsi_bitmask 0x0 0x0 0x0 0xcccccccc
+dbbc3=core3h=5,vsi_bitmask 0x0 0x0 0x0 0x33333333
+dbbc3=core3h=6,vsi_bitmask 0x0 0x0 0x0 0x33333333
+dbbc3=core3h=7,vsi_bitmask 0x0 0x0 0x0 0x33333333
+dbbc3=core3h=8,vsi_bitmask 0x0 0x0 0x0 0x33333333
+core3h_mode
+enddef
+define  core3hbb      00000000000x
+core3h_mode=begin,$
+core3h_mode=1,,0x33333333,,64.0,$
+core3h_mode=2,,0x33333333,,64.0,$
+core3h_mode=3,,0xcccccccc,,64.0,$
+core3h_mode=4,,0xcccccccc,,64.0,$
+core3h_mode=5,,0x33333333,,64.0,$
+core3h_mode=6,,0x33333333,,64.0,$
+core3h_mode=7,,0x33333333,,64.0,$
+core3h_mode=8,,0x33333333,,64.0,$
+core3h_mode=end,$
+enddef
+define  dbbcbb       200000000000
+"band A / H
+bbc001=519.6,a,32.0
+bbc002=551.6,a,32.0
+bbc003=615.6,a,32.0
+bbc004=679.6,a,32.0
+bbc005=775.6,a,32.0
+bbc006=903.6,a,32.0
+bbc007=935.6,a,32.0
+bbc008=967.6,a,32.0
+"band A / V
+bbc009=519.6,b,32.0
+bbc010=551.6,b,32.0
+bbc011=615.6,b,32.0
+bbc012=679.6,b,32.0
+bbc013=775.6,b,32.0
+bbc014=903.6,b,32.0
+bbc015=935.6,b,32.0
+bbc016=967.6,b,32.0
+"band B / H
+bbc017=1720.4,c,32.0
+bbc018=1688.4,c,32.0
+bbc019=1624.4,c,32.0
+bbc020=1560.4,c,32.0
+bbc021=1464.4,c,32.0
+bbc022=1336.4,c,32.0
+bbc023=1304.4,c,32.0
+bbc024=1272.4,c,32.0
+"band B / V
+bbc025=1720.4,d,32.0
+bbc026=1688.4,d,32.0
+bbc027=1624.4,d,32.0
+bbc028=1560.4,d,32.0
+bbc029=1464.4,d,32.0
+bbc030=1336.4,d,32.0
+bbc031=1304.4,d,32.0
+bbc032=1272.4,d,32.0
+"band C / H
+bbc033=1159.6,e,32.0
+bbc034=1191.6,e,32.0
+bbc035=1255.6,e,32.0
+bbc036=1319.6,e,32.0
+bbc037=1415.6,e,32.0
+bbc038=1543.6,e,32.0
+bbc039=1575.6,e,32.0
+bbc040=1607.6,e,32.0
+"band C / V
+bbc041=1159.6,f,32.0
+bbc042=1191.6,f,32.0
+bbc043=1255.6,f,32.0
+bbc044=1319.6,f,32.0
+bbc045=1415.6,f,32.0
+bbc046=1543.6,f,32.0
+bbc047=1575.6,f,32.0
+bbc048=1607.6,f,32.0
+"band D / H
+bbc049=1319.6,g,32.0
+bbc050=1351.6,g,32.0
+bbc051=1415.6,g,32.0
+bbc052=1479.6,g,32.0
+bbc053=1575.6,g,32.0
+bbc054=1703.6,g,32.0
+bbc055=1735.6,g,32.0
+bbc056=1767.6,g,32.0
+"band D / V
+bbc057=1319.6,h,32.0
+bbc058=1351.6,h,32.0
+bbc059=1415.6,h,32.0
+bbc060=1479.6,h,32.0
+bbc061=1575.6,h,32.0
+bbc062=1703.6,h,32.0
+bbc063=1735.6,h,32.0
+bbc064=1767.6,h,32.0
+enddef
+define  ifdbb         00000000000x
+ifa=1,agc,32000
+ifb=1,agc,32000
+ifc=1,agc,32000
+ifd=1,agc,32000
+ife=1,agc,32000
+iff=1,agc,32000
+ifg=1,agc,32000
+ifh=1,agc,32000
+lo=
+lo=loa,4000,lsb,lcp,5,
+lo=lob,4000,lsb,rcp,5,
+lo=loc,4000,usb,lcp,5,
+lo=lod,4000,usb,rcp,5,
+lo=loe,8000,lsb,lcp,5,
+lo=lof,8000,lsb,rcp,5,
+lo=log,12000,lsb,lcp,5,
+lo=loh,12000,lsb,rcp,5,
+lo_config
+enddef
+define  checkmk6      00000000000x
+mk6=record?
+mk6=evlbi?
+sy=exec /usr2/oper/bin/checkVGOSdata.py &
+enddef
+define  pcalon        00000000000
+phasecal=on
+enddef
+define  pcaloff       00000000000
+phasecal=off
+enddef
+define  preob         00000000000
+onsource
+track
+cont_cal=off
+cont_cal=on
+enddef
+define  midob         00000000000x
+onsource
+wx
+mcast_time
+iread
+bread
+gps-fmout
+mk6=mode?
+!+1s
+sy=rte_go setcl adapt &
+sy=rte_go setcl &
+enddef
+define  postob        00000000000
+CDMS=getmeas
+checkmk6
+enddef
 END RAEGSMAR
 $FLUX
 $CODES
