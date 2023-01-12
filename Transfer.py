@@ -28,12 +28,17 @@ def download_ftp():
     year = now.year % 100
     names = [f"master{year:02d}.txt",
              f"master{year:02d}-int.txt",
-             f"mediamaster{year:02d}.txt"]
+             f"master{2000 + year:4d}.txt",
+             f"master{2000 + year:4d}-int.txt",
+             f"mediamaster{year:02d}.txt",
+             ]
 
     # also download master file for next year in case today is December
     if now.month == 12:
         names.append(f"master{year + 1:02d}.txt")
         names.append(f"master{year + 1:02d}-int.txt")
+        names.append(f"master{2001 + year:4d}.txt")
+        names.append(f"master{2001 + year:4d}-int.txt")
         names.append(f"mediamaster{year + 1:02d}.txt")
 
     try:

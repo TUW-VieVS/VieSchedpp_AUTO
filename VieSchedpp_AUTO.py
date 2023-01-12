@@ -98,7 +98,7 @@ def start_scheduling(settings):
             upload = False
 
         # read master files
-        template_master = Template(s_program.get("master", "master$YY.txt"))
+        template_master = Template(s_program.get("master", "master$YYYY.txt"))
         master = Path("MASTER") / template_master.substitute(YY=str(syear), YYYY=str(year))
 
         sessions = Helper.read_master(master)
