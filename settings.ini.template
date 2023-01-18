@@ -54,7 +54,7 @@ function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
-[VGOS-INT-2]
+[VGOS-INT-S]
 master = master$YYYY-int.txt
 post_scheduling_functions = fill_vex_template,fill_skd_template
 pattern = VG2\d{2}-\d{3}[^A]
