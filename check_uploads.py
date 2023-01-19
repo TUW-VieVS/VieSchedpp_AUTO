@@ -31,10 +31,11 @@ def check_uploads(settings, fallback_email=""):
         for dt in range(delta_days):
             target_day = today + datetime.timedelta(days=dt)
             year = target_day.year % 100
+            year_long = target_day.year
 
             # read master files
             template_master = Template(s_program.get("master", "master$YY.txt"))
-            master = template_master.substitute(YY=str(year))
+            master = template_master.substitute(YY=str(year), YYYY=str(year_long))
 
             master = Path("MASTER") / master
             sessions = read_master(master)
