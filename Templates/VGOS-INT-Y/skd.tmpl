@@ -21,6 +21,9 @@ TAPE_MOTION _  START&STOP
 TAPE_ALLOCATION _  SCHEDULED
 SNR Gs-Yj X   15 Gs-Yj S   15
 SNR Gs-Sa X   15 Gs-Sa S   15
+SNR Gs-Mg X   15 Gs-Mg S   15
+SNR Mg-Yj X   15 Mg-Yj S   15
+SNR Mg-Sa X   15 Mg-Sa S   15
 SNR Sa-Yj X   15 Sa-Yj S   15
 SNR MARGIN X   0 MARGIN S   0
 SNR AST_MARGIN X   0 AST_MARGIN S   0
@@ -123,7 +126,7 @@ Yj AOFF F ARAT F COFF F CRT1 F CRT2 F X F Y F Z F
 261 F 262 F 263 F 264 F 265 F 266 F 267 F 268 F 269 F 270 F
 271 F 272 F 273 F 274 F 275 F 276 F 277 F
 $MAJOR
-Subnet GsSaYj
+Subnet GsSaYjMg
 SkyCov             Yes
 AllBlGood          Yes
 MaxAngle       180.00
@@ -167,26 +170,169 @@ $SRCWT
 $STATWT
 $BROADBAND
 GGAO12M    512.00    8192       8192          0
+MACGO12M   512.00    8192       8192          0
 RAEGYEB    512.00    8192       8192          0
 RAEGSMAR   512.00    8192       8192          0
 $DOWNTIME
 $CATALOGS_USED
 $SOURCES
 $STATIONS
+A  M MACGO12M AZEL  0.00000   720.0  10  180.0  720.0  360.0   8    6.5   88.0  12.0   Mg  Mg  Mg
 A  G GGAO12M  AZEL   0.00000 293.0   5  180.0  720.0   70.0   3   6.5  88.0  12.0 Gs Gs   Gs
 A  R RAEGSMAR AZEL  0.00000   720.0   3    0.0  420.0  360.0   3    5.0   89.0  13.2   Sa  Sa  Sa 
 A  A RAEGYEB  AZEL  0.00000   720.0   3  300.0  780.0  360.0   3    5.0   89.0  13.2   Yj  Yj  -- 
+P Mg MACGO12M    -1330788.4620   -5328106.5932    3236427.4918   00000000  104.01   30.40 2020c
 P Gs GGAO12M      1130729.8766   -4831245.9720    3994228.2998   71025302   76.83   39.02 2020c
 P Sa RAEGSMAR   4618524.3022   -2166020.7199    3816270.3446  00000000    25.13  36.99 2020c 
 P Yj RAEGYEB      4848831.0211    -261629.3880    4122976.5762   73890000    3.09   40.52 2020c
+T Mg  MACGO12M 2x56000  17640   X  3000   S  3000 RDBE MARK6
 T Gs  GGAO12M   2x56000  17640  X  3500   S  3000 RDBE MARK6
 T Sa RAEGSMAR  2x56000    17640   X  3000   S  3000   DBBC MARK6
 T Yj  RAEGYEB   1x56000 17640   X  1600   S  1700 DBBC_DDC MARK6
+H Mg  0 5 70 6 75 7 80 8 85 9 95 8 105 6 145 7 150 8 155 9 165 10 185 8 190 7 195 5 360
 H Gs 0 6 15 5.5 58 3.5 90 4.5 130 3 149 3 150 11 152 18 157 27 167 37 177 41 187 43 197 43 207 41 217 37 227 27 232 18 234 11 235 6 360 6
 $SKED
 $PROCS
 BEGIN COMMON
 END COMMON
+BEGIN MACGO12M
+define  proc_library  00000000000x
+" VT9200     MACGO12M  MG
+" Created by Ed from vt9200k2.prc
+" drudg version 2016Jul25 compiled under FS  0.00.00
+"< BB       rack >< Mark6    recorder 1>
+enddef
+define  rdbebb        19200214605x
+rdbe=dbe_data_send=off;
+!+1s
+rdbe=dbe_chsel_en=2:chsel_enable:psn_enable;
+rdbe=dbe_chsel=0:1:2:4:6:9:13:14:15;
+rdbe=dbe_chsel=1:1:2:4:6:9:13:14:15;
+"offset= mod(lo+1024),5)
+"loa is 2472.4
+"lob is 4712.4
+"loc is 5832.4
+"lod is 9672.4
+rdbe=pcal=1.4e6;
+!+1s
+rdbe=dbe_data_send=on;
+enddef
+define  sched_initi   19200214549x
+mk6bb
+ifdbb
+enddef
+define  mk6bb         19200214549x
+mk6=input_stream = delete ;
+!+4s
+mk6=input_stream = add : rdbeA : vdif : 8224 : 42 : 66 : eth2 : 127.0.0.1 : 12000;
+mk6=input_stream = add : rdbeB : vdif : 8224 : 42 : 66 : eth3 : 127.0.0.1 : 12000;
+mk6=input_stream = add : rdbeC : vdif : 8224 : 42 : 66 : eth4 : 127.0.0.1 : 12000;
+mk6=input_stream = add : rdbeD : vdif : 8224 : 42 : 66 : eth5 : 127.0.0.1 : 12000;
+mk6=input_stream = commit ;
+enddef
+define  setupbb       19200214605x
+pcalon
+tpicd=stop
+"ifdbb
+rdbebb
+"mk6bb
+tpicd=no,100
+tpicd
+enddef
+define  checkmk6      00000000000
+mk6=record=off;
+!+2s
+mk6=scan_check?;
+enddef
+define  pcalon        19200214605x
+"pcal is on
+enddef
+define  time          00000000000x
+rdbe=pps_offset?;
+rdbe=dot?;
+rdbe=gps_offset?;
+enddef
+define  midob         00000000000x
+onsource
+track
+rdbe=sw_version?;
+mk6=dts_id?;
+rdbe=dbe_personality?;
+wx
+ifdmon
+mk6=input_stream?;
+rdbe=dbe_chsel_en?;
+rdbe=dbe_chsel?0;
+rdbe=dbe_chsel?1;
+rdbe=pcal?;
+rdbe_atten
+rdbe=dbe_bstate?0;
+rdbe=dbe_bstate?1;
+dewar
+time
+enddef
+define  postob        00000000000x
+enddef
+define  preob         00000000000
+"onsource
+"track
+rdbe_atten=
+rdbe=dbe_quantize=0;
+rdbe=dbe_quantize=1;
+"rdbe=dbe_bstate?0;
+"rdbe=dbe_bstate?1;
+enddef
+define  ifdbb         19200214553x
+lo=
+lo=loa0,2472.4,usb,lcp,5
+lo=loa1,2472.4,usb,rcp,5
+lo=lob0,4712.4,usb,lcp,5
+lo=lob1,4712.4,usb,rcp,5
+lo=loc0,5832.4,usb,lcp,5
+lo=loc1,5832.4,usb,rcp,5
+lo=lod0,9672.4,usb,lcp,5
+lo=lod1,9672.4,usb,rcp,5
+"
+sy=popen 's_client -h udca -c udc_lo=2472.4 2>&1' -n udcca
+sy=popen 's_client -h udcb -c udc_lo=4712.4 2>&1' -n udccb
+sy=popen 's_client -h udcc -c udc_lo=5832.4 2>&1' -n udccc
+sy=popen 's_client -h udcd -c udc_lo=9672.4 2>&1' -n udccd
+"
+sy=popen 's_client -h udca -c udc_atten=0:20 2>&1' -n udcca
+sy=popen 's_client -h udcb -c udc_atten=0:20 2>&1' -n udccb
+sy=popen 's_client -h udcc -c udc_atten=0:20 2>&1' -n udccc
+sy=popen 's_client -h udcd -c udc_atten=0:20 2>&1' -n udccd
+sy=popen 's_client -h udca -c udc_atten=1:20 2>&1' -n udcca
+sy=popen 's_client -h udcb -c udc_atten=1:15 2>&1' -n udccb
+sy=popen 's_client -h udcc -c udc_atten=1:20 2>&1' -n udccc
+sy=popen 's_client -h udcd -c udc_atten=1:20 2>&1' -n udccd
+"
+sy=popen 's_client -h rfd -c rfd_atten=0:20 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten=1:15 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten=2:20 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten=3:20 2>&1' -n rfdcn
+enddef
+define  ifdmon        00000000000x
+sy=popen 's_client -h udca -c udc_atten?0 2>&1' -n udcca
+sy=popen 's_client -h udca -c udc_atten?1 2>&1' -n udcca
+sy=popen 's_client -h udcb -c udc_atten?0 2>&1' -n udccb
+sy=popen 's_client -h udcb -c udc_atten?1 2>&1' -n udccb
+sy=popen 's_client -h udcc -c udc_atten?0 2>&1' -n udccc
+sy=popen 's_client -h udcc -c udc_atten?1 2>&1' -n udccc
+sy=popen 's_client -h udcd -c udc_atten?0 2>&1' -n udccd
+sy=popen 's_client -h udcd -c udc_atten?1 2>&1' -n udccd
+"
+sy=popen 's_client -h udca -c udc_lo? 2>&1' -n udcca
+sy=popen 's_client -h udcb -c udc_lo? 2>&1' -n udccb
+sy=popen 's_client -h udcc -c udc_lo? 2>&1' -n udccc
+sy=popen 's_client -h udcd -c udc_lo? 2>&1' -n udccd
+"
+sy=popen 's_client -h rfd -c rfd_atten?0 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten?1 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten?2 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten?3 2>&1' -n rfdcn
+enddef
+END MACGO12M
 BEGIN GGAO12M
 define  rdbebb        16264172742x
 rdbe=dbe_data_send=off;
@@ -606,6 +752,21 @@ C SX S  2265.99  10000.0   11 Mk341:1    8.00 1(11)
 C SX S  2295.99  10000.0   12 Mk341:1    8.00 1(12)
 C SX S  2345.99  10000.0   13 Mk341:1    8.00 1(13)
 C SX S  2365.99  10000.0   14 Mk341:1    8.00 1(14)
+F GEOSX    SX MACGO12M
+C SX X  8212.99  10000.0    1 Mk341:2    8.00 1(-1,3)
+C SX X  8252.99  10000.0    2 Mk341:2    8.00 1(7)
+C SX X  8352.99  10000.0    3 Mk341:2    8.00 1(11)
+C SX X  8512.99  10000.0    4 Mk341:2    8.00 1(15)
+C SX X  8732.99  10000.0    5 Mk341:2    8.00 1(19)
+C SX X  8852.99  10000.0    6 Mk341:2    8.00 1(23)
+C SX X  8912.99  10000.0    7 Mk341:2    8.00 1(27)
+C SX X  8932.99  10000.0    8 Mk341:2    8.00 1(0,4)
+C SX S  2225.99  10000.0    9 Mk341:2    8.00 1(8)
+C SX S  2245.99  10000.0   10 Mk341:2    8.00 1(12)
+C SX S  2265.99  10000.0   11 Mk341:2    8.00 1(16)
+C SX S  2295.99  10000.0   12 Mk341:2    8.00 1(20)
+C SX S  2345.99  10000.0   13 Mk341:2    8.00 1(24)
+C SX S  2365.99  10000.0   14 Mk341:2    8.00 1(28)
 R SX   16.000
 L G SX X  1N 8080       1  U
 L G SX X  1N 8080       2  U
@@ -621,6 +782,20 @@ L G SX S  2N 2020       11 U
 L G SX S  2N 2020       12 U
 L G SX S  2N 2020       13 U
 L G SX S  2N 2020       14 U
+L M SX X  1N 8080       1  U
+L M SX X  1N 8080       2  U
+L M SX X  1N 8080       3  U
+L M SX X  1N 8080       4  U
+L M SX X  3N 8580.1     5  U
+L M SX X  3N 8580.1     6  U
+L M SX X  3N 8580.1     7  U
+L M SX X  3N 8580.1     8  U
+L M SX S  2N 2020       9  U
+L M SX S  2N 2020       10 U
+L M SX S  2N 2020       11 U
+L M SX S  2N 2020       12 U
+L M SX S  2N 2020       13 U
+L M SX S  2N 2020       14 U
 L R SX X  A1 8100       1  U
 L R SX X  A1 8100       2  U
 L R SX X  A1 8100       3  U
