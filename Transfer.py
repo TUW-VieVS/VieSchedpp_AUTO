@@ -187,8 +187,9 @@ def upload(path):
     # rename it to submitopar_script.sh
     # ask Sebastien Lambert for username and pw (line 11 and 12)
 
-    p = subprocess.run(["bash", "submitopar_script.sh", skdFile.resolve(), txtFile.resolve(), vexFile.resolve()],
-                       capture_output=True, text=True)
+    p = subprocess.run(
+        ["bash", "submitopar_script.sh", "-upload", skdFile.resolve(), txtFile.resolve(), vexFile.resolve()],
+        capture_output=True, text=True)
     log = p.stdout
     if log:
         Message.addMessage(log, dump="log")
