@@ -186,7 +186,8 @@ def upload(path):
 
     user, pw = read_pw_from_file(Path("BKG_pw.txt"))
     if pw is not None:
-        ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
+        ftp = FTP_TLS("ivsopar.obspm.fr", user=user, passwd=pw)
+        # ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
         ftp.prot_p()
 
         ftp.login(user, pw)  # *** INSERT USER AND PASSWORD HERE (replace user, pw) ***
