@@ -6,6 +6,7 @@ import traceback
 from ftplib import FTP, FTP_TLS
 from ftplib import all_errors as ftp_errors
 from bs4 import BeautifulSoup
+import subprocess
 
 import requests
 
@@ -180,14 +181,33 @@ def upload(path):
     txtFile = skdFile.parent / (skdFile.stem + ".txt")
     vexFile = skdFile.parent / (skdFile.stem + ".vex")
 
+    # change upload to OPAR
+    # requires submitopar_script.sh
+    # modify submitopar_script_template.sh:
+    # rename it to submitopar_script.sh
+    # ask Sebastien Lambert for username and pw (line 11 and 12)
+
+    p = subprocess.run(["bash", "submitopar_script.sh", skdFile.resolve(), txtFile.resolve(), vexFile.resolve()],
+                       capture_output=True, text=True)
+    log = p.stdout
+    if log:
+        Message.addMessage(log, dump="log")
+    errlog = p.stderr
+    if errlog:
+        Message.addMessage(errlog, dump="log")
+    p.check_returncode()
+
+    return
+
+    # change upload to BKG
     today = datetime.date.today()
     Message.addMessage(f"##### {code} #####\n", dump="download")
     Message.addMessage("connecting to: ivs.bkg.bund.de\n", dump="download")
 
     user, pw = read_pw_from_file(Path("BKG_pw.txt"))
     if pw is not None:
-        ftp = FTP_TLS("ivsopar.obspm.fr", user=user, passwd=pw)
-        # ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
+        # ftp = FTP_TLS("ivsopar.obspm.fr", user=user, passwd=pw)
+        ftp = FTP_TLS("ivs.bkg.bund.de", user=user, passwd=pw)
         ftp.prot_p()
 
         ftp.login(user, pw)  # *** INSERT USER AND PASSWORD HERE (replace user, pw) ***

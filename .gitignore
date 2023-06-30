@@ -6,6 +6,7 @@ venv
 settings.ini
 tmp_download/
 STP
+submitopar_script.sh
 
 __pycache__
 /upload_scheduler.txt
