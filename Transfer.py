@@ -187,6 +187,14 @@ def upload(path):
     # rename it to submitopar_script.sh
     # ask Sebastien Lambert for username and pw (line 11 and 12)
 
+    Message.addMessage(f"##### {code} #####\n", dump="download")
+    Message.addMessage("connecting to: https://ivsopar.obspm.fr/upload/\n", dump="download")
+
+    Message.addMessage("uploading files to OPAR server\n", dump="download")
+    Message.addMessage(f"    {skdFile.resolve()}\n", dump="download")
+    Message.addMessage(f"    {txtFile.resolve()}\n", dump="download")
+    Message.addMessage(f"    {vexFile.resolve()}\n", dump="download")
+
     p = subprocess.run(
         ["bash", "submitopar_script.sh", "-upload", skdFile.resolve(), txtFile.resolve(), vexFile.resolve()],
         capture_output=True, text=True)
@@ -197,6 +205,7 @@ def upload(path):
     if errlog:
         Message.addMessage(errlog, dump="log")
     p.check_returncode()
+    Message.addMessage(f"upload successful", dump="download")
 
     return
 
