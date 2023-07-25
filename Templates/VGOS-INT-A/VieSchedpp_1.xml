@@ -81,6 +81,7 @@
         <rec>../../CATALOGS/rec.cat</rec>
         <rx>../../CATALOGS/rx.cat</rx>
         <source>./source.cat.v2</source>
+        <satellite_avoid/>
         <tracks>../../CATALOGS/tracks.cat</tracks>
     </catalogs>
     <station>

@@ -8,7 +8,7 @@ from lxml import etree
 from Helper import Message
 
 
-def adjust_xml(template, session, pre_scheduling_functions):
+def adjust_xml(template, session, pre_scheduling_functions, outdir):
     """
     change template xml file with session specific entries
     
@@ -49,7 +49,7 @@ def adjust_xml(template, session, pre_scheduling_functions):
     add_parameter(tree.find("./station/parameters"), "tagalong", ["tagalong"], ["1"])
     add_parameter(tree.find("./station/parameters"), "down", ["available"], ["0"])
     for f in pre_scheduling_functions:
-        f(tree=tree, session=session, folder=template.parent)
+        f(tree=tree, session=session, folder=template.parent, outdir=outdir)
 
     # change setup for tagalong mode
     add_tagalong_time(session, tree)

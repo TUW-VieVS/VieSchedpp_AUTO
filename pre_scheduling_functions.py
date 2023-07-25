@@ -2,6 +2,7 @@ import configparser
 import datetime
 from itertools import combinations
 from pathlib import Path
+import requests
 
 from lxml import etree
 
@@ -48,6 +49,48 @@ def add_downtime_intensives(**kwargs):
             if sta in session["stations"]:
                 insert_station_setup_with_time(int_start, int_end, s_start, s_end, session, tree, sta, "down",
                                                int["name"])
+
+
+def retrieve_starlink_satellites(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+    outdir = kwargs["outdir"]
+
+    start_time = session["date"]
+    end_time = start_time + datetime.timedelta(hours=session["duration"])
+
+    url = 'https://satdb.ethz.ch/api/satellitedata'
+    params = {
+        'start-datetime': f"{start_time:%Y%m%dT%H%M}",
+        'end-datetime': f"{end_time:%Y%m%dT%H%M}",
+        'before': 14,
+        'after': 7,
+        'without-frequency-data': False,
+        'frequency-list': [[10.7, 10.8]],
+        # 'object-name': 'ISS'
+    }
+    Message.addMessage(f"\nDownloading satellite file (currently not applied)\n", dump="session")
+
+    outfile = outdir / "satellites.tle"
+    with open(outfile, "w") as f:
+        try:
+            # initial request
+            response = requests.get(url, params)
+            next, results = response.json()['next'], response.json()['results']
+            f.write('\n'.join(item['norad_str'] for item in results))
+
+            # make next request
+            while next != None:
+                response = requests.get(next)
+                results = response.json()['results']
+                f.write('\n')
+                f.write('\n'.join(item['norad_str'] for item in results))
+                next = response.json()['next']
+        except Exception as e:
+            Message.addMessage(f"ERROR downloading satellite file:\n    {e}\n", dump="session")
+
+    # tree.find("./catalogs/satellite_avoid").text = str(outfile.resolve())
 
 
 def adjust_INT_observing_mode_VLBA_256_8_RDV(**kwargs):

@@ -313,11 +313,11 @@ def adjust_template(output_path:Path, session, templates, pre_scheduling_functio
 
     out = []
     for template in templates:
-        tree = adjust_xml(template, session, pre_scheduling_functions)
-        Message.log(False)
-
         output_dir = folder / session["code"]
         output_dir.mkdir(exist_ok=True, parents=True)
+        tree = adjust_xml(template, session, pre_scheduling_functions, output_dir)
+        Message.log(False)
+
         newFile = output_dir / template.name
         out.append(newFile)
         tree.write(str(newFile), pretty_print=True)
