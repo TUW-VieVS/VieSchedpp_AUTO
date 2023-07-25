@@ -288,7 +288,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
 
 def delete_files(folder):
     for f in folder.iterdir():
-        if "VieSchedpp" in f.name or f.is_dir() or f.suffix == ".csv":
+        if "VieSchedpp" in f.name or f.is_dir() or f.suffix == ".csv" or f.suffix == ".tle":
             continue
         else:
             f.unlink()
