@@ -67,8 +67,7 @@ def retrieve_starlink_satellites(**kwargs):
         'before': 14,
         'after': 7,
         'without-frequency-data': False,
-        'frequency-list': [[10.7, 10.8]],
-        # 'object-name': 'ISS'
+        'frequency-list': "[10.7-10.8]",
     }
     Message.addMessage(f"\nDownloading satellite file (currently not applied)\n", dump="session")
 
