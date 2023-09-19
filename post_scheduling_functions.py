@@ -56,6 +56,7 @@ def fill_vex_template(**kwargs):
                 append = False
 
             if append:
+                l = l.replace("mode = type", "mode = v01")
                 additional_text.append(l)
 
     vex_new = "".join([vex_new, *additional_text])
