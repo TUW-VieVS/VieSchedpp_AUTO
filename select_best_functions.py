@@ -48,20 +48,23 @@ def select_best_ohg(df, **kwargs):
     nobs = df["n_observations"]
     sky_cov = df["sky-coverage_average_25_areas_60_min"]
     avg_rep = df["sim_repeatability_average_3d_station_coord._[mm]"]
-    ohg_rep = df["sim_repeatability_OHIGGINS"]
     avg_mfe = df["sim_mean_formal_error_average_3d_station_coord._[mm]"]
-    ohg_mfe = df["sim_mean_formal_error_OHIGGINS"]
     # data = pd.concat([nobs, sky_cov, avg_rep, ohg_rep, avg_mfe, ohg_mfe], axis=1)
 
     s_nobs = Helper.scale(nobs, minIsGood=False)
     s_sky_cov = Helper.scale(sky_cov, minIsGood=False)
     s_rep_avg_sta = Helper.scale(avg_rep)
-    s_rep_ohg = Helper.scale(ohg_rep)
     s_mfe_avg_sta = Helper.scale(avg_mfe)
-    s_mfe_ohg = Helper.scale(ohg_mfe)
     # scores = pd.concat([s_nobs, s_sky_cov, s_rep_avg_sta, s_rep_ohg, s_mfe_avg_sta, s_mfe_ohg], axis=1)
 
-    score = 1 * s_nobs + .25 * s_sky_cov + 1.5 * s_rep_ohg + 1 * s_mfe_ohg + .75 * s_rep_avg_sta + .5 * s_mfe_avg_sta
+    if "sim_repeatability_OHIGGINS" in df:
+        ohg_rep = df["sim_repeatability_OHIGGINS"]
+        ohg_mfe = df["sim_mean_formal_error_OHIGGINS"]
+        s_rep_ohg = Helper.scale(ohg_rep)
+        s_mfe_ohg = Helper.scale(ohg_mfe)
+        score = 1 * s_nobs + .25 * s_sky_cov + 1.5 * s_rep_ohg + 1 * s_mfe_ohg + .75 * s_rep_avg_sta + .5 * s_mfe_avg_sta
+    else:
+        score = 1 * s_nobs + .25 * s_sky_cov + .75 * s_rep_avg_sta + .5 * s_mfe_avg_sta
     best = score.idxmax()
     return best
 
