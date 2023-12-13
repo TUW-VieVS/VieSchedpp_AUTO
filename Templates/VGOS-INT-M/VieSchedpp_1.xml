@@ -302,15 +302,32 @@
             <block>
                 <startTime>600</startTime>
                 <scans>1</scans>
-                <duration>60</duration>
-                <sources>calib</sources>
+                <duration>120</duration>
+                <sources>__all__</sources>
             </block>
             <block>
                 <startTime>3000</startTime>
                 <scans>1</scans>
-                <duration>60</duration>
-                <sources>calib</sources>
+                <duration>120</duration>
+                <sources>__all__</sources>
             </block>
+            <numberOfObservations_factor>5</numberOfObservations_factor>
+            <numberOfObservations_offset>0</numberOfObservations_offset>
+            <averageStations_factor>100</averageStations_factor>
+            <averageStations_offset>1</averageStations_offset>
+            <averageBaseline_factor>0</averageBaseline_factor>
+            <averageBaseline_offset>1</averageBaseline_offset>
+            <duration_factor>2</duration_factor>
+            <duration_offset>1</duration_offset>
+            <diffParallacticAngle>
+                <nscans>1</nscans>
+                <duration>120</duration>
+                <distanceScaling>3</distanceScaling>
+                <sources>__all__</sources>
+                <baselines>__all__</baselines>
+                <investigationCadence>300</investigationCadence>
+                <intent>CALIBRATE_BANDPASS</intent>
+            </diffParallacticAngle>
         </calibration>
     </rules>
     <simulator>
