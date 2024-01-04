@@ -134,6 +134,8 @@ def adjust_R1_observing_mode(**kwargs):
     tree = kwargs["tree"]
     session = kwargs["session"]
     mediamaster = Path("MASTER") / f"mediamaster{session['date'].year % 100:02d}.txt"
+    if not mediamaster.is_file():
+        mediamaster = Path("MASTER") / f"mediamaster{session['date'].year :d}.txt"
 
     flag_512 = False
     with open(mediamaster) as f:
@@ -141,7 +143,8 @@ def adjust_R1_observing_mode(**kwargs):
             l = l.strip()
             if l.startswith("|"):
                 l = l.strip("|")
-                if l.startswith(session["name"]):
+                code = l.split("|")[2].strip()
+                if code == session["name"]:
                     stations = l.split("|")[6]
                     stations = stations.split()[0]
                     stations = [stations[i:i + 4] for i in range(0, len(stations), 4)]
@@ -150,7 +153,8 @@ def adjust_R1_observing_mode(**kwargs):
                         flag_512 = True
                     elif g_module > 0:
                         Message.addMessage(f"WARNING: undefined observing mode! {g_module:d} stations with 512 Mbps, "
-                                           f"{len(stations - g_module):d} stations with 256 Mbps",
+                                           f"{len(stations) - g_module:d} stations with 256 Mbps. Defaulting to 256 "
+                                           f"Mbps",
                                            dump="header")
                     break
 
