@@ -320,7 +320,7 @@
             <duration_factor>2</duration_factor>
             <duration_offset>1</duration_offset>
             <diffParallacticAngle>
-                <nscans>1</nscans>
+                <nscans>3</nscans>
                 <duration>120</duration>
                 <distanceScaling>3</distanceScaling>
                 <sources>__all__</sources>
