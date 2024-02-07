@@ -511,13 +511,17 @@ def close_all():
 
 
 if __name__ == "__main__":
-    import skd_parser.skd as skd_parser
+    # import skd_parser.skd as skd_parser
 
-    skd = skd_parser.skdParser(r'C:/programming/q20348.skd')
-    skd.parse()
-    polar_plots(skd, 'C:/programming/', "duration")
+    # skd = skd_parser.skdParser(r'C:/programming/q20348.skd')
+    # skd.parse()
+    # polar_plots(skd, 'C:/programming/', "duration")
 
-    # import pandas as pd
-    # df = pd.read_csv(r'C:\Users\Matthias Schartner\Desktop\Neuer Ordner\summary.txt',index_col=0)
-    # df = df.tail(10)
-    # summary(df, 'C:/programming/')
+    import pandas as pd
+    from pathlib import Path
+
+    df = pd.read_csv(r'/home/mschartner/summary.txt', index_col=0)
+    df = df.tail(10)
+    summary(df, ["n_stations", "n_observations", "n_scans_per_sta", "sky-coverage_37_areas_60_min", "sources_per_obs",
+                 "sources_per_scans", "time", "dUT1"], Path("/home/mschartner"))
+    pass
