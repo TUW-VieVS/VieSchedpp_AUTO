@@ -79,8 +79,8 @@
                 <available>1</available>
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
-                <minScan>30</minScan>
-                <maxScan>30</maxScan>
+                <minScan>12</minScan>
+                <maxScan>25</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
@@ -245,7 +245,7 @@
         </simple>
         <bandPolicies>
             <bandPolicy name="A">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -256,7 +256,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="B">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -267,7 +267,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="C">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -278,7 +278,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="D">
-                <minSNR>15</minSNR>
+                <minSNR>12</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
