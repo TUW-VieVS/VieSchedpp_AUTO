@@ -228,7 +228,7 @@ def send_bkg(message):
     if SendMail.flag_sendMail:
         print("Send email (BKG) to: " + message['To'], end="... ")
         # server = smtplib.SMTP('localhost', 25)
-        server = smtplib.SMTP('141.74.2.1', 25)
+        server = smtplib.SMTP('141.74.2.3', 25)
         server.ehlo()
         server.send_message(message)
         server.quit()
