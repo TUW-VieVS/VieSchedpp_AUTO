@@ -227,7 +227,8 @@ def send_bkg(message):
     message['From'] = "vieschedpp.auto@wettzell.de"
     if SendMail.flag_sendMail:
         print("Send email (BKG) to: " + message['To'], end="... ")
-        server = smtplib.SMTP('localhost', 25)
+        # server = smtplib.SMTP('localhost', 25)
+        server = smtplib.SMTP('141.74.2.1', 25)
         server.ehlo()
         server.send_message(message)
         server.quit()
@@ -241,3 +242,12 @@ def undefined():
 class SendMail:
     flag_sendMail = True
     send = undefined
+
+
+if __name__ == "__main__":
+    msg = MIMEMultipart()
+    msg['To'] = "mschartner@ethz.ch"
+    msg['Subject'] = "Test mail"
+    msg.attach(MIMEText("This is a test email"))
+    send_bkg(msg)
+    pass
