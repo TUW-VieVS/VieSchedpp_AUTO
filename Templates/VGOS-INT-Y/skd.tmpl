@@ -282,7 +282,7 @@ rdbe=dbe_quantize=1;
 "rdbe=dbe_bstate?0;
 "rdbe=dbe_bstate?1;
 enddef
-define  ifdbb         19200214553x
+define  ifdbb         00000000000x
 lo=
 lo=loa0,2472.4,usb,lcp,5
 lo=loa1,2472.4,usb,rcp,5
@@ -303,14 +303,14 @@ sy=popen 's_client -h udcb -c udc_atten=0:20 2>&1' -n udccb
 sy=popen 's_client -h udcc -c udc_atten=0:20 2>&1' -n udccc
 sy=popen 's_client -h udcd -c udc_atten=0:20 2>&1' -n udccd
 sy=popen 's_client -h udca -c udc_atten=1:20 2>&1' -n udcca
-sy=popen 's_client -h udcb -c udc_atten=1:15 2>&1' -n udccb
+sy=popen 's_client -h udcb -c udc_atten=1:25 2>&1' -n udccb
 sy=popen 's_client -h udcc -c udc_atten=1:20 2>&1' -n udccc
 sy=popen 's_client -h udcd -c udc_atten=1:20 2>&1' -n udccd
 "
 sy=popen 's_client -h rfd -c rfd_atten=0:20 2>&1' -n rfdcn
-sy=popen 's_client -h rfd -c rfd_atten=1:15 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten=1:20 2>&1' -n rfdcn
 sy=popen 's_client -h rfd -c rfd_atten=2:20 2>&1' -n rfdcn
-sy=popen 's_client -h rfd -c rfd_atten=3:20 2>&1' -n rfdcn
+sy=popen 's_client -h rfd -c rfd_atten=3:25 2>&1' -n rfdcn
 enddef
 define  ifdmon        00000000000x
 sy=popen 's_client -h udca -c udc_atten?0 2>&1' -n udcca
