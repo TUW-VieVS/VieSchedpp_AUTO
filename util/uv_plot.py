@@ -16,6 +16,8 @@ from util.coord_tranformation import rade2azel
 DEG2RAD = pi / 180
 RAD2DEG = 180 / pi
 
+WARNING_FLUX = True
+
 
 def calc_uv(gmst, ra, de, dx, dy, dz):
     gmst = gmst.value * 15 * DEG2RAD
@@ -141,6 +143,7 @@ def check_snr(skd, us, vs, sta1, sta2, src, el_storage):
     equip_model_2 = sta2.equip
     t = skd.maxscan
 
+    global WARNING_FLUX
     flux_model = src.flux
     flags = [np.nan for i in range(len(us))]
     for band in ["x", "s"]:
@@ -150,7 +153,20 @@ def check_snr(skd, us, vs, sta1, sta2, src, el_storage):
         for i, (u, v, el1, el2) in enumerate(zip(us, vs, el1s, el2s)):
             if np.isnan(u) or np.isnan(el1) or np.isnan(el2):
                 continue
-            f = flux_model.flux(band, (u, v))
+            if flux_model is None:
+                if WARNING_FLUX:
+                    print(f"WARNING: No flux information - defaulting to 0.1 Jy (this message is only shown once)")
+                    WARNING_FLUX = False
+                f = 0.1
+            else:
+                f = flux_model.flux(band, (u, v))
+
+            if f is None:
+                if WARNING_FLUX:
+                    print(f"WARNING: No flux information - defaulting to 0.1 Jy (this message is only shown once)")
+                    WARNING_FLUX = False
+                f = 0.1
+
             sefd1 = equip_model_1.sefd(band, el1)
             sefd2 = equip_model_2.sefd(band, el2)
 

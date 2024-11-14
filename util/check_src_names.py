@@ -33,7 +33,8 @@ def run(cat):
         if n1 in trans.keys() and trans[n1] == n2:
             print(f"{n1} is correctly named {trans[n1]}")
         if n1 not in trans.keys() and n2 != '$':
-            print(f"missing entry for {n1} {n2}")
+            # print(f"missing entry for {n1} {n2}")
+            pass
 
     pass
 

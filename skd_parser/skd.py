@@ -87,24 +87,28 @@ class skdParser:
                         station.mask = mask
 
                     if line.startswith("T"):
-                        tmp = line.split()
-                        sefd_x = float(tmp[6])
-                        sefd_s = float(tmp[8])
-                        if len(tmp) == 11:
-                            eq = Equip(sefd_x, sefd_s)
-                        elif len(tmp) == 19:
-                            band_a = tmp[9]
-                            coef_a = [float(a) for a in tmp[10:13]]
-                            band_b = tmp[13]
-                            coef_b = [float(a) for a in tmp[14:17]]
-                            if band_a.lower() == "x":
-                                coef_x = coef_a
-                                coef_s = coef_b
-                            else:
-                                coef_x = coef_b
-                                coef_s = coef_a
+                        try:
+                            tmp = line.split()
+                            sefd_x = float(tmp[6])
+                            sefd_s = float(tmp[8])
+                            if len(tmp) == 11:
+                                eq = Equip(sefd_x, sefd_s)
+                            elif len(tmp) == 19:
+                                band_a = tmp[9]
+                                coef_a = [float(a) for a in tmp[10:13]]
+                                band_b = tmp[13]
+                                coef_b = [float(a) for a in tmp[14:17]]
+                                if band_a.lower() == "x":
+                                    coef_x = coef_a
+                                    coef_s = coef_b
+                                else:
+                                    coef_x = coef_b
+                                    coef_s = coef_a
 
-                            eq = Equip_el(sefd_x, sefd_s, coef_x, coef_s)
+                                eq = Equip_el(sefd_x, sefd_s, coef_x, coef_s)
+                        except:
+                            print(f"error parsing EQUIP .cat")
+                            eq = Equip(1, 1)
                         else:
                             eq = Equip(1, 1)
                             print("failed to parse equip block (not critical)")
