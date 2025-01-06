@@ -1,0 +1,170 @@
+$EXPER B22079
+$PARAM
+DESCRIPTION VGOS-B
+SCHEDULING_SOFTWARE VieSched++
+SOFTWARE_VERSION 2bee4f99b90697fb002ecd67781e35ceee7dd66f
+SCHEDULE_CREATE_DATE 22070205507
+SCHEDULER unknown CORRELATOR unknown START 22079073000 END 22079083000
+CALIBRATION     4 CORSYNCH        0 DURATION      196
+EARLY           0 IDLE            0 LOOKAHEAD       0
+MAXSCAN        30 MINSCAN        15 MINIMUM         0
+MIDTP           0 MODULAR         1 MODSCAN         1 PARITY          0
+SETUP           0 SOURCE          4 TAPETM          0 WIDTH           0
+CONFIRM         Y VSCAN           Y
+DEBUG           N KEEP_LOG        N VERBOSE         N
+PRFLAG       YNNN SNR          AUTO
+FREQUENCY   SX PREOB      PREOB  MIDOB     MIDOB  POSTOB     POSTOB
+ELEVATION _     5
+TAPE_MOTION _ START&STOP
+TAPE_TYPE Is K5 Oe FlexBuff Ow FlexBuff
+TAPE_ALLOCATION Is AUTO Oe AUTO Ow AUTO
+SNR  Is-Oe S  15    Is-Oe X  20    Is-Ow S  15    Is-Ow X  20
+SNR  Oe-Ow S  15    Oe-Ow X  20
+$OP
+$DOWNTIME
+$MAJOR
+Subnet IsOeOw
+SkyCov             No
+AllBlGood         Yes
+MaxAngle          180
+MinAngle            2
+MinBetween         30
+MinSunDist          4
+MaxSlewTime       600
+TimeWindow       0.00
+MinSubNetSize       3
+NumSubNet           2
+Best              100
+FillIn            Yes
+FillMinSub          3
+FillMinTime        20
+FillBest          100
+Add_ps           0.00
+SNRWts             No
+$MINOR
+Astro          No  Abs     0.00
+BegScan        No  Abs     0.00
+Covar          No  Abs     0.00
+EndScan        Yes Abs     1.00
+LowDec         No  Abs     0.00
+NumLoEl        No  Abs     0.00 0.00
+NumRiseSet     No  Abs     0.00
+NumObs         Yes Abs     0.00
+SkyCov         Yes Abs     0.50
+SrcEvn         Yes Abs     0.00 NONE
+SrcWt          Yes Abs     1.00
+StatEvn        Yes Abs     0.00 NONE
+StatIdle       No  Abs     0.00
+StatWt         Yes Abs     1.00
+TimeVar        No  Abs     0.00
+$ASTROMETRIC
+$BROADBAND
+ISHIOKA    512.00    8192       8192
+ONSA13NE   512.00    8192       8192
+ONSA13SW   512.00    8192       8192
+$CATALOGS_USED
+$CODES
+F GEOSX SX ISHIOKA
+C SX X 8212.99 10000.0  1 Mk341:1  8.00 1(-1,13)
+C SX X 8252.99 10000.0  2 Mk341:1  8.00 1(0)
+C SX X 8352.99 10000.0  3 Mk341:1  8.00 1(1)
+C SX X 8512.99 10000.0  4 Mk341:1  8.00 1(2)
+C SX X 8732.99 10000.0  5 Mk341:1  8.00 1(3)
+C SX X 8852.99 10000.0  6 Mk341:1  8.00 1(4)
+C SX X 8912.99 10000.0  7 Mk341:1  8.00 1(5)
+C SX X 8932.99 10000.0  8 Mk341:1  8.00 1(6,14)
+C SX S 2225.99 10000.0  9 Mk341:1  8.00 1(7)
+C SX S 2245.99 10000.0 10 Mk341:1  8.00 1(8)
+C SX S 2265.99 10000.0 11 Mk341:1  8.00 1(9)
+C SX S 2295.99 10000.0 12 Mk341:1  8.00 1(10)
+C SX S 2345.99 10000.0 13 Mk341:1  8.00 1(11)
+C SX S 2365.99 10000.0 14 Mk341:1  8.00 1(12)
+F GEOSX SX ONSA13NE ONSA13SW
+C SX X 8212.99 10000.0  1 Mk341:1  8.00 1(-1,7)
+C SX X 8252.99 10000.0  2 Mk341:1  8.00 1(0)
+C SX X 8352.99 10000.0  3 Mk341:1  8.00 1(1)
+C SX X 8512.99 10000.0  4 Mk341:1  8.00 1(2)
+C SX X 8732.99 10000.0  5 Mk341:1  8.00 1(3)
+C SX X 8852.99 10000.0  6 Mk341:1  8.00 1(4)
+C SX X 8912.99 10000.0  7 Mk341:1  8.00 1(5)
+C SX X 8932.99 10000.0  8 Mk341:1  8.00 1(6,8)
+C SX S 2225.99 10000.0  9 Mk341:1  8.00 1(9)
+C SX S 2245.99 10000.0 10 Mk341:1  8.00 1(10)
+C SX S 2265.99 10000.0 11 Mk341:1  8.00 1(11)
+C SX S 2295.99 10000.0 12 Mk341:1  8.00 1(12)
+C SX S 2345.99 10000.0 13 Mk341:1  8.00 1(13)
+C SX S 2365.99 10000.0 14 Mk341:1  8.00 1(14)
+R SX 16
+B SX
+L I SX  X 1N     7580   1 U
+L I SX  X 1N     7580   2 U
+L I SX  X 1N     7580   3 U
+L I SX  X 1N     7580   4 U
+L I SX  X 3N     8080   5 U
+L I SX  X 3N     8080   6 U
+L I SX  X 3N     8080   7 U
+L I SX  X 3N     8080   8 U
+L I SX  S 2N     1520   9 U
+L I SX  S 2N     1520  10 U
+L I SX  S 2N     1520  11 U
+L I SX  S 2N     1520  12 U
+L I SX  S 2N     1520  13 U
+L I SX  S 2N     1520  14 U
+L 1 SX  X A1     8100   1 U
+L 1 SX  X A1     8100   2 U
+L 1 SX  X A1     8100   3 U
+L 1 SX  X A1     8100   4 U
+L 1 SX  X B1     8100   5 U
+L 1 SX  X B1     8100   6 U
+L 1 SX  X B1     8100   7 U
+L 1 SX  X B1     8100   8 U
+L 1 SX  S C1     1700   9 U
+L 1 SX  S C1     1700  10 U
+L 1 SX  S C1     1700  11 U
+L 1 SX  S C1     1700  12 U
+L 1 SX  S D1     1700  13 U
+L 1 SX  S D1     1700  14 U
+L 2 SX  X A1     8100   1 U
+L 2 SX  X A1     8100   2 U
+L 2 SX  X A1     8100   3 U
+L 2 SX  X A1     8100   4 U
+L 2 SX  X B1     8100   5 U
+L 2 SX  X B1     8100   6 U
+L 2 SX  X B1     8100   7 U
+L 2 SX  X B1     8100   8 U
+L 2 SX  S C1     1700   9 U
+L 2 SX  S C1     1700  10 U
+L 2 SX  S C1     1700  11 U
+L 2 SX  S C1     1700  12 U
+L 2 SX  S D1     1700  13 U
+L 2 SX  S D1     1700  14 U
+$STATIONS
+A  I ISHIOKA  AZEL  0.00000   720.0  10  -70.0  430.0  360.0  10    5.0   89.0  13.2   Is  Is  Is
+A  1 ONSA13NE AZEL  0.00000   720.0   5  -65.0  425.0  360.0   4    5.0   90.0  13.2   Oe  Oe  Oe
+A  2 ONSA13SW AZEL  0.00000   720.0   5  -65.0  425.0  360.0 4.5    5.0   90.0  13.2   Ow  Ow  Ow
+P Is ISHIOKA   -3959636.2032    3296825.4480    3747042.5711  00000000   219.78  36.21 2020c 
+P Oe ONSA13NE  3370889.29752    711571.19917   5349692.04831  00000000   348.08  57.39 2020c Interferometric colocation at OSO
+P Ow ONSA13SW  3370946.77873    711534.50687   5349660.92546  00000000   348.08  57.39 2020c Interferometric colocation at OSO
+T  Is  ISHIOKA        1      100   X  1950  S  1750 K4-2 K5
+T  Oe ONSA13NE  2x56000    17640   X  3000  S  3000 DBBC_DDC FlexBuff
+T  Ow ONSA13SW  2x56000    17640   X  3000  S  3000 DBBC_DDC FlexBuff
+H Oe 0 8 8 5 215 10 226 5 240 9 252 5 315 8 360
+H Ow 0 5 34 10 46 5 259 18 283 5 342 7 360
+$STATWT
+$SOURCES
+$SRCWT
+$SKED
+$FLUX
+$HEAD
+I SX       11(-319) 21(31)   31(-271) 41(79)   51(-223) 61(127)
+I SX       71(-175) 81(175)  91(-127) A1(223)  B1(-79)  C1(271)
+I SX       D1(-31)  E1(319)
+1 SX       11(-319) 21(31)   31(-271) 41(79)   51(-223) 61(127)
+1 SX       71(-175) 81(175)  91(-127) A1(223)  B1(-79)  C1(271)
+1 SX       D1(-31)  E1(319)
+2 SX       11(-319) 21(31)   31(-271) 41(79)   51(-223) 61(127)
+2 SX       71(-175) 81(175)  91(-127) A1(223)  B1(-79)  C1(271)
+2 SX       D1(-31)  E1(319)
+$DUMMY
+$PROCS
+$DUMMY
