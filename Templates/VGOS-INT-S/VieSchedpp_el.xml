@@ -42,20 +42,20 @@
 		<createTimeTable>true</createTimeTable>
 	</output>
 	<catalogs>
-		<antenna>/scratch/programming/VieSchedpp_AUTO/Templates/VGOS-INT-S/antenna.cat.vgos</antenna>
-		<equip>/scratch/programming/VieSchedpp_AUTO/Templates/VGOS-INT-S/equip.cat.VGOS</equip>
-		<flux>/scratch/programming/VieSchedpp_AUTO/CATALOGS/flux.cat</flux>
-		<freq>/scratch/programming/VieSchedpp_AUTO/CATALOGS/freq.cat</freq>
-		<hdpos>/scratch/programming/VieSchedpp_AUTO/CATALOGS/hdpos.cat</hdpos>
-		<loif>/scratch/programming/VieSchedpp_AUTO/CATALOGS/loif.cat</loif>
-		<mask>/scratch/programming/VieSchedpp_AUTO/CATALOGS/mask.cat</mask>
-		<modes>/scratch/programming/VieSchedpp_AUTO/CATALOGS/modes.cat</modes>
-		<position>/scratch/programming/VieSchedpp_AUTO/CATALOGS/position.cat</position>
-		<rec>/scratch/programming/VieSchedpp_AUTO/CATALOGS/rec.cat</rec>
-		<rx>/scratch/programming/VieSchedpp_AUTO/CATALOGS/rx.cat</rx>
+		<antenna>./antenna.cat.vgos</antenna>
+		<equip>./equip.cat.VGOS</equip>
+		<flux>../../flux.cat</flux>
+		<freq>../../freq.cat</freq>
+		<hdpos>../../hdpos.cat</hdpos>
+		<loif>../../loif.cat</loif>
+		<mask>../../mask.cat</mask>
+		<modes>../../modes.cat</modes>
+		<position>../../position.cat</position>
+		<rec>../../rec.cat</rec>
+		<rx>../../rx.cat</rx>
 		<satellite/>
-		<source>/scratch/programming/VieSchedpp_AUTO/Templates/VGOS-INT-S/source.cat.vgoss</source>
-		<tracks>/scratch/programming/VieSchedpp_AUTO/CATALOGS/tracks.cat</tracks>
+		<source>./source.cat.vgoss</source>
+		<tracks>../../tracks.cat</tracks>
 		<stp_dir>/scratch/STP</stp_dir>
 	</catalogs>
 	<station>
