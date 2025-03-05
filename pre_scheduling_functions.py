@@ -3,6 +3,8 @@ import datetime
 from itertools import combinations
 from pathlib import Path
 import requests
+import numpy as np
+import pandas as pd
 
 from lxml import etree
 
@@ -49,6 +51,99 @@ def add_downtime_intensives(**kwargs):
             if sta in session["stations"]:
                 insert_station_setup_with_time(int_start, int_end, s_start, s_end, session, tree, sta, "down",
                                                int["name"])
+
+
+def vgos_int_s(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+    outdir = kwargs["outdir"]
+
+    stations = {"WETTZ13S": {"name": "WETTZ13S", "lon": 12.88, "lat": 49.15},
+                "MACGO12M": {"name": "MACGO12M", "lon": 255.99, "lat": 30.40}}
+
+    sources = pd.read_csv("Templates/VGOS-INT-S/source.cat.vgoss", delim_whitespace=True, header=None, comment="*")
+    sources.columns = ["name", "name2", "ra_h", "ra_m", "ra_s", "de_d", "de_m", "de_s", "a1", "a2", "a3", "a4"]
+    sources["ra"] = sources["ra_h"] + sources["ra_m"] / 60 + sources["ra_s"] / 3600
+    sources["de"] = sources["de_d"] + sources["de_m"] / 60 + sources["de_s"] / 3600
+
+    mjd_2000_01_01 = 51544
+    delta_days = session["date"] - datetime.datetime(2000, 1, 1)
+    mjd = mjd_2000_01_01 + delta_days.total_seconds() / 86400
+
+    def zazel_s(mjd, lon, lat, ra, de):
+        tu = mjd - 51544.5
+        frac = mjd - np.floor(mjd) + 0.5
+        fac = 0.00273781191135448
+        era = 2 * np.pi * (frac + 0.7790572732640 + fac * tu)
+        era = np.mod(era, 2 * np.pi)
+
+        # source vector CRF
+        sid = np.sin(de)
+        cod = np.cos(de)
+        sir = np.sin(ra)
+        cor = np.cos(ra)
+
+        q = np.array([cod * cor, cod * sir, sid]).T
+
+        # rotation matrix for rotation around z-axis
+        caEra = np.cos(-era)
+        siEra = np.sin(-era)
+
+        t2c = np.array([[caEra, -siEra, 0], [siEra, caEra, 0], [0, 0, 1]])
+
+        # source in TRS (c2t = t2c')
+        rq = np.dot(t2c, q)
+
+        # source in local system
+        coLat = np.cos(np.pi / 2 - lat)
+        siLat = np.sin(np.pi / 2 - lat)
+        coLon = np.cos(lon)
+        siLon = np.sin(lon)
+
+        g2l = np.dot(np.array([[coLat, 0, -siLat], [0, -1, 0], [siLat, 0, coLat]]),
+                     np.array([[coLon, siLon, 0], [-siLon, coLon, 0], [0, 0, 1]]))
+        lq = np.dot(g2l, rq)
+
+        zd = np.arccos(lq[2])
+        el = np.pi / 2 - zd
+        saz = np.arctan2(lq[1], lq[0])
+        saz += (np.pi * 2) if saz < 0 else 0
+        az = saz + np.pi
+        az = np.mod(az, np.pi * 2)
+
+        return (az, el)
+
+    high_els = dict()
+    for sta_name, station in stations.items():
+        tmp = []
+        for _, s in sources.iterrows():
+            name = s["name"]
+            ra = s["ra"] * 15 * np.pi / 180
+            de = s["de"] * np.pi / 180
+            az, el = zazel_s(mjd, station["lon"] * np.pi / 180, station["lat"] * np.pi / 180, ra, de)
+            el = el * 180 / np.pi
+            if el > 60:
+                tmp.append((name, el))
+            pass
+        tmp = [k[0] for idx, k in enumerate(sorted(tmp, reverse=True, key=lambda x: x[1])) if
+               (k[1] > 70 and idx < 7) or idx < 7]
+        high_els[sta_name] = tmp
+
+    mg_txt = [f"<member>{name}</member>" for name in high_els["MACGO12M"]]
+    ws_txt = [f"<member>{name}</member>" for name in high_els["WETTZ13S"]]
+
+    # Find groups
+    for group in tree.xpath("//group"):
+        if group.get("name") == "high_el_Mg":
+            group.text = ""  # Clear the placeholder text
+            for member in mg_txt:
+                group.append(etree.fromstring(member))  # Append members
+
+        elif group.get("name") == "high_el_Ws":
+            group.text = ""  # Clear the placeholder text
+            for member in ws_txt:
+                group.append(etree.fromstring(member))  # Append members
 
 
 def retrieve_starlink_satellites(**kwargs):

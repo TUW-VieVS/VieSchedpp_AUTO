@@ -80,7 +80,7 @@
         <position>../../CATALOGS/position.cat</position>
         <rec>../../CATALOGS/rec.cat</rec>
         <rx>../../CATALOGS/rx.cat</rx>
-        <source>./source.cat.v2</source>
+        <source>./source.cat.vgosb</source>
         <satellite_avoid/>
         <tracks>../../CATALOGS/tracks.cat</tracks>
     </catalogs>
@@ -155,6 +155,11 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
+            <setup>
+                <member>Oe-Ow</member>
+                <parameter>ignore</parameter>
+                <transition>hard</transition>
+            </setup>
         </setup>
         <parameters>
             <parameter name="default">
@@ -186,7 +191,7 @@
         <lowElevationFullWeight>15</lowElevationFullWeight>
     </weightFactor>
     <focusCorners>
-        <cadence>450</cadence>
+        <cadence>900</cadence>
         <nscans>2</nscans>
     </focusCorners>
     <multisched>
@@ -253,7 +258,7 @@
         </simple>
         <bandPolicies>
             <bandPolicy name="A">
-                <minSNR>12</minSNR>
+                <minSNR>15</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -264,7 +269,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="B">
-                <minSNR>12</minSNR>
+                <minSNR>15</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -275,7 +280,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="C">
-                <minSNR>12</minSNR>
+                <minSNR>15</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -286,7 +291,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="D">
-                <minSNR>12</minSNR>
+                <minSNR>15</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -336,7 +341,7 @@
                 <constraint>0.0001</constraint>
             </dUT1>
         </EOP>
-        <reference_clock>WETTZ13S</reference_clock>
+        <reference_clock>ISHIOKA</reference_clock>
         <station name="__all__">
             <coordinates>false</coordinates>
             <datum>false</datum>
