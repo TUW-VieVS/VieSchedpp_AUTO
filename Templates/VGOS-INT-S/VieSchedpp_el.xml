@@ -44,18 +44,18 @@
 	<catalogs>
 		<antenna>./antenna.cat.vgos</antenna>
 		<equip>./equip.cat.VGOS</equip>
-		<flux>../../flux.cat</flux>
-		<freq>../../freq.cat</freq>
-		<hdpos>../../hdpos.cat</hdpos>
-		<loif>../../loif.cat</loif>
-		<mask>../../mask.cat</mask>
-		<modes>../../modes.cat</modes>
-		<position>../../position.cat</position>
-		<rec>../../rec.cat</rec>
-		<rx>../../rx.cat</rx>
+		<flux>../../CATALOGS/flux.cat</flux>
+		<freq>../../CATALOGS/freq.cat</freq>
+		<hdpos>../../CATALOGS/hdpos.cat</hdpos>
+		<loif>../../CATALOGS/loif.cat</loif>
+		<mask>../../CATALOGS/mask.cat</mask>
+		<modes>../../CATALOGS/modes.cat</modes>
+		<position>../../CATALOGS/position.cat</position>
+		<rec>../../CATALOGS/rec.cat</rec>
+		<rx>../../CATALOGS/rx.cat</rx>
 		<satellite/>
 		<source>./source.cat.vgoss</source>
-		<tracks>../../tracks.cat</tracks>
+		<tracks>../../CATALOGS/tracks.cat</tracks>
 		<stp_dir>/scratch/STP</stp_dir>
 	</catalogs>
 	<station>
