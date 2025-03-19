@@ -9,7 +9,7 @@ fonttools==4.33.3
 html5lib==1.1
 idna==3.3
 kiwisolver==1.4.2
-lxml==4.9.0
+lxml==4.9.1
 matplotlib==3.5.2
 numpy==1.26.4
 packaging==21.3
