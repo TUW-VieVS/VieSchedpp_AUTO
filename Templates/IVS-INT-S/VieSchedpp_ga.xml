@@ -225,7 +225,7 @@
         <skdMode>1024-16(SI)</skdMode>
         <bandPolicies>
             <bandPolicy name="X">
-                <minSNR>20</minSNR>
+                <minSNR>25</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
