@@ -97,7 +97,7 @@
                 <available>1</available>
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
-                <minScan>20</minScan>
+                <minScan>12</minScan>
                 <maxScan>30</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
@@ -137,7 +137,7 @@
                 <weight>1</weight>
                 <minElevation>0</minElevation>
                 <minSunDistance>4</minSunDistance>
-                <minNumberOfStations>3</minNumberOfStations>
+                <minNumberOfStations>4</minNumberOfStations>
                 <minRepeat>900</minRepeat>
                 <minFlux>0.15</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
