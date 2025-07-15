@@ -71,7 +71,7 @@
     <catalogs>
         <antenna>../../VGOS_CATALOGS/antenna.cat.vgos</antenna>
         <equip>../../VGOS_CATALOGS/equip.cat.vgos</equip>
-        <flux>../../CATALOGS/flux.cat</flux>
+        <flux>../../VGOS_CATALOGS/flux.cat.merged</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
         <loif>../../CATALOGS/loif.cat</loif>

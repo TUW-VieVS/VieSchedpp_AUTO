@@ -313,60 +313,6 @@ def sefd_based_snr(**kwargs):
     insert_setup_node(session, "low_low", tree.find("./baseline/setup"), "high_snr", )
 
 
-def merge_flux_cat_vgos_sx(**kwargs):
-    tree = kwargs["tree"]
-    session = kwargs["session"]
-    folder = kwargs["folder"]
-    outdir = kwargs["outdir"]
-
-    # generate flux catalogs
-    def read_flux_cat(file):
-        data = defaultdict(list)
-        version = "unknown"
-        with open(file) as f:
-            check_version = True
-            for l in f:
-                l = l.strip()
-                if not l:
-                    continue
-                if check_version and "VERSION" in l:
-                    version = l.split()[-1]
-                    check_version = False
-                if l.startswith("*"):
-                    continue
-                check_version = False
-                name = l.split()[0]
-                data[name].append(l)
-        return data, version
-
-    flux_sx, sx_version = read_flux_cat("CATALOGS/flux.cat")
-    flux_vgos, vgos_version = read_flux_cat("VGOS_CATALOGS/flux.cat.vgos")
-
-    notes = tree.find("./output/notes")
-    notes.text += f"Source flux density catalog: merged VGOS v.'{vgos_version}' and SX v.'{sx_version}'\\n"
-
-    vgos_found = []
-    with open(folder / f"flux_{session['code']}.cat", "w") as f:
-        f.write(f"* ========== VGOS (version {vgos_version}) ========== \n")
-        for src, ls in flux_vgos.items():
-            for l in ls:
-                f.write(l + "\n")
-            vgos_found.append(src)
-
-        f.write(f"* ========== SX (version {sx_version}) ========== \n")
-        for src, ls in flux_sx.items():
-            if src in vgos_found:
-                continue
-            else:
-                for l in ls:
-                    f.write(l + "\n")
-            pass
-
-    shutil.copy(folder / f"flux_{session['code']}.cat", outdir / f"flux_{session['code']}.cat")
-    tree.find("./catalogs/flux").text = str((folder / f"flux_{session['code']}.cat").resolve())
-    pass
-
-
 def vgos_ops_magic(**kwargs):
     tree = kwargs["tree"]
     session = kwargs["session"]
@@ -374,7 +320,6 @@ def vgos_ops_magic(**kwargs):
     outdir = kwargs["outdir"]
 
     sources = VGOS_source(tree, folder, outdir, session, plot=True)
-    merge_flux_cat_vgos_sx(**kwargs)
     _dummy_flux(tree, folder, outdir, session, sources)
     VGOS_src_groups(tree, sources)
 

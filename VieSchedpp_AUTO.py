@@ -50,6 +50,7 @@ def start_scheduling(settings):
     if not args.no_download:
         Transfer.download_ftp()
         Transfer.download_http()
+        Helper.merge_flux_cat_vgos_sx()
     else:
         Message.addMessage("no downloads", dump="header")
 
