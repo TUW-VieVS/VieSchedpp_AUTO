@@ -44,6 +44,19 @@ def adjust_xml(template, session, pre_scheduling_functions, outdir):
     tree.find("./catalogs/rx").text = str((folder / tree.find("./catalogs/rx").text).resolve())
     tree.find("./catalogs/source").text = str((folder / tree.find("./catalogs/source").text).resolve())
     tree.find("./catalogs/tracks").text = str((folder / tree.find("./catalogs/tracks").text).resolve())
+    if tree.find("./catalogs/procs") is not None:
+        tree.find("./catalogs/procs").text = str((folder / tree.find("./catalogs/procs").text).resolve())
+
+    # Define the path and the note content
+    output = tree.find("./output")
+    if output is None:
+        output = etree.SubElement(tree, "output")
+    # Either find existing 'notes' or create a new one
+    notes = output.find("notes")
+    if notes is None:
+        notes = etree.SubElement(output, "notes")
+    notes.text = ("This schedule is generated fully automatically using VieSched++ AUTO\\n"
+                  "===========================================================\\n\\n")
 
     # add parameters
     add_parameter(tree.find("./station/parameters"), "tagalong", ["tagalong"], ["1"])
@@ -176,10 +189,19 @@ def insert_station_setup_with_time(p_start, p_end, session_start, session_end, s
     :param session: dictionary with session specific fields 
     :param tree: xml parameter tree
     :param station: station name
-    :param parameter_name:  name of the parameter in xml file
+    :param parameter_name: name of the parameter in xml file
     :param comment: 
     :return: None
     """
+
+    # Define a helper to count depth from root
+    def depth(elem):
+        d = 0
+        while elem.getparent() is not None:
+            d += 1
+            elem = elem.getparent()
+        return d
+
     b_in = p_start >= session_start and p_end <= session_end
     b_start_in = session_start <= p_start <= session_end
     b_end_in = session_start <= p_end <= session_end
@@ -189,7 +211,12 @@ def insert_station_setup_with_time(p_start, p_end, session_start, session_end, s
             p_start = max(session_start, p_start)
             p_end = min(session_end, p_end)
             add_comment(station, p_start, p_end, parameter_name, comment)
-            insert_setup_node(session, station, tree.find("./station/setup"), parameter_name, p_start, p_end)
+            root = tree.find("./station/setup")
+            matching_setups = root.xpath(f".//setup[.//member[text()='{station}']]")
+            if matching_setups:
+                root = max(matching_setups, key=depth, default=None)
+
+            insert_setup_node(session, station, root, parameter_name, p_start, p_end)
 
 
 def insert_setup_node(session, member, root, parameter_name, p_start=None, p_end=None, tag="member"):
@@ -401,9 +428,12 @@ def change_station_names_in_xml(session, tree):
     # change priority entries
     root = tree.find("./priorities")
     if root is not None:
+        staweight = 1.0
         fixed = ["#obs", "XPO", "YPO", "dUT1", "NUTX", "NUTY"]
         for s in root:
             if s.tag == "variable" and s.attrib["name"] not in fixed and s.attrib["name"] not in stations:
+                if s.tag == "variable" and s.attrib["name"] == "stations":
+                    staweight = float(s.text)
                 root.remove(s)
 
         for sta in stations:
@@ -412,5 +442,5 @@ def change_station_names_in_xml(session, tree):
                     break
             else:
                 node = etree.Element("variable", name=sta)
-                node.text = "0.0"
+                node.text = f"{staweight / len(stations):.3f}"
                 root.insert(len(root), node)

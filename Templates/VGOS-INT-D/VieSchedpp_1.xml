@@ -69,8 +69,8 @@
         <createSkyCoverage>false</createSkyCoverage>
     </output>
     <catalogs>
-        <antenna>../../CATALOGS/antenna.cat</antenna>
-        <equip>./equip.cat.VGOS</equip>
+        <antenna>../../VGOS_CATALOGS/antenna.cat.vgos</antenna>
+        <equip>../../VGOS_CATALOGS/equip.cat.vgos</equip>
         <flux>../../CATALOGS/flux.cat</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
@@ -83,6 +83,7 @@
         <source>./source.cat.jet90deg</source>
         <satellite_avoid/>
         <tracks>../../CATALOGS/tracks.cat</tracks>
+        <procs>../../VGOS_CATALOGS/procs.cat.vgos</procs>
     </catalogs>
     <station>
         <setup>

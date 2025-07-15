@@ -1,0 +1,25 @@
+* VGOS antenna catalog
+*
+*ID Name    Axis   Offset    Rate1  C1   Lim1   Lim1    Rate2  C2  Lim2  Lim2   Diam PO EQ MS
+*   
+ G GGAO12M  AZEL   0.00000   300.0   7  180.0  720.0     70.0   4   6.5  88.0   12.0 Gs Gs Gs
+ L HOBART12 AZEL   0.00000   300.0   8   90.0  630.0     75.0   7   5.0  88.0   12.0 Hb Hb Hb
+ J HARTVGS  AZEL   0.00000   720.0   7 -270.0  270.0    360.0   6   0.0  89.0   13.2 Hv Hv Hv
+ I ISHIOKA  AZEL   0.00000   720.0  11  -70.0  430.0    360.0  12   5.0  89.0   13.2 Is Is --
+ C KOKEE12M AZEL   0.00000   720.0  10  182.5  722.3    360.0   8   1.1  88.2   12.0 K2 K2 K2
+ K KATH12M  AZEL   0.00000   300.0   8   90.0  630.0     75.0   7   5.0  88.0   12.0 Ke Ke --
+ M MACGO12M AZEL   0.00000   720.0  10  180.0  720.0    360.0   8   6.5  88.0   12.0 Mg Mg Mg
+ A MATERAVG AZEL   0.00000   720.0   1  -90.0  450.0    360.0   1   5.0  88.0   13.2 Mb Mb --
+ B NYALE13N AZEL   0.00000   720.0   8  -90.0  450.0    360.0   8   5.0  89.0   13.2 Nn Nn Nn
+ D NYALE13S AZEL   0.00000   720.0   8  -90.0  450.0    360.0   8   5.0  89.0   13.2 Ns Ns Ns
+ 1 ONSA13NE AZEL   0.00000   720.0   4  -90.0  450.0    360.0   5   5.0  89.0   13.2 Oe Oe Oe
+ 2 ONSA13SW AZEL   0.00000   720.0   4  -90.0  450.0    360.0   5   5.0  89.0   13.2 Ow Ow Ow
+ R RAEGSMAR AZEL   0.00000   720.0   5    0.0  420.0    240.0   5   5.0  89.0   13.2 Sa Sa --
+ H RAEGYEB  AZEL   0.00000   720.0   5  300.0  780.0    360.0   7   5.0  89.0   13.2 Yj Yj --
+ E SESHAN13 AZEL   0.00000   720.0   9  -90.0  450.0    360.0   4   7.0  89.0   13.0 S6 S6 S6
+ T TIANMA13 AZEL   0.00000   720.0   0  -90.0  450.0    360.0   0   5.0  89.0   13.2 T1 T1 T1
+ U URUMQI13 AZEL   0.00000   720.0   9  -90.0  450.0    360.0   4   7.0  89.0   13.0 Um Um Um
+ F WESTFORD AZEL   0.31830   200.0   9  100.0  460.0    120.0   9   4.0  87.2   18.0 Wf Wf Wf
+ N WETTZ13N AZEL   0.00000   720.0  11  -90.0  450.0    360.0   7   5.0  89.0   13.2 Wn Wn Wn
+ S WETTZ13S AZEL   0.00000   720.0  10  -90.0  450.0    360.0   7   5.0  89.0   13.2 Ws Ws Ws
+ Y YARRA12M AZEL   0.00000   300.0   8   90.0  630.0     75.0   8   5.0  88.0   12.0 Yg Yg --

@@ -1,15 +1,24 @@
 import configparser
 import datetime
-from itertools import combinations
+import shutil
+from collections import defaultdict
+from gettext import translation
+from itertools import combinations, product
 from pathlib import Path
 import requests
 import numpy as np
 import pandas as pd
+import healpy as hp
+from string import ascii_uppercase
+from util.coord_tranformation import rade2azel
 
 from lxml import etree
 
 from Helper import read_master, antennaLookupTable, Message, read_sources
 from XML_manipulation import insert_station_setup_with_time, add_parameter, insert_setup_node, add_group
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
 
 
 def add_downtime_intensives(**kwargs):
@@ -132,6 +141,12 @@ def vgos_int_s(**kwargs):
 
     mg_txt = [f"<member>{name}</member>" for name in high_els["MACGO12M"]]
     ws_txt = [f"<member>{name}</member>" for name in high_els["WETTZ13S"]]
+
+    notes = tree.find("./output/notes")
+    notes.text += f"Special high/low elevation scan mode used\\n"
+    notes.text += f" - number of high elevation sources for MACGO12M: {len(high_els['MACGO12M'])}\\n"
+    notes.text += f" - number of high elevation sources for WETTZ13S: {len(high_els['WETTZ13S'])}\\n\\n"
+
 
     # Find groups
     for group in tree.xpath("//group"):
@@ -273,6 +288,14 @@ def sefd_based_snr(**kwargs):
     add_group(tree.find("./baseline"), "high_high", high_high)
     add_group(tree.find("./baseline"), "high_low", high_low)
     add_group(tree.find("./baseline"), "low_low", low_low)
+
+    notes = tree.find("./output/notes")
+    notes.text += f"Adjust target SNR based on station SEFDs\\n"
+    notes.text += f" - number of high-high SEFD baselines {len(high_high):2d}: (low SNR target)\\n"
+    notes.text += f" - number of high-low  SEFD baselines {len(high_low):2d}: (mid SNR target)\\n"
+    notes.text += f" - number of low-low   SEFD baselines {len(low_low):2d}: (high SNR target)\\n\\n"
+
+
     Message.addMessage("add baseline SEFD based SNR targets")
     Message.addMessage(f"    new baseline group \"{'high_high':2}\" with {len(high_high):d} members")
     Message.addMessage(f"    new baseline group \"{'high_low':2}\" with {len(high_low):d} members")
@@ -285,9 +308,540 @@ def sefd_based_snr(**kwargs):
     add_parameter(tree.find("./baseline/parameters"), "high_snr", ["minSNR", "minSNR"], ["22", "17"],
                   [("band", "X"), ("band", "S")])
 
-    insert_setup_node(session, "high_high", tree.find("./baseline/setup"), "low_snr", tag="group")
-    insert_setup_node(session, "high_low", tree.find("./baseline/setup"), "mid_snr", tag="group")
-    insert_setup_node(session, "low_low", tree.find("./baseline/setup"), "high_snr", tag="group")
+    insert_setup_node(session, "high_high", tree.find("./baseline/setup"), "low_snr", )
+    insert_setup_node(session, "high_low", tree.find("./baseline/setup"), "mid_snr", )
+    insert_setup_node(session, "low_low", tree.find("./baseline/setup"), "high_snr", )
+
+
+def merge_flux_cat_vgos_sx(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+    outdir = kwargs["outdir"]
+
+    # generate flux catalogs
+    def read_flux_cat(file):
+        data = defaultdict(list)
+        version = "unknown"
+        with open(file) as f:
+            check_version = True
+            for l in f:
+                l = l.strip()
+                if not l:
+                    continue
+                if check_version and "VERSION" in l:
+                    version = l.split()[-1]
+                    check_version = False
+                if l.startswith("*"):
+                    continue
+                check_version = False
+                name = l.split()[0]
+                data[name].append(l)
+        return data, version
+
+    flux_sx, sx_version = read_flux_cat("CATALOGS/flux.cat")
+    flux_vgos, vgos_version = read_flux_cat("VGOS_CATALOGS/flux.cat.vgos")
+
+    notes = tree.find("./output/notes")
+    notes.text += f"Source flux density catalog: merged VGOS v.'{vgos_version}' and SX v.'{sx_version}'\\n"
+
+    vgos_found = []
+    with open(folder / f"flux_{session['code']}.cat", "w") as f:
+        f.write(f"* ========== VGOS (version {vgos_version}) ========== \n")
+        for src, ls in flux_vgos.items():
+            for l in ls:
+                f.write(l + "\n")
+            vgos_found.append(src)
+
+        f.write(f"* ========== SX (version {sx_version}) ========== \n")
+        for src, ls in flux_sx.items():
+            if src in vgos_found:
+                continue
+            else:
+                for l in ls:
+                    f.write(l + "\n")
+            pass
+
+    shutil.copy(folder / f"flux_{session['code']}.cat", outdir / f"flux_{session['code']}.cat")
+    tree.find("./catalogs/flux").text = str((folder / f"flux_{session['code']}.cat").resolve())
+    pass
+
+
+def vgos_ops_magic(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    folder = kwargs["folder"]
+    outdir = kwargs["outdir"]
+
+    sources = VGOS_source(tree, folder, outdir, session, plot=True)
+    merge_flux_cat_vgos_sx(**kwargs)
+    _dummy_flux(tree, folder, outdir, session, sources)
+    VGOS_src_groups(tree, sources)
+
+    VGOS_sta_setup(tree, session)
+    VGOS_sites(tree, session["stations"])
+    VGOS_calib(tree, session)
+
+
+def VGOS_src_groups(tree, sources):
+    root = tree.getroot()
+    groups = root.find("source/groups")  # XPath, in case it's nested
+
+    for grp in ["core", "good", "test"]:
+        type_group = etree.SubElement(groups, "group", name=grp)
+        type = sources.loc[sources["type"].str.contains(grp, case=False)]
+        for name in type["name2"]:
+            etree.SubElement(type_group, "member").text = name
+
+        for loc, type_loc in zip(["northern", "southern"],
+                                 [type.loc[type["de_deg"] >= -15], type.loc[type["de_deg"] < -15]]):
+            type_loc_group = etree.SubElement(groups, "group", name=f"{grp}_{loc}")
+            for name in type_loc["name2"]:
+                etree.SubElement(type_loc_group, "member").text = name
+
+            flux2name = {
+                "VGOS": "vgos_flux",
+                "SX": "sx_flux",
+                "NONE": "no_flux",
+            }
+            for flux in ["VGOS", "SX", "NONE"]:
+                type_loc_flux_group = etree.SubElement(groups, "group", name=f"{grp}_{loc}_{flux2name[flux]}")
+                type_loc_flux = type_loc.loc[type_loc["flux"] == flux]
+                for name in type_loc_flux["name2"]:
+                    etree.SubElement(type_loc_flux_group, "member").text = name
+                pass
+
+    for grp in ["calib1", "calib2", "test"]:
+        type_group = etree.SubElement(groups, "group", name=grp)
+        type = sources.loc[sources["type"].str.contains(grp, case=False)]
+        for name in type["name2"]:
+            etree.SubElement(type_group, "member").text = name
+    pass
+
+
+def VGOS_sta_setup(tree, session):
+    stations = session["stations"]
+    sta2equip = {}
+    slow = ["GGAO12M", "WESTFORD", "MACGO12M", "KOKEE12M"]
+
+    notes = tree.find("./output/notes")
+    notes.text += f"The following stations require buffer-flush time (4 Gbps data write speed instead of 8 Gbps):\\n"
+
+    with open("VGOS_CATALOGS/equip.cat.vgos") as f:
+        for l in f:
+            l = l.strip()
+            if l.startswith("*"):
+                continue
+            sta = l.split()[0]
+            equip = l.split()[-1]
+            if sta in stations:
+                # hard-coded MARK6 for American stations
+                if sta in slow:
+                    sta2equip[sta] = "MARK6"
+                else:
+                    sta2equip[sta] = "FLEXBUFF"
+                # sta2equip[sta] = equip
+
+    root = tree.getroot()
+    station_node = root.find("station")  # XPath, in case it's nested
+    setup_node = station_node.find("setup")  # XPath, in case it's nested
+    for station, equip in sta2equip.items():
+        if equip.upper() in ["MARK6", "MARK5B"]:
+            setup = etree.SubElement(setup_node, "setup")
+            etree.SubElement(setup, "member").text = station
+            etree.SubElement(setup, "parameter").text = "buffer_flush"
+            etree.SubElement(setup, "transition").text = "hard"
+            notes.text += f" - {station}\\n"
+
+    notes.text += f"\\n"
+    pass
+
+
+def VGOS_calib(tree, session):
+    # source 4C39.25
+    ra = 2.474223394708588
+    de = 0.68136127710676
+
+    # station positions
+    stations = pd.read_csv("CATALOGS/position.cat", comment="*", header=None,
+                           usecols=[1, 6, 7], names=["name", "lon", "lat"], sep="\s+")
+    stations["lon"] = 360 - stations["lon"]
+    stations.set_index("name", inplace=True)
+    stations = stations.loc[session["stations"]]
+    stations["lon_rad"] = np.radians(stations["lon"])
+    stations["lat_rad"] = np.radians(stations["lat"])
+
+    # extract potential times for calibration scans to 4C39.25
+    start = session["date"]
+    duration = datetime.timedelta(hours=session["duration"])
+    end = start + duration
+    index = pd.date_range(start=start, end=end, freq="15min", inclusive="neither")
+    index = index[index.minute != 0]
+
+    # save elevation of all stations (in case > 10 deg)
+    df = pd.DataFrame(index=index, columns=stations.index)
+    for ts in index:
+        jd = ts.to_julian_date()
+        mjd = jd - 2400000.5
+
+        for sta, s in stations.iterrows():
+            lon = s["lon_rad"]
+            lat = s["lat_rad"]
+            az, el = rade2azel(mjd, lat, lon, ra, de)
+            el = np.degrees(el)
+            if el > 5:
+                df.loc[ts, sta] = el
+            pass
+        pass
+    df = df.dropna(how="all", axis=1)
+
+    best_pair = None
+    best_non_nan_count = -1
+    best_min_value = -np.inf
+
+    # Iterate over all unique pairs of rows
+    for i, j in combinations(df.index, 2):
+        row1 = df.loc[i]
+        row2 = df.loc[j]
+
+        # Combine rows with priority to non-NaN
+        combined = row1.combine_first(row2)  # row1 if not NaN, else row2
+
+        # Check rule 1: each column must have at least one non-NaN
+        if combined.isna().any():
+            continue  # skip if any column is still NaN
+
+        # Rule 2: count total non-NaN values in both rows
+        total_non_nan = row1.notna().sum() + row2.notna().sum()
+
+        # Rule 3: calculate minimal value across combined non-NaNs
+        min_value = combined.min()
+
+        # Apply rule 2 and 3 to select best
+        if (total_non_nan > best_non_nan_count or
+                (total_non_nan == best_non_nan_count and min_value > best_min_value)):
+            best_pair = (i, j)
+            best_non_nan_count = total_non_nan
+            best_min_value = min_value
+
+    if best_pair:
+        times_4C39p25 = [int((best_pair[0] - start).total_seconds()), int((best_pair[1] - start).total_seconds())]
+    else:
+        times_4C39p25 = []
+
+    notes = tree.find("./output/notes")
+    notes.text += (f"CALIBRATION blocks every full hour\\n"
+                   f" - every 3 hours: 120-second long scans to CALIB2 source list (for imaging calibration) \\n"
+                   f" - every other block: 30-second long scans to CALIB1 source list (for correlation and fringe finders) \\n"
+                   f" - two special scans to 4C39.25 (for cross-polarization bandpass calibration - at {best_pair[0]} and {best_pair[1]})\\n\\n")
+
+    dur_seconds = int(duration.total_seconds())
+    calib = sorted(list(set(times_4C39p25 + list(range(1 * 3600, dur_seconds, 1 * 3600)))))
+
+    # add calibraiton blocks
+    root = tree.getroot()
+    rules = root.find("rules")
+    calibration = etree.SubElement(rules, "calibration")
+
+    for start_time in calib:
+        block = etree.SubElement(calibration, "block")
+        etree.SubElement(block, "startTime").text = str(start_time)
+
+        if start_time in times_4C39p25:
+            etree.SubElement(block, "scans").text = "1"
+            etree.SubElement(block, "duration").text = "120"
+            etree.SubElement(block, "sources").text = "4C39.25"
+            etree.SubElement(block, "overlap").text = "0"
+            etree.SubElement(block, "rigorosOverlap").text = "false"
+        elif start_time % (3 * 3600) == 0:
+            etree.SubElement(block, "scans").text = "3"
+            etree.SubElement(block, "duration").text = "120"
+            etree.SubElement(block, "sources").text = "calib2"
+            etree.SubElement(block, "overlap").text = "1"
+            etree.SubElement(block, "rigorosOverlap").text = "true"
+        else:
+            etree.SubElement(block, "scans").text = "3"
+            etree.SubElement(block, "duration").text = "30"
+            etree.SubElement(block, "sources").text = "calib1"
+            etree.SubElement(block, "overlap").text = "2"
+            etree.SubElement(block, "rigorosOverlap").text = "false"
+
+    etree.SubElement(calibration, "tryToIncludeAllStations").text = "true"
+    etree.SubElement(calibration, "tryToIncludeAllStations_factor").text = "3"
+    etree.SubElement(calibration, "numberOfObservations_factor").text = "1"
+    etree.SubElement(calibration, "numberOfObservations_offset").text = "0"
+    etree.SubElement(calibration, "averageStations_factor").text = "2"
+    etree.SubElement(calibration, "averageStations_offset").text = "1"
+    etree.SubElement(calibration, "averageBaseline_factor").text = "0.5"
+    etree.SubElement(calibration, "averageBaseline_offset").text = "1"
+    etree.SubElement(calibration, "duration_factor").text = "0.20000000000000001"
+    etree.SubElement(calibration, "duration_offset").text = "1"
+
+    pass
+
+
+def VGOS_sites(tree, station_list):
+    joint = [("NYALE13N", "NYALE13S"),
+             ("ONSA13NE", "ONSA13SW"),
+             ("WETTZ13N", "WETTZ13S"),
+             ("SESHAN13", "TIANMA13"),
+             ]
+
+    def generate_ids():
+        for size in range(1, 3):  # Up to 2-letter IDs: A-Z, AA-ZZ
+            for letters in product(ascii_uppercase, repeat=size):
+                yield ''.join(letters)
+
+    id_gen = generate_ids()
+
+    root = tree.getroot()  # If you're parsing from file, use etree.parse()
+    sites_elem = etree.SubElement(root, "sites")
+    # === Process station list with joint logic ===
+    processed = set()
+
+    notes = tree.find("./output/notes")
+    notes.text += f"The following stations are co-located and count as one site only:\\n"
+
+    for name in station_list:
+        if name in processed:
+            continue
+
+        # Check if part of a joint station
+        found_joint = False
+        for pair in joint:
+            if name in pair:
+                other = pair[1] if name == pair[0] else pair[0]
+                if other in station_list:
+                    site_elem = etree.SubElement(sites_elem, "site", ID=next(id_gen))
+                    etree.SubElement(site_elem, "station").text = name
+                    etree.SubElement(site_elem, "station").text = other
+                    processed.update({name, other})
+                    found_joint = True
+                    notes.text += f" - {name} {other}\\n"
+
+                    break
+
+        if not found_joint:
+            site_elem = etree.SubElement(sites_elem, "site", ID=next(id_gen))
+            etree.SubElement(site_elem, "station").text = name
+            processed.add(name)
+
+    notes.text += f"\\n"
+    pass
+
+
+def VGOS_source(tree, folder, outdir, session, plot=True):
+    # some helper functions:
+    def read_srclist(path):
+        df = pd.read_csv(path, header=None, dtype=str, comment="*", sep="\s+",
+                         names="name name2 ra_h ra_m ra_s de_d de_m de_s 2000.0 0.0 type".split(),
+                         index_col="name")
+        df["sign_dec"] = df["de_d"].str.contains("-").replace({True: -1, False: 1})
+        df["ra_deg"] = (df["ra_h"].astype(float) + df["ra_m"].astype(float) / 60 + df["ra_s"].astype(
+            float) / 3600) * 15
+        df["de_deg"] = df["sign_dec"] * (
+                abs(df["de_d"].astype(float)) + df["de_m"].astype(float) / 60 + df["de_s"].astype(
+            float) / 3600)
+        df["ra"] = np.radians(df["ra_deg"])
+        df['ra'] = np.where(df['ra'] > np.pi, df['ra'] - 2 * np.pi, df['ra'])
+        df["de"] = np.radians(df["de_deg"])
+        theta = np.pi / 2 - df["de"]  # colatitude
+        phi = df['ra']  # longitude
+        pix = hp.ang2pix(2, theta.values, phi.values)
+        df["pix"] = pix
+        return df
+
+    def select_n(preselected, df, n, seed=42):
+        selected = []
+        for idx, tmp in df.groupby("pix"):
+            if preselected is not None:
+                n_grp = n - sum(preselected["pix"] == idx)
+            else:
+                n_grp = n
+            items = tmp.sample(n=min(tmp.shape[0], n_grp), random_state=seed).index.to_list()
+            selected += items
+            pass
+        return df.loc[selected, :]
+
+    def select_calib(preselected, all):
+        all = pd.concat(all)
+        calib = all.loc[all["type"].str.contains("CALIB", case=False)]
+        extra_calib = calib.loc[calib.index.difference(preselected.index)]
+        extra_calib['type'] = extra_calib['type'].str.replace(r'_GOOD|_TEST|_CORE', '', regex=True)
+        return extra_calib
+
+    # read source lists
+    core = read_srclist(folder / "source_core.cat")
+    good = read_srclist(folder / "source_good.cat")
+    test = read_srclist(folder / "source_test.cat")
+
+    # select certain number of sources
+    selected_good = select_n(None, good, 6, seed=int(session['date'].timestamp()))
+    selected_test = select_n(selected_good, test, 7, seed=int(session['date'].timestamp()))
+
+    sources = pd.concat([core, selected_good, selected_test])
+    extra_calib = select_calib(sources, [core, good, test])
+    sources = pd.concat([sources, extra_calib])
+
+    notes = tree.find("./output/notes")
+    notes.text += (f"Balanced sources selection:\\n"
+                   f" - CORE list: {core.shape[0]} sources\\n"
+                   f" - GOOD list: {selected_good.shape[0]} sources (from {good.shape[0]})\\n"
+                   f" - TEST list: {selected_test.shape[0]} sources (from {test.shape[0]})\\n"
+                   f" - plus an additional {extra_calib.shape[0]} sources for calibration purposes only\\n"
+                   f"Note that not all of these 'selected' sources are also scheduled!\\n\\n")
+
+    # write source list based on the selected sources
+    with open(folder / f"source_{session['code']}.cat", "w") as f:
+        f.write("* ========== CORE ========== \n")
+        for name, s in core.iterrows():
+            f.write(
+                f"{name:<8s} {s['name2']:<8s}      {s['ra_h']:<3s} {s['ra_m']:<3s} {s['ra_s']:<12s}       {s['de_d']:>3s} {s['de_m']:<3s} {s['de_s']:<11s}     2000.0 0.0    {s['type']} \n")
+        f.write("* ========== GOOD ========== \n")
+        for name, s in selected_good.iterrows():
+            f.write(
+                f"{name:<8s} {s['name2']:<8s}      {s['ra_h']:<3s} {s['ra_m']:<3s} {s['ra_s']:<12s}       {s['de_d']:>3s} {s['de_m']:<3s} {s['de_s']:<11s}     2000.0 0.0    {s['type']} \n")
+        f.write("* ========== TEST ========== \n")
+        for name, s in selected_test.iterrows():
+            f.write(
+                f"{name:<8s} {s['name2']:<8s}      {s['ra_h']:<3s} {s['ra_m']:<3s} {s['ra_s']:<12s}       {s['de_d']:>3s} {s['de_m']:<3s} {s['de_s']:<11s}     2000.0 0.0    {s['type']} \n")
+        f.write("* ========== EXTRA CALIB ========== \n")
+        for name, s in extra_calib.iterrows():
+            f.write(
+                f"{name:<8s} {s['name2']:<8s}      {s['ra_h']:<3s} {s['ra_m']:<3s} {s['ra_s']:<12s}       {s['de_d']:>3s} {s['de_m']:<3s} {s['de_s']:<11s}     2000.0 0.0    {s['type']} \n")
+    shutil.copy(folder / f"source_{session['code']}.cat", outdir / f"source_{session['code']}.cat")
+    tree.find("./catalogs/source").text = str((outdir / f"source_{session['code']}.cat").resolve())
+
+    if plot:
+        # optional generate a plot of source selection
+        def quickplot(df, title="sources", outpath=outdir):
+            fig = plt.figure(figsize=(8, 4))
+            fig.add_subplot(111, projection='mollweide')
+            plt.grid(True)
+            counters = defaultdict(int)
+            for i, row in df.iterrows():
+                marker = '*'
+                size = 100 if 'DEF' in row['type'] else 30
+                color = 'C0'  # default
+                edgecolor = 'none'
+                alpha = 0.5
+
+                if 'DEF' not in row['type']:
+                    marker = 'o'
+                    counters["NORMAL"] += 1
+                else:
+                    counters[("DEF")] += 1
+
+                if 'CALIB1' in row['type']:
+                    color = 'C1'
+                    counters["CALIB1"] += 1
+                if 'CORE' in row['type']:
+                    alpha = 1.0
+                    edgecolor = 'black'
+                    counters["CORE"] += 1
+                if 'CALIB2' in row['type']:
+                    color = 'C2'
+                    counters["CALIB2"] += 1
+                if 'CALIB1' in row['type'] and 'CALIB2' in row['type']:
+                    color = "C3"
+                if 'TEST' in row['type']:
+                    color = "gray"
+                    counters["TEST"] += 1
+                if 'GOOD' in row['type']:
+                    alpha = 1.0
+                    counters["GOOD"] += 1
+                counters["TOTAL"] += 1
+                plt.scatter(row['ra'], row['de'], marker=marker, s=size, color=color, edgecolors=edgecolor,
+                            linewidths=1, alpha=alpha)
+
+            legend_elements = [
+                Line2D([0], [0], marker='*', color='C0', label=f'DEF ({counters["DEF"]})', markersize=10,
+                       linestyle='None'),
+                Line2D([0], [0], marker='o', color='C0', label=f'STD ({counters["NORMAL"]})', markersize=6,
+                       linestyle='None'),
+                Patch(facecolor='C0', edgecolor='k', label=f'CORE ({counters["CORE"]})'),
+                Patch(facecolor='C1', edgecolor='none', label=f'CALIB1 ({counters["CALIB1"]})'),
+                Patch(facecolor='C0', edgecolor='none', label=f'GOOD ({counters["GOOD"]})', ),
+                Patch(facecolor='C2', edgecolor='none', label=f'CALIB2 ({counters["CALIB2"]})'),
+                Patch(facecolor='gray', edgecolor='none', label=f'TEST ({counters["TEST"]})', alpha=0.5),
+                Patch(facecolor='C3', edgecolor='none', label=f'CALIB1&2'),
+            ]
+            plt.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=4)
+            plt.title(f"{title} ({counters['TOTAL']})")
+            plt.tight_layout()
+            plt.savefig(outpath, dpi=300)
+            pass
+
+        outpath = outdir / f"{session['code']}.png"
+        quickplot(sources, f"{session['code']}", outpath)
+        shutil.copy(outpath, folder / outpath.name)
+
+    return sources
+
+
+def _dummy_flux(tree, folder, outdir, session, sources):
+    flux_cat = tree.find("./catalogs/flux").text
+
+    all_names = sources.index.to_list() + sources["name2"].to_list()
+    all_names = list(set(all_names))
+    translation_table = {}
+    for name, s in sources.iterrows():
+        name2 = s["name2"]
+        if name != name2:
+            translation_table[name] = name2
+        pass
+
+    # generate flux catalogs
+    def read_flux_cat(file):
+        data = defaultdict(list)
+        comments = []
+        with open(file) as f:
+            for l in f:
+                l = l.strip()
+                if not l or l.startswith("*"):
+                    comments.append(l)
+                    continue
+                name = l.split()[0]
+                data[name].append(l)
+        return data, comments
+
+    flux, comments = read_flux_cat(flux_cat)
+
+    sources["flux"] = "NONE"
+    n_none = 0
+    with open(folder / f"flux_{session['code']}.cat", "w") as f:
+        for comment in comments:
+            f.write(comment + "\n")
+
+        for src, ls in flux.items():
+            if src in translation_table:
+                src = translation_table[src]
+            if src in all_names:
+                idx = sources[sources["name2"] == src].index[0]
+                if sorted([tmp.split()[1] for tmp in ls]) == ["A", "B", "C", "D"]:
+                    sources.loc[idx, "flux"] = "VGOS"
+                else:
+                    sources.loc[idx, "flux"] = "SX"
+                for l in ls:
+                    f.write(l + "\n")
+
+        f.write("* ========== DUMMY VALUES ========== \n")
+        for src, s in sources.iterrows():
+            if s["flux"] == "NONE":
+                n_none += 1
+                f.write(f"{src:<8s}  A   B   0.0  0.15  13000 * DUMMY VALUE\n")
+                f.write(f"{src:<8s}  B   B   0.0  0.15  13000 * DUMMY VALUE\n")
+                f.write(f"{src:<8s}  C   B   0.0  0.15  13000 * DUMMY VALUE\n")
+                f.write(f"{src:<8s}  D   B   0.0  0.15  13000 * DUMMY VALUE\n")
+
+    if n_none > 0:
+        notes = tree.find("./output/notes")
+        notes.text += (f" - {n_none} sources do not have a source flux density model -> add DUMMY model. \\n"
+                       f" - these sources will be observed for 30-seconds straight. \\n\\n")
+
+    shutil.copy(folder / f"flux_{session['code']}.cat", outdir / f"flux_{session['code']}.cat")
+    tree.find("./catalogs/flux").text = str((outdir / f"flux_{session['code']}.cat").resolve())
+    return
 
 
 def prepare_source_list_crf(**kwargs):

@@ -1,0 +1,30 @@
+* VGOS equip catalog
+*
+* SEFD(el) = SEFD * ( c0 + c1 / (sin(el)^y) )
+* if no y/c0/c1 parameters are provided: SEFD(el) = SEFD 
+* 
+* The 2nd naming of antenna and the tape information is provided for compabiltiy with SKED
+*
+*Antenna   ID  Antenna   Heads  Tape_len    A SEFD B SEFD C SEFD D SEFD    A y    c0   c1    B y    c0   c1    C y    c0   c1    D y    c0   c1     equipment
+*                        den/spd  ft/min      (Jy)   (Jy)   (Jy)   (Jy)
+GGAO12M    Gs  GGAO12M   2x56000  17640     A 2500 B 2400 C 2100 D 2900    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   RDBE             MARK6
+HOBART12   Hb  HOBART12  2x56000  17640     A 5000 B 5000 C 5000 D 5000                                                                             DBBC_DDC         MARK5B
+HARTVGS    Hv  HART15M   2x56000  17640     A 3000 B 2900 C 2800 D 2600                                                                             DBBC_DDC/Fila10g FlexBuff
+ISHIOKA    Is  ISHIOKA     1      100       A 2300 B 2600 C 2600 D 3300    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   K4-2             K5
+KOKEE12M   K2  KOKEE12M  2x56000  17640     A 3000 B 2200 C 2200 D 3300    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   RDBE             MARK6
+KATH12M    Ke  KATH12M   2x56000  17640     A 5000 B 5000 C 5000 D 5000                                                                             DBBC_DDC         MARK5B
+MACGO12M   Mg  MACGO12M  2x56000  17640     A 2100 B 2100 C 2300 D 2700    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   RDBE             MARK6
+MATERAVG   Mb  MATERAVG  1x56000  17640     A 3000 B 3000 C 3000 D 3000    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC         MARK6
+NYALE13N   Nn  NYALE13N    1      17650     A 1800 B 1800 C 1700 D 2800    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC/Fila10g FlexBuff
+NYALE13S   Ns  NYALE13S    1      17650     A 3000 B 3000 C 3000 D 3000    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC/Fila10g FlexBuff
+ONSA13NE   Oe  ONSA13NE  2x56000  17640     A 3000 B 1600 C 1600 D 2100    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC         FlexBuff
+ONSA13SW   Ow  ONSA13SW  2x56000  17640     A 2100 B 1400 C 1300 D 1400    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC         FlexBuff
+RAEGSMAR   Sa  RAEGSMAR  1x56000  17640     A 1600 B 1300 C 1300 D 1700    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC         MARK6
+RAEGYEB    Yj  RAEGYEB   1x56000  17640     A 1800 B 2300 C 2200 D 2800    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC         MARK6
+SESHAN13   S6  SESHAN13  2x56000  17640     A 3000 B 3000 C 3000 D 3000    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   RDBE             MARK6
+TIANMA13   T1  TIANMA13  2x56000  17640     A 3000 B 3000 C 3000 D 3000    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   RDBE             MARK6
+URUMQI13   Um  URUMQI13  2x56000  17640     A 3000 B 3000 C 3000 D 3000    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   RDBE             MARK6
+WESTFORD   Wf  WESTFORD  2x56000  17640     A 3000 B 3000 C 3000 D 5500                                                                             RDBE             MARK6
+WETTZ13N   Wn  WETTZ13N  2x56000  17640     A 2500 B 2500 C 2500 D 2500    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC_DDC         MARK5B
+WETTZ13S   Ws  WETTZ13S  2x56000  17640     A 3000 B 3000 C 3000 D 3000    A 1.00 0.94 0.06  B 1.00 0.92 0.08  C 1.00 0.89 0.11  D 1.00 0.88 0.12   DBBC3_DDC        FlexBuff
+YARRA12M   Yg  YARRA12M  2x56000  17640     A 4500 B 4500 C 4500 D 4500                                                                             DBBC_DDC         MARK5B

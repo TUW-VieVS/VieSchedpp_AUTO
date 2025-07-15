@@ -36,6 +36,22 @@
         <experimentDescription>no further description</experimentDescription>
         <scheduler>unknown</scheduler>
         <correlator>unknown</correlator>
+        <contacts>
+            <contact>
+                <function/>
+                <name>DACH</name>
+                <email>oc.dach@bkg.bund.de</email>
+                <affiliation></affiliation>
+            </contact>
+            <contact>
+                <function/>
+                <name>Matthias Schartner</name>
+                <email>mschartner@ethz.ch</email>
+                <affiliation>ETH Zurich, Switzerland</affiliation>
+            </contact>
+        </contacts>
+        <notes>This schedule was generated automatically
+        </notes>
         <initializer_log>true</initializer_log>
         <iteration_log>true</iteration_log>
         <createSummary>false</createSummary>
@@ -52,8 +68,8 @@
         <createTimeTable>false</createTimeTable>
     </output>
     <catalogs>
-        <antenna>./antenna.cat.VGOS</antenna>
-        <equip>./equip.cat.VGOS</equip>
+        <antenna>../../VGOS_CATALOGS/antenna.cat.vgos</antenna>
+        <equip>../../VGOS_CATALOGS/equip.cat.vgos</equip>
         <flux>../../CATALOGS/flux.cat</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
@@ -67,6 +83,7 @@
         <satellite_avoid/>
         <tracks>../../CATALOGS/tracks.cat</tracks>
         <stp_dir/>
+        <procs>../../VGOS_CATALOGS/procs.cat.vgos</procs>
     </catalogs>
     <station>
         <setup>

@@ -173,7 +173,7 @@ def start(master, path_scheduler, code, code_regex, select_best, emails, delta_d
         Message.addMessage(f"date offset: {delta_days} days", dump="program")
         Message.addMessage(f"target start time: {target_day:%B %d, %Y}", dump="program")
         sessions = [s for s in master if (s["type"] == code or pattern.match(s["name"]))
-                    and s["date"].date() == target_day]
+                    and s["date"].date() == target_day and s["scheduler"] == settings["general"].get("institute")]
     Message.addMessage(f"{len(sessions)} session(s) will be processed", dump="program")
 
     # get list of templates
@@ -322,7 +322,6 @@ def adjust_template(output_path:Path, session, templates, pre_scheduling_functio
         out.append(newFile)
         tree.write(str(newFile), pretty_print=True)
     Message.log(True)
-
     return out
 
 
