@@ -490,13 +490,17 @@ def merge_flux_cat_vgos_sx():
         f.write(f"* MERGED CATALOG \n")
         f.write(f"* VERSION VGOS_{vgos_version}+SX_{sx_version}\n")
         f.write(f"* ========== VGOS ({vgos_version}) ========== \n")
-        for src, ls in flux_vgos.items():
+        sources = sorted(flux_vgos.keys())
+        for src in sources:
+            ls = flux_vgos[src]
             for l in ls:
                 f.write(l + "\n")
             vgos_found.append(src)
 
         f.write(f"* ========== SX ({sx_version}) ========== \n")
-        for src, ls in flux_sx.items():
+        sources = sorted(flux_sx.keys())
+        for src in sources:
+            ls = flux_sx[src]
             if src in vgos_found:
                 continue
             else:
