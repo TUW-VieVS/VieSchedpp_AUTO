@@ -153,7 +153,12 @@ def url_response(cat, message_flag=True):
 
     try:
         # download new file
-        r = requests.get(url, stream=True)
+        proxies = {
+                  "http": "http://141.74.2.1:8000",
+                  "https": "http://141.74.2.1:8000",
+                  }
+
+        r = requests.get(url, stream=True, proxies=proxies)
         if r.ok:
             with open(path, 'wb') as f:
                 for ch in r:
@@ -161,7 +166,21 @@ def url_response(cat, message_flag=True):
                 if message_flag:
                     Message.addMessage("successful", dump="download")
         else:
-            Message.addMessage("ERROR", dump="download")
+	    # proxies requiered for GOW:
+            proxies = {
+                  "http": "http://141.74.2.1:8000",
+                  "https": "http://141.74.2.1:8000",
+                  }
+
+            r = requests.get(url, stream=True, proxies=proxies)
+            if r.ok:
+                with open(path, 'wb') as f:
+                    for ch in r:
+                        f.write(ch)
+                    if message_flag:
+                        Message.addMessage("successful", dump="download")
+            else:
+                 Message.addMessage("ERROR", dump="download")
 
     except requests.exceptions.RequestException as err:
         Message.addMessage(f"#### ERROR {err} ####", dump="download")
