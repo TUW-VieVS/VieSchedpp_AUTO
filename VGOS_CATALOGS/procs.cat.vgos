@@ -506,22 +506,25 @@ END MACGO12M
 
 
 BEGIN RAEGYEB
-define  iread         16291113153x
+define  proc_library  25198171827x
+" g25198     RAEGYEB   Yj
+" drudg version 2022-05-28 compiled under FS 10.01.00
+"< BB                   rack >< FlexBuff recorder 1>
+enddef
+define  iread         25198173000x
 "Yebes RDBEs: nothing
 enddef
-define  bread         00000000000x
+define  bread         25198173000x
 "Yebes RDBEs:
 rdbe=dbe_tsys?1;
 rdbe=dbe_tsys?0;
 enddef
-define  midob         00000000000x
+define  midob         25198173000x
 onsource
 bread
 iread
 "Yebes MK6
-mk6=dts_id?;
-mk6=input_stream?;
-"
+fb=dts_id?
 "Yebes RDBEs
 rdbe=sw_version?;
 rdbe=dbe_personality?;
@@ -535,59 +538,46 @@ time
 fase
 wx
 enddef
-define  ifdbb         16291112224x
+define  ifdbb         25198171827x
 lo=
 newlo=0
 " rdbe#1
 " band A h-pol on if0
 " band A v-pol on if1
-lo=loa0,2472.4,usb,lcp,10
-lo=loa1,2472.4,usb,rcp,10
+lo=loa0,2472.4,usb,lcp,5
+lo=loa1,2472.4,usb,rcp,5
 newlo=a
 " rdbe#2
 " band B h-pol on if0
 " band B v-pol on if1
-lo=lob0,4712.4,usb,lcp,10
-lo=lob1,4712.4,usb,rcp,10
+lo=lob0,4712.4,usb,lcp,5
+lo=lob1,4712.4,usb,rcp,5
 newlo=b
 "
 " rdbe#3
 " band C h-pol on if0
 " band C v-pol on if1
-lo=loc0,5832.4,usb,lcp,10
-lo=loc1,5832.4,usb,rcp,10
+lo=loc0,5832.4,usb,lcp,5
+lo=loc1,5832.4,usb,rcp,5
 newlo=c
 "
 " rdbe#4
 " band D h-pol on if0
 " band D v-pol on if1
-lo=lod0,9672.4,usb,lcp,10
-lo=lod1,9672.4,usb,rcp,10
+lo=lod0,9672.4,usb,lcp,5
+lo=lod1,9672.4,usb,rcp,5
 newlo=d
 enddef
-define  mk6bb         16291112231x
-"RDBE-g1        connects to Mark6 eth2
-"RDBE-g2        connects to Mark6 eth3
-"RDBE-g3        connects to Mark6 eth4
-"RDBE-g4        connects to Mark6 eth5
-mk6=input_stream = delete ;
-!+4s
-mk6=input_stream = add : bandA : vdif : 8224 : 42 : 66 : eth2 : 192.168.1.100 : 9000;
-mk6=input_stream = add : bandB : vdif : 8224 : 42 : 66 : eth3 : 192.168.1.101 : 9001;
-mk6=input_stream = add : bandC : vdif : 8224 : 42 : 66 : eth4 : 192.168.1.102 : 9002;
-mk6=input_stream = add : bandD : vdif : 8224 : 42 : 66 : eth5 : 192.168.1.103 : 9003;
-mk6=input_stream = commit;
-enddef
-define  sched_initi   16291112223x
+define  sched_initi   25198171826x
 !+1s
 antenna=geo
 logsw_geo
 proc_library
 setupbb
-mk6bb
+fb_config
 auto
 enddef
-define  setupbb       16291112832x
+define  setupbb       25198171827x
 pcalon
 tpicd=stop
 ifdbb
@@ -595,7 +585,7 @@ rdbebb
 tpicd=no,100
 tpicd
 enddef
-define  rdbebb        16291112832x
+define  rdbebb        25198171827x
 rdbe=dbe_data_send=off;
 !+1s
 rdbe=dbe_chsel_en=2:chsel_enable:psn_enable;
@@ -606,39 +596,39 @@ rdbe=dbe_chsel=1:1:2:4:6:9:13:14:15;
 "lobX is 4712.4
 "locX is 5832.4
 "lodX is 9672.4
-rdbe=pcal=6.4e6;
+rdbe=pcal=1.4e6;
 !+1s
 rdbe=dbe_data_send=on;
 enddef
-define  checkmk6      00000000000x
-mk6=record=off;
-!+2s
-mk6=scan_check?;
+define  checkmk6      25198173018x
+fb=evlbi?
+checkfb
 enddef
-define  pcalon        16291112832x
+define  pcalon        25198171827x
 "pcal should be on
 phasecal=on
 enddef
-define  preob         16291112845x
-"onsource
+define  preob         25198172956x
+onsource
 ifman
 auto
-"track
+track
 enddef
-define  postob        00000000000x
-"checkmk6
+define  postob        25198173018x
+scan_check
+checkmk6
 enddef
-define  auto          16291112235
+define  auto          25198171830x0
 rdbe_atten=both
 rdbe=dbe_quantize=0;
 rdbe=dbe_quantize=1;
 enddef
-define  time          00000000000x
+define  time          25198173000x
 rdbe=pps_offset?;
 rdbe=dot?;
 rdbe=gps_offset?;
 enddef
-define  fase          00000000000x
+define  fase          25198173000x
 cable=getmeas
 enddef
 END RAEGYEB
