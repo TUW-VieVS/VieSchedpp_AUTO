@@ -1,26 +1,27 @@
 BEGIN WESTFORD
-define  rdbebb        15085151358x
-rdbe=dbe_data_send=off;
+define  rdbebb        25219001124x
+data_send=off
 !+1s
-"rdbe=dbe_chsel_en=2:chsel_enable:psn_enable;
-rdbe=dbe_chsel=0:31:30:28:26:23:19:18:17;
-rdbe=dbe_chsel=1:31:30:28:26:23:19:18:17;
-"offset= mod(lo+1024),5)
+channels=,31,30,28,26,23,19,18,17
+"offset=5-mod(lo,5)
 "loa is 2472.4
 "lob is 4712.4
 "loc is 5832.4
 "lod is 9672.4
-rdbe=pcal=1.4e6;
+pcal_offset=2.6e6
 !+1s
-rdbe=dbe_data_send=on;
+data_send=on
 enddef
-define  sched_initi   15085151229x
+define  exper_initi   00000000000x
+proc_library
+sched_initi
+pcalon
 mk6bb
 ifdbb
-"fix for tsys for band d, allows 5point to run
-rdbed=dbe_num_chan=legacy:32:16;
+mk6bb
+rdbe_version
 enddef
-define  mk6bb         15085151229x
+define  mk6bb         25219001145x
 mk6=input_stream = delete ;
 !+4s
 mk6=input_stream = add : rdbeA : vdif : 8224 : 42 : 66 : eth2 : 127.0.0.1 : 12000;
@@ -29,8 +30,8 @@ mk6=input_stream = add : rdbeC : vdif : 8224 : 42 : 66 : eth4 : 127.0.0.1 : 1200
 mk6=input_stream = add : rdbeD : vdif : 8224 : 42 : 66 : eth5 : 127.0.0.1 : 12000;
 mk6=input_stream = commit ;
 enddef
-define  setupbb       15085151358x
-pcalon
+define  setupbb       00000000000
+"pcalon
 tpicd=stop
 "ifdbb
 rdbebb
@@ -38,69 +39,7 @@ rdbebb
 tpicd=no,100
 tpicd
 enddef
-define  checkmk6      00000000000
-mk6=record=off;
-!+2s
-mk6=scan_check?;
-enddef
-define  pcalon        15085151358x
-"pcal is on
-enddef
-define  time          15085151938x
-rdbe=pps_offset?;
-rdbe=dot?;
-rdbe=gps_offset?;
-enddef
-define  midob         15085151909x
-!+2s
-onsource
-rdbe=dbe_version?;
-mk6=dts_id?;
-"rdbe=dbe_personality?;
-cable
-wx
-ifdmon
-mk6=input_stream?;
-"rdbe=dbe_chsel_en?;
-rdbe=dbe_chsel?0;
-rdbe=dbe_chsel?1;
-rdbe=pcal?;
-rdbe_atten
-dewar
-time
-enddef
-define  postob        15085151909x
-enddef
-define  preob         00000000000
-"onsource
-rdbe=dbe_atten=
-rdbe=dbe_quantize=0;
-rdbe=dbe_quantize=1;
-rdbe=dbe_bstate?0;
-rdbe=dbe_bstate?1;
-enddef
-define  dewar         15201145313x
-sy=popen -n mcicn 'mcicn mci "g_hrp" 2>&1' &
-!+1s
-sy=popen -n mcicn 'mcicn mci "g_70ktemp" 2>&1' &
-!+1s
-sy=popen -n mcicn 'mcicn mci "g_20ktemp" 2>&1' &
-enddef
-define  ifdmon        15085151909x
-sy=popen 's_client -h udca -c udc_atten?0 2>&1' -n udcca
-sy=popen 's_client -h udca -c udc_atten?1 2>&1' -n udcca
-sy=popen 's_client -h udca -c udc_lo? 2>&1' -n udcca
-sy=popen 's_client -h udcb -c udc_atten?0 2>&1' -n udccb
-sy=popen 's_client -h udcb -c udc_atten?1 2>&1' -n udccb
-sy=popen 's_client -h udcb -c udc_lo? 2>&1' -n udccb
-sy=popen 's_client -h udcc -c udc_atten?0 2>&1' -n udccc
-sy=popen 's_client -h udcc -c udc_atten?1 2>&1' -n udccc
-sy=popen 's_client -h udcc -c udc_lo? 2>&1' -n udccc
-sy=popen 's_client -h udcd -c udc_atten?0 2>&1' -n udccd
-sy=popen 's_client -h udcd -c udc_atten?1 2>&1' -n udccd
-sy=popen 's_client -h udcd -c udc_lo? 2>&1' -n udccd
-enddef
-define  ifdbb         15085151358x
+define  ifdbb         25219001135x
 lo=
 lo=loa0,2472.4,usb,lcp,5
 lo=loa1,2472.4,usb,rcp,5
