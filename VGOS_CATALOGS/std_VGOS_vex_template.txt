@@ -1,13 +1,13 @@
 $MODE;
 *=========================================================================================================
     def VGOS_std;
-        ref $FREQ             = VGOS_std     : Gs      : Hv : Is      : K2 : Mg : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws      : Yj ;
-        ref $FREQ             = VGOS_std_AUS      : Hb           : Ke                                                             : Yg      ;
-        ref $BBC              = VGOS_std     : Gs : Hb : Hv : Is : Ke : K2 : Mg : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws : Yg : Yj ;
-        ref $IF               = VGOS_std     : Gs : Hb : Hv : Is : Ke : K2 : Mg : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws : Yg : Yj ;
-        ref $TRACKS           = VDIF              : Hb : Hv : Is : Ke      : Mg : Nn : Oe : Ow : S6 : Sa : T1 : Um      : Wn : Ws : Yg      ;
-        ref $TRACKS           = VDIFC        : Gs                     : K2 : Mg                                    : Wf                : Yj ;
-        ref $PHASE_CAL_DETECT = Standard     : Gs : Hb : Hv : Is : Ke : K2 : Mg : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws : Yg : Yj ;
+        ref $FREQ             = VGOS_std     : Gs      : Hv : Is      : K2 : Mg : Mb : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws      : Yj ;
+        ref $FREQ             = VGOS_std_AUS      : Hb           : Ke                                                                  : Yg      ;
+        ref $BBC              = VGOS_std     : Gs : Hb : Hv : Is : Ke : K2 : Mg : Mb : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws : Yg : Yj ;
+        ref $IF               = VGOS_std     : Gs : Hb : Hv : Is : Ke : K2 : Mg : Mb : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws : Yg : Yj ;
+        ref $TRACKS           = VDIF              : Hb : Hv : Is : Ke           : Mb : Nn : Oe : Ow : S6 : Sa : T1 : Um      : Wn : Ws : Yg      ;
+        ref $TRACKS           = VDIFC        : Gs                     : K2 : Mg                                         : Wf                : Yj ;
+        ref $PHASE_CAL_DETECT = Standard     : Gs : Hb : Hv : Is : Ke : K2 : Mg : Mb : Nn : Oe : Ow : S6 : Sa : T1 : Um : Wf : Wn : Ws : Yg : Yj ;
     enddef;
 *=========================================================================================================
 $BBC;
