@@ -1,6 +1,8 @@
-* List of wind velocity values corresponding to refractive index structure constant (Cn) predictions for common VLBI stations
-* Based on Schartner 2025, Journal of Geodesy
-* up-to-date values can be found at https://gpc.ethz.ch/products/Troposphere/Cn/
+* List of wind velocity values for common VLBI stations
+* Unit: m/s
+* Based on Schartner (2025), Journal of Geodesy (10.1007/s00190-025-01996-w)
+* Check for VLBI_Cn.cat for corresponding refractive index structure constant (Cn) values
+* up-to-date values can be found at https://github.com/TUW-VieVS/VieSchedpp_AUTO/tree/master/SIMULATION_CATALOGS 
 * 
 Name     ID  JAN  FEB  MAR  APR  MAY  JUN  JUL  AUG  SEP  OCT  NOV  DEC
 AGGO     Ag  5.5  5.9  5.8  6.8  7.5  8.6  8.8  8.4  7.4  6.9  6.8  6.1
