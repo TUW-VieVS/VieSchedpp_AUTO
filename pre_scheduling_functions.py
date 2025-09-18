@@ -71,8 +71,8 @@ def vgos_int_s(**kwargs):
     stations = {"WETTZ13S": {"name": "WETTZ13S", "lon": 12.88, "lat": 49.15},
                 "MACGO12M": {"name": "MACGO12M", "lon": 255.99, "lat": 30.40}}
 
-    sources = pd.read_csv("Templates/VGOS-INT-S/source.cat.vgoss", delim_whitespace=True, header=None, comment="*")
-    sources.columns = ["name", "name2", "ra_h", "ra_m", "ra_s", "de_d", "de_m", "de_s", "a1", "a2", "a3", "a4"]
+    sources = pd.read_csv(tree.find("./catalogs/source").text, delim_whitespace=True, header=None, comment="*")
+    sources.columns = ["name", "name2", "ra_h", "ra_m", "ra_s", "de_d", "de_m", "de_s", "a1", "a2", "a3"]
     sources["ra"] = sources["ra_h"] + sources["ra_m"] / 60 + sources["ra_s"] / 3600
     sources["de"] = sources["de_d"] + sources["de_m"] / 60 + sources["de_s"] / 3600
 

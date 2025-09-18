@@ -81,7 +81,7 @@
         <position>../../CATALOGS/position.cat</position>
         <rec>../../CATALOGS/rec.cat</rec>
         <rx>../../CATALOGS/rx.cat</rx>
-        <source>./source.cat.vgyg</source>
+        <source>../../CATALOGS_VieSchedpp/source.cat.vgos</source>
         <satellite_avoid/>
         <tracks>../../CATALOGS/tracks.cat</tracks>
         <procs>../../CATALOGS_VieSchedpp/procs.cat.vgos</procs>
