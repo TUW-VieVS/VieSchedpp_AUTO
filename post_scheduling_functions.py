@@ -26,7 +26,7 @@ def VGOS_std_vex_template(**kwargs):
 
     # copy .vex template
     path_to_vex.unlink()
-    path_vex_template = Path("VGOS_CATALOGS/std_VGOS_vex_template.txt")
+    path_vex_template = Path("CATALOGS_VieSchedpp/std_VGOS_vex_template.txt")
     template = {}
     with open(path_vex_template) as f:
         values = []

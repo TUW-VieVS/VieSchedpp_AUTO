@@ -372,7 +372,7 @@ def VGOS_sta_setup(tree, session):
     notes = tree.find("./output/notes")
     notes.text += f"The following stations require buffer-flush time (4 Gbps data write speed instead of 8 Gbps):\\n"
 
-    with open("VGOS_CATALOGS/equip.cat.vgos") as f:
+    with open("CATALOGS_VieSchedpp/equip.cat.vgos") as f:
         for l in f:
             l = l.strip()
             if l.startswith("*"):

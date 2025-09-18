@@ -483,10 +483,10 @@ def merge_flux_cat_vgos_sx():
         return data, version
 
     flux_sx, sx_version = read_flux_cat("CATALOGS/flux.cat")
-    flux_vgos, vgos_version = read_flux_cat("VGOS_CATALOGS/flux.cat.vgos")
+    flux_vgos, vgos_version = read_flux_cat("CATALOGS_VieSchedpp/flux.cat.vgos")
 
     vgos_found = []
-    with open(f"VGOS_CATALOGS/flux.cat.merged", "w") as f:
+    with open(f"CATALOGS_VieSchedpp/flux.cat.merged", "w") as f:
         f.write(f"* MERGED CATALOG \n")
         f.write(f"* VERSION VGOS_{vgos_version}+SX_{sx_version}\n")
         f.write(f"* ========== VGOS ({vgos_version}) ========== \n")

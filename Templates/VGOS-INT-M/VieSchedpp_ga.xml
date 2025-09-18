@@ -63,9 +63,9 @@
         <createSkyCoverage>false</createSkyCoverage>
     </output>
     <catalogs>
-        <antenna>../../VGOS_CATALOGS/antenna.cat.vgos</antenna>
-        <equip>../../VGOS_CATALOGS/equip.cat.vgos</equip>
-        <flux>../../VGOS_CATALOGS/flux.cat.merged</flux>
+        <antenna>../../CATALOGS_VieSchedpp/antenna.cat.vgos</antenna>
+        <equip>../../CATALOGS_VieSchedpp/equip.cat.vgos</equip>
+        <flux>../../CATALOGS_VieSchedpp/flux.cat.merged</flux>
         <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
         <loif>../../CATALOGS/loif.cat</loif>
@@ -77,7 +77,7 @@
         <source>./source.cat.vgosm</source>
         <satellite_avoid/>
         <tracks>../../CATALOGS/tracks.cat</tracks>
-        <procs>../../VGOS_CATALOGS/procs.cat.vgos</procs>
+        <procs>../../CATALOGS_VieSchedpp/procs.cat.vgos</procs>
     </catalogs>
     <station>
         <setup>
