@@ -150,16 +150,16 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
-            <setup>
+            <setup_>
                 <member>Is-S6</member>
                 <parameter>ignore</parameter>
                 <transition>hard</transition>
-            </setup>
-            <setup>
+            </setup_>
+            <setup_>
                 <member>Sa-Yj</member>
                 <parameter>ignore</parameter>
                 <transition>hard</transition>
-            </setup>
+            </setup_>
         </setup>
         <parameters>
             <parameter name="default">
