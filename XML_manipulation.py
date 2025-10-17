@@ -212,7 +212,9 @@ def insert_station_setup_with_time(p_start, p_end, session_start, session_end, s
             p_end = min(session_end, p_end)
             add_comment(station, p_start, p_end, parameter_name, comment)
             root = tree.find("./station/setup")
-            matching_setups = root.xpath(f".//setup[.//member[text()='{station}']]")
+            matching_setups = tree.xpath(
+                f".//setup[member[text()='{station}'] and not(parameter='down')]"
+            )
             if matching_setups:
                 root = max(matching_setups, key=depth, default=None)
 
