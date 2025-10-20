@@ -158,8 +158,8 @@ def url_response(cat, message_flag=True):
                   "https": "http://141.74.2.1:8000",
                   }
 
-        # r = requests.get(url, stream=True, proxies=proxies)
-        r = requests.get(url, stream=True)
+        r = requests.get(url, stream=True, proxies=proxies)
+        # r = requests.get(url, stream=True)
         if r.ok:
             with open(path, 'wb') as f:
                 for ch in r:
