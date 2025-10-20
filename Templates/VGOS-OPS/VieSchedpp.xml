@@ -400,7 +400,7 @@
 			<sequence>good</sequence>
 		</sourceSequence>
 	</rules>
-	<_optimization>
+	<optimization>
 		<combination>and</combination>
 		<maxNumberOfIterations>30</maxNumberOfIterations>
 		<minNumberOfSourcesToReduce>5</minNumberOfSourcesToReduce>
@@ -418,7 +418,7 @@
 			<minScans>8</minScans>
 			<minBaselines>0</minBaselines>
 		</condition>
-	</_optimization>
+	</optimization>
 	<multisched>
 		<weight_factor_sky-coverage>
 			<value>0.33000000000000002</value>
