@@ -125,7 +125,7 @@ def download_http():
         url_response(cat)
 
 
-def url_response(cat, message_flag=True):
+def url_response(cat, message_flag=True, use_proxies=True):
     """
     download a single file from https and store
 
@@ -135,6 +135,9 @@ def url_response(cat, message_flag=True):
     :param message_flag: output message (default = True)
     :return: None
     """
+    if getattr(url_response, "proxies_failed", False):
+        use_proxies = False
+
     path, url = cat
 
     # only download file if current file was last modified longer than 23 hours ago
@@ -151,15 +154,19 @@ def url_response(cat, message_flag=True):
                                    dump="download")
             return
 
+    # download new file
     try:
-        # download new file
         proxies = {
                   "http": "http://141.74.2.1:8000",
                   "https": "http://141.74.2.1:8000",
-                  }
+        } if use_proxies else None
 
-        r = requests.get(url, stream=True, proxies=proxies)
-        # r = requests.get(url, stream=True)
+        try:
+            r = requests.get(url, stream=True, proxies=proxies, timeout=10)
+        except requests.exceptions.RequestException:
+            url_response.proxies_failed = True
+            r = requests.get(url, stream=True, timeout=10)
+
         if r.ok:
             with open(path, 'wb') as f:
                 for ch in r:
@@ -167,13 +174,7 @@ def url_response(cat, message_flag=True):
                 if message_flag:
                     Message.addMessage("successful", dump="download")
         else:
-	    # proxies requiered for GOW:
-            proxies = {
-                  "http": "http://141.74.2.1:8000",
-                  "https": "http://141.74.2.1:8000",
-                  }
-
-            r = requests.get(url, stream=True, proxies=proxies)
+            r = requests.get(url, stream=True)
             if r.ok:
                 with open(path, 'wb') as f:
                     for ch in r:
