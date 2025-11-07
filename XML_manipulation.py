@@ -210,6 +210,8 @@ def insert_station_setup_with_time(p_start, p_end, session_start, session_end, s
         if station in session["stations"]:
             p_start = max(session_start, p_start)
             p_end = min(session_end, p_end)
+            if p_start == p_end:
+                return
             add_comment(station, p_start, p_end, parameter_name, comment)
             root = tree.find("./station/setup")
             matching_setups = tree.xpath(

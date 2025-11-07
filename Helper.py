@@ -508,3 +508,4 @@ def merge_flux_cat_vgos_sx():
                     f.write(l + "\n")
             pass
     pass
+
