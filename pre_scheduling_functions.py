@@ -11,6 +11,7 @@ import pandas as pd
 import healpy as hp
 from string import ascii_uppercase
 from util.coord_tranformation import rade2azel
+from util.misc import spread_ones_global
 
 from lxml import etree
 
@@ -476,8 +477,8 @@ def VGOS_calib(tree, session):
 
     notes = tree.find("./output/notes")
     notes.text += (f"CALIBRATION blocks approximately every full hour\\n"
-                   f" - four times: 120-second long scans to CALIB2 source list (for imaging calibration) \\n"
-                   f" - every other block: 30-second long scans to CALIB1 source list (for correlation and fringe finders) \\n"
+                   f" - 18 blocks with 30-second long scans to CALIB1 source list (for correlation and fringe finders) \\n"
+                   f" - 5 blocks with 120-second long scans to CALIB2 source list (for imaging calibration) \\n"
                    f" - out of the four 120-second long scan blocks, two feature dedicated scans to 4C39.25 "
                    f"(for cross-polarization bandpass calibration - at {best_pair[0]} and {best_pair[1]})\\n"
                    f"   Those scans do not necessarily be at the full hour\\n\\n")
@@ -494,14 +495,7 @@ def VGOS_calib(tree, session):
 
     # Define 4 120-second scans including those to 4C39.25, spread as evenly as possible
     flags = [1 if flag in times_4C39p25 else 0 for flag in calib]
-
-    def distance_to_selected(i):
-        return min(abs(i - j) for j, v in enumerate(flags) if v == 1)
-
-    while sum(flags) < 4:
-        candidates = [i for i, v in enumerate(flags) if v == 0]
-        best = max(candidates, key=distance_to_selected)
-        flags[best] = 1
+    flags = spread_ones_global(flags, 5)
 
     # add calibration blocks
     root = tree.getroot()
