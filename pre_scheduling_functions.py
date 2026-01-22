@@ -475,30 +475,51 @@ def VGOS_calib(tree, session):
         times_4C39p25 = []
 
     notes = tree.find("./output/notes")
-    notes.text += (f"CALIBRATION blocks every full hour\\n"
-                   f" - every 3 hours: 120-second long scans to CALIB2 source list (for imaging calibration) \\n"
+    notes.text += (f"CALIBRATION blocks approximately every full hour\\n"
+                   f" - four times: 120-second long scans to CALIB2 source list (for imaging calibration) \\n"
                    f" - every other block: 30-second long scans to CALIB1 source list (for correlation and fringe finders) \\n"
-                   f" - two special scans to 4C39.25 (for cross-polarization bandpass calibration - at {best_pair[0]} and {best_pair[1]})\\n\\n")
+                   f" - out of the four 120-second long scan blocks, two feature dedicated scans to 4C39.25 "
+                   f"(for cross-polarization bandpass calibration - at {best_pair[0]} and {best_pair[1]})\\n"
+                   f"   Those scans do not necessarily be at the full hour\\n\\n")
 
     dur_seconds = int(duration.total_seconds())
-    calib = sorted(list(set(times_4C39p25 + list(range(1 * 3600, dur_seconds, 1 * 3600)))))
+    calib = list(range(1 * 3600, dur_seconds, 1 * 3600))
 
-    # add calibraiton blocks
+    # replace two of them with 4C39.25 scans
+    for times in times_4C39p25:
+        closest = min(calib, key=lambda c: abs(c - times))
+        calib.remove(closest)
+        calib.append(times)
+    calib = sorted(calib)
+
+    # Define 4 120-second scans including those to 4C39.25, spread as evenly as possible
+    flags = [1 if flag in times_4C39p25 else 0 for flag in calib]
+
+    def distance_to_selected(i):
+        return min(abs(i - j) for j, v in enumerate(flags) if v == 1)
+
+    while sum(flags) < 4:
+        candidates = [i for i, v in enumerate(flags) if v == 0]
+        best = max(candidates, key=distance_to_selected)
+        flags[best] = 1
+
+    # add calibration blocks
     root = tree.getroot()
     rules = root.find("rules")
     calibration = etree.SubElement(rules, "calibration")
 
-    for start_time in calib:
+    for idx, start_time in enumerate(calib):
         block = etree.SubElement(calibration, "block")
         etree.SubElement(block, "startTime").text = str(start_time)
 
         if start_time in times_4C39p25:
-            etree.SubElement(block, "scans").text = "1"
+            etree.SubElement(block, "scans").text = "3"
             etree.SubElement(block, "duration").text = "120"
-            etree.SubElement(block, "sources").text = "4C39.25"
-            etree.SubElement(block, "overlap").text = "0"
-            etree.SubElement(block, "rigorosOverlap").text = "false"
-        elif start_time % (3 * 3600) == 0:
+            etree.SubElement(block, "sources").text = "calib2"
+            etree.SubElement(block, "focus").text = "4C39.25"
+            etree.SubElement(block, "overlap").text = "1"
+            etree.SubElement(block, "rigorosOverlap").text = "true"
+        elif flags[idx] == 1:
             etree.SubElement(block, "scans").text = "3"
             etree.SubElement(block, "duration").text = "120"
             etree.SubElement(block, "sources").text = "calib2"

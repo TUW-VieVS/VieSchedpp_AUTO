@@ -23,7 +23,7 @@
 		<fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
 		<stations></stations>
 		<scanAlignment>start</scanAlignment>
-		<logSeverityConsole>info</logSeverityConsole>
+		<logSeverityConsole>warning</logSeverityConsole>
 		<logSeverityFile>info</logSeverityFile>
 		<doNotObserveSourcesWithinMinRepeat>false</doNotObserveSourcesWithinMinRepeat>
 		<ignore_successive_scans_same_source>true</ignore_successive_scans_same_source>
@@ -105,7 +105,7 @@
 				<weight>1</weight>
 				<minScan>10</minScan>
 				<maxScan>600</maxScan>
-				<minSlewtime>0</minSlewtime>
+				<minSlewtime>60</minSlewtime>
 				<maxSlewtime>600</maxSlewtime>
 				<maxSlewDistance>175</maxSlewDistance>
 				<minSlewDistance>0</minSlewDistance>
