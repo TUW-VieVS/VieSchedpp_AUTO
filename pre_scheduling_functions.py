@@ -314,6 +314,21 @@ def sefd_based_snr(**kwargs):
     insert_setup_node(session, "low_low", tree.find("./baseline/setup"), "high_snr", )
 
 
+def vgos_minslew(**kwargs):
+    tree = kwargs["tree"]
+    session = kwargs["session"]
+    nsta = len(session["stations"])
+    m = 7
+    b = -30
+    minslew = max(int(round(m * nsta + b)), 0)
+    param = tree.find("./station/parameters/parameter[@name='default']")
+    if param is not None:
+        node = param.find("minSlewtime")
+        if node is not None:
+            node.text = str(minslew)
+    pass
+
+
 def vgos_ops_magic(**kwargs):
     tree = kwargs["tree"]
     session = kwargs["session"]
@@ -493,7 +508,7 @@ def VGOS_calib(tree, session):
         calib.append(times)
     calib = sorted(calib)
 
-    # Define 4 120-second scans including those to 4C39.25, spread as evenly as possible
+    # Define 5 120-second scans including those to 4C39.25, spread as evenly as possible
     flags = [1 if flag in times_4C39p25 else 0 for flag in calib]
     flags = spread_ones_global(flags, 5)
 
