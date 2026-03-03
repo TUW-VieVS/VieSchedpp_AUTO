@@ -266,3 +266,13 @@ def _vlba_vex_adjustments(**kwargs):
     finally:
         Message.addMessage(f"    - change dir to {cwd}", dump="session")
         os.chdir(str(cwd))
+
+
+if __name__ == "__main__":
+    path = Path("/scratch/programming/out/20260206-000607_north/north.vex")
+    session = {"code": path.stem.lower(),
+               "stations_tlc": ["Gs", "Is", "K2", "Mg", "Mb", "Nn", "Oe", "Ow", "Sa", "Yj", "S6", "T1", "Um", "Wf",
+                                "Wn", "Ws"],
+               # "stations_tlc": ["Hv","Ke","Hb","Yg"],
+               }
+    VGOS_std_vex_template(path=path.parent, session=session)
