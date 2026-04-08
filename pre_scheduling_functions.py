@@ -302,7 +302,7 @@ def sefd_based_snr(**kwargs):
     Message.addMessage(f"    new baseline group \"{'high_low':2}\" with {len(high_low):d} members")
     Message.addMessage(f"    new baseline group \"{'low_low':2}\" with {len(low_low):d} members")
 
-    add_parameter(tree.find("./baseline/parameters"), "low_snr", ["minSNR", "minSNR"], ["18", "13"],
+    add_parameter(tree.find("./baseline/parameters"), "low_snr", ["minSNR", "minSNR"], ["13", "10"],
                   [("band", "X"), ("band", "S")])
     add_parameter(tree.find("./baseline/parameters"), "mid_snr", ["minSNR", "minSNR"], ["20", "15"],
                   [("band", "X"), ("band", "S")])

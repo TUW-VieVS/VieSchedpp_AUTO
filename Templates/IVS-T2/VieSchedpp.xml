@@ -134,12 +134,12 @@
 				<availableForFillinmode>1</availableForFillinmode>
 				<weight>1</weight>
 				<minScan>30</minScan>
-				<maxScan>600</maxScan>
+				<maxScan>1200</maxScan>
 				<minSlewtime>0</minSlewtime>
-				<maxSlewtime>600</maxSlewtime>
+				<maxSlewtime>900</maxSlewtime>
 				<maxSlewDistance>175</maxSlewDistance>
 				<minSlewDistance>0</minSlewDistance>
-				<maxWait>600</maxWait>
+				<maxWait>900</maxWait>
 				<minElevation>5</minElevation>
 				<maxNumberOfScans>9999</maxNumberOfScans>
 				<maxTotalObsTime>999999</maxTotalObsTime>
@@ -151,7 +151,7 @@
 				<available>0</available>
 			</parameter>
 			<parameter name="moreWeight">
-				<weight>2</weight>
+				<weight>3</weight>
 			</parameter>
 		</parameters>
 		<cableWrapBuffers>
