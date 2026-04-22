@@ -273,6 +273,7 @@ def start(session, settings):
 
     # delete all files in the cwd except for the "selected" folder and some special files to save storage space
     delete_files(cwd)
+    Message.addMessage(f"finished processing session {session['code']}\n")
 
 
 def delete_files(folder):
