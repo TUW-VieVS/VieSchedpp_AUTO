@@ -12,7 +12,7 @@ import pexpect
 from Helper import read_sources, Message
 
 
-def VGOS_std_vex_template(**kwargs):
+def vex_template_vgos_std(**kwargs):
     session = kwargs["session"]
     path_selected = kwargs["path"]
     code = session["code"].lower()
@@ -26,7 +26,7 @@ def VGOS_std_vex_template(**kwargs):
 
     # copy .vex template
     path_to_vex.unlink()
-    path_vex_template = Path("CATALOGS_VieSchedpp/std_VGOS_vex_template.txt")
+    path_vex_template = Path("CATALOGS_VieSchedpp/vex_template_VGOS_std.txt")
     template = {}
     with open(path_vex_template) as f:
         values = []
@@ -110,8 +110,8 @@ def fill_vex_template(**kwargs):
 
     # copy .vex template
     path_to_vex.unlink()
-    program_code = kwargs["program_code"]
-    path_vex_template = Path("Templates") / program_code / "vex.tmpl"
+    program = kwargs["program"]
+    path_vex_template = Path("Templates") / program / "vex.tmpl"
     shutil.copy(path_vex_template, path_to_vex)
 
     with open(path_to_vex, "r") as f:
@@ -179,6 +179,9 @@ def _vex_in_sked_format(**kwargs):
         return
 
     Message.addMessage(f"    - copy {path_to_skd} to {Path(path_sked) / name_skd}", dump="session")
+    if (Path(path_sked) / name_skd).is_file():
+        Message.addMessage(f"    - delete existing .skd file {Path(path_sked) / name_skd}", dump="session")
+        (Path(path_sked) / name_skd).unlink()
     shutil.copy(path_to_skd, Path(path_sked) / name_skd)
 
     cwd = Path.cwd()
@@ -275,4 +278,4 @@ if __name__ == "__main__":
                                 "Wn", "Ws"],
                # "stations_tlc": ["Hv","Ke","Hb","Yg"],
                }
-    VGOS_std_vex_template(path=path.parent, session=session)
+    vex_template_vgos_std(path=path.parent, session=session)

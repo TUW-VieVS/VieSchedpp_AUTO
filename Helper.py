@@ -118,8 +118,7 @@ def read_master_v1(path):
                                                dump="header")
                     continue
 
-                sessions.append({"name": tmp[1].strip(),
-                                 "code": tmp[2].strip(),
+                sessions.append({"code": tmp[2].strip(),
                                  "type": "unknown",
                                  "date": date,
                                  "duration": dur,
@@ -175,8 +174,7 @@ def read_master_v2(path):
                                                dump="header")
                     continue
 
-                sessions.append({"name": tmp[3].strip(),
-                                 "code": tmp[3].strip(),
+                sessions.append({"code": tmp[3].strip(),
                                  "type": tmp[1].strip(),
                                  "date": date,
                                  "duration": dur,
@@ -192,7 +190,7 @@ def read_master_v2(path):
     return sessions
 
 
-def read_master(paths):
+def read_master(paths=None):
     """
     read session master
 
@@ -201,6 +199,10 @@ def read_master(paths):
     """
     if isinstance(paths, Path):
         paths = [paths]
+    elif paths is None:
+        current_year = datetime.date.today().year
+        paths = list(Path("MASTER").glob(f"master{current_year}*.txt"))
+        paths += list(Path("MASTER").glob(f"master{current_year + 1}*.txt"))
 
     sessions = []
     for path in paths:
@@ -219,6 +221,7 @@ def read_master(paths):
                                    dump="header")
                 Message.addMessage(traceback.format_exc(), dump="header")
 
+    Message.addMessage(f"schedule master files contain {len(sessions)} sessions", dump="header")
     return sessions
 
 
@@ -270,7 +273,7 @@ def field2name(field):
     return name
 
 
-def addStatistics(stats, best_idx, code, summary_file):
+def addStatistics(stats, code, summary_file):
     """
     list statistics for best schedule
 
@@ -286,17 +289,17 @@ def addStatistics(stats, best_idx, code, summary_file):
 
     # number of scans per station
     nscans_sta = {}
-    filter_col = [col for col in stats if col.startswith('n_sta_scans_')]
+    filter_col = [col for col in stats.index if col.startswith('n_sta_scans_')]
     for col in filter_col:
         name = col.split("_")[-1]
-        nscans_sta[name] = stats.loc[best_idx, col]
+        nscans_sta[name] = stats[col]
 
     # number of observations per station
     nobs_sta = {}
-    filter_col = [col for col in stats if col.startswith('n_sta_obs_')]
+    filter_col = [col for col in stats.index if col.startswith('n_sta_obs_')]
     for col in filter_col:
         name = col.split("_")[-1]
-        nobs_sta[name] = stats.loc[best_idx, col]
+        nobs_sta[name] = stats[col]
 
     # output station dependent statistics
     nsta = len(nscans_sta)
@@ -307,11 +310,11 @@ def addStatistics(stats, best_idx, code, summary_file):
 
     # number of observations per baseline
     nobs_bl = {}
-    filter_col = [col for col in stats if col.startswith('n_bl_obs_')]
+    filter_col = [col for col in stats.index if col.startswith('n_bl_obs_')]
     for col in filter_col:
         name = col.split("_")[-1]
         name = (name[0:2], name[3:5])
-        nobs_bl[name] = stats.loc[best_idx, col]
+        nobs_bl[name] = stats[col]
 
     # output baseline dependend statistics
     tlcs = [i for n in nobs_bl.keys() for i in n]
@@ -327,9 +330,9 @@ def addStatistics(stats, best_idx, code, summary_file):
 
     # number of scans per source
     nscans_src = defaultdict(int)
-    filter_col = [col for col in stats if col.startswith('n_src_scans_')]
+    filter_col = [col for col in stats.index if col.startswith('n_src_scans_')]
     for col in filter_col:
-        scans = stats.loc[best_idx, col]
+        scans = int(stats[col])
         nscans_src[scans] += 1
 
     # output source dependent statistics
@@ -345,7 +348,7 @@ def addStatistics(stats, best_idx, code, summary_file):
         else:
             summary = pd.DataFrame()
 
-    new = stats.loc[best_idx, :].to_frame().T
+    new = stats.to_frame().T
     new.index = [code]
     new['stations'] = tlcs
     if code in summary.index:
@@ -357,25 +360,15 @@ def addStatistics(stats, best_idx, code, summary_file):
     return summary.tail(10)
 
 
-def update_uploadScheduler(path, delta_days, upload=False):
+def update_uploadScheduler(path, upload_date):
     path = path.parent
-
-    today = datetime.date.today()
-    target_day = today + datetime.timedelta(days=delta_days)
-
-    flag = "pending"
-    if not upload:
-        flag = "uploaded"
-
-    txt = ""
+    txt = f"{path} {upload_date} pending\n"
     with open("upload_scheduler.txt", "r") as f:
         for l in f:
             if not l.strip():
                 continue
             if not l.startswith(str(path)):
                 txt += l
-
-    txt += f"{path} {target_day} {flag}\n"
 
     with open("upload_scheduler.txt", "w") as f:
         f.write(txt)
@@ -509,3 +502,18 @@ def merge_flux_cat_vgos_sx():
             pass
     pass
 
+
+def is_datetime(s):
+    try:
+        datetime.datetime.fromisoformat(s)
+        return True
+    except ValueError:
+        return False
+
+
+def is_int(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False

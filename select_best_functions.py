@@ -201,57 +201,6 @@ def select_best_24h_focus_EOP(df, **kwargs):
     return best
 
 
-def select_best_CRF(df, **kwargs):
-    if df.shape[0] == 1:
-        return df.index[0]
-
-    template_path = kwargs["template_path"]
-    target = Helper.read_sources(template_path / "source.cat.target")[0]
-    calib = Helper.read_sources(template_path / "source.cat.calib")[0]
-
-    df_src = df.filter(like='n_src_scans_', axis=1)
-
-    targets = [c for c in df.columns if c[12:] in target]
-    df_target = df_src.loc[:, df_src.columns.isin(targets)]
-    df_target = df_target > 4
-
-    calibs = [c for c in df.columns if c[12:] in calib]
-    df_calib = df_src.loc[:, df_src.columns.isin(calibs)]
-    df_calib = df_calib > 4
-
-    target_source_good = df_target.sum(axis=1)
-    calib_source_good = df_calib.sum(axis=1)
-    source_good = target_source_good + calib_source_good
-
-    fraction = abs(target_source_good / calib_source_good)
-    fraction = fraction.replace([np.inf, -np.inf], np.nan)
-    fraction = fraction.replace(np.nan, fraction.max())
-
-    nobs = df["n_observations"]
-    obs_time = df["time_average_observation"]
-    idle_time = df["time_average_idle"]
-
-    s_source_good = Helper.scale(source_good, minIsGood=False)
-    s_nobs = Helper.scale(nobs, minIsGood=False)
-    s_obs_time = Helper.scale(obs_time, minIsGood=False)
-    s_idle_time = Helper.scale(idle_time)
-
-    # scale fraction between target and calibrator scans. Target fraction is 4
-    s_fraction = pd.Series(data=0, index=fraction.index)
-    s_fraction[abs(fraction - 4) < 1.5] = 1
-    s_fraction[abs(fraction - 4) < .75] = 2
-
-    score = 0.5 * s_nobs + \
-            2 * s_source_good + \
-            s_fraction + \
-            0.2 * s_obs_time + \
-            0.2 * s_idle_time
-
-    best = score.idxmax()
-
-    return best
-
-
 def select_best_local_tie(df, **kwargs):
     """
     logic to select best schedule for local tie measurements

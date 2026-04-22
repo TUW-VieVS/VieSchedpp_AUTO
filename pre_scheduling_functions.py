@@ -60,7 +60,7 @@ def add_downtime_intensives(**kwargs):
         for sta in int["stations"]:
             if sta in session["stations"]:
                 insert_station_setup_with_time(int_start, int_end, s_start, s_end, session, tree, sta, "down",
-                                               int["name"])
+                                               int["code"])
 
 
 def vgos_int_s(**kwargs):

@@ -25,7 +25,7 @@ def adjust_xml(template, session, pre_scheduling_functions, outdir):
     tree.find("./general/experimentName").text = session["code"]
     tree.find("./general/startTime").text = f"{session['date']:%Y.%m.%d %H:%M:%S}"
     tree.find("./general/endTime").text = f"{session['date'] + datetime.timedelta(hours=session['duration']):%Y.%m.%d %H:%M:%S}"
-    tree.find("./output/experimentDescription").text = session["name"]
+    tree.find("./output/experimentDescription").text = session["type"]
     tree.find("./output/scheduler").text = session["scheduler"]
     tree.find("./output/correlator").text = session["correlator"]
 

@@ -1,404 +1,157 @@
 [general]
-# extend downtime for IVS intensives
 ivs_int_downtime_extra_min = 10
-# special file for OHG downtime
-Oh_down = ./OHG_plan.txt
-# extend downtime for OHIGGINS
+# Oh_down = /path/to/OHG_plan.txt
 Oh_down_extra_min = 5
-# email server (e.g.: Gmail, BKG, fromFile) "fromFile" reads input from a file called "./email_function.txt"
-email_server = Gmail
-# define output folder
-prefix_output_folder = Schedules
-# path to scheduler
-path_to_scheduler = /scratch/programming/VieSchedpp/cmake-build-release/VieSchedpp
-# institute
-institute = DACH
+email_server = None
+prefix_output_folder = ./Schedules/
+path_to_scheduler = /path/to/VieSchedpp
+institute = UNKNOWN
+# path_sked = /home/schartner/sked_sched
+# sked_executable = /usr/local/bin/sked
+# path_vex_correction_script = /data/VieSchedpp_AUTO_Schedules/vlba_vex_correct
 
-[IVS-INT-S]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY-int.txt
-# regular expression to match session name
-pattern = SI\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 18
-# days prior to session start when schedule should be uploaded
+# VGOS 24-hour sessions
+
+[VGOS-OPS]
+pre_scheduling_functions = vgos_ops_magic,vgos_minslew,add_downtime_intensives
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
 upload_date = 7
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
+function = select_best_24h
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_30_min,sky-coverage_average_13_areas_30_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
 upload = No
 
-[VGOS-INT-A]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_skd_template
-pattern = VGOS-2\d{4}
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch
+[VGOS-R3]
+pre_scheduling_functions = vgos_ops_magic,add_downtime_intensives
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
+function = select_best_24h
+statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_30_min,sky-coverage_average_13_areas_30_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
+upload = No
+
+
+# VGOS Intensives
+
+[VGOS-INT-B]
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
-[VGOS-INT-M]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_skd_template
-pattern = VGOS-M\d{5}
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch
+[VGOS-INT-C]
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
+upload = No
+
+[VGOS-INT-D]
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
 [VGOS-INT-G]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_skd_template
-pattern = VGOS-G\d{5}
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
-[VGOS-INT-Y]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_skd_template
-pattern = VGYG-\d{5}
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch
+[VGOS-INT-M]
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
 [VGOS-INT-S]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_vex_template,fill_skd_template
-pattern = VG2\d{2}-\d{3}[^A]
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch
+pre_scheduling_functions = vgos_int_s
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
 statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
-[VGOS-INT-B]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_skd_template
-pattern = VGOS-B\d{4}
-schedule_date = 12
-upload_date = 9
+[VGOS-INT-Y]
+post_scheduling_functions = vex_template_vgos_std
+schedule_date = 9
+upload_date = 7
 contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
-[VGOS-INT-C]
-master = master$YYYY-int.txt
-post_scheduling_functions = fill_skd_template
-pattern = VGOS-C\d{4}
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
-function = select_best_intensives
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-upload = No
-
-
-[IVS-INT-3]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY-int.txt
-# regular expression to match session name
-pattern = IN3\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
+# SX Intensives
 
 [IVS-INT-2]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY-int.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
 pre_scheduling_functions = adjust_INT_observing_mode_VLBA_256_8_RDV
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = vlba_vex_file
-# regular expression to match session name
-pattern = IN2\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
 upload = No
 
-[IVS-INT-1]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY-int.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = adjust_INT_observing_mode_VLBA_256_8_RDV
-# regular expression to match session name
-pattern = IN1\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
+[IVS-INT-3]
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
+upload = No
+
+[IVS-INT-S]
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
+function = select_best_intensives
+statistics = n_stations,n_observations,n_scans_per_sta,sky-coverage_37_areas_60_min,sources_per_obs,sources_per_scans,time,dUT1
+upload = No
+
+# SX 24-hour
+
+[AUSTRAL]
+pre_scheduling_functions = add_downtime_intensives
+schedule_date = 9
+upload_date = 7
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
+function = select_best_24h
+statistics = n_stations,n_observations,n_scans_per_type,n_scans_per_sta,sources_per_obs,sources_per_scans,sky-coverage_25_areas_60_min,time,dUT1,POL,NUT,COORD
 upload = No
 
 [IVS-OHIG]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
 pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
-# regular expression to match session name
-pattern = IVS-OHG\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
+schedule_date = 8
+upload_date = 6
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_ohg
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans,n_sta_scans_OHIGGINS,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_OHIGGINS_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,time_OHIGGINS_observation,time_OHIGGINS_slew,time_OHIGGINS_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans_per_type,n_scans_per_sta,sources_per_obs,sources_per_scans,sky-coverage_25_areas_60_min,time,dUT1,POL,NUT,COORD,sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
 upload = No
 
 [IVS-T2]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
 pre_scheduling_functions = add_downtime_intensives,sefd_based_snr
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = upload_vex_in_sked_format
-# regular expression to match session name
-pattern = IVS-T2\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
+schedule_date = 8
+upload_date = 6
+contact = mschartner@ethz.ch,christian.ploetz@bkg.bund.de
 function = select_best_24h
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,sky-coverage_average_13_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
+statistics = n_stations,n_observations,n_sta_obs_OHIGGINS,n_scans_per_type,n_scans_per_sta,sources_per_obs,sources_per_scans,sky-coverage_25_areas_60_min,time,dUT1,POL,NUT,COORD,sim_repeatability_OHIGGINS,sim_mean_formal_error_OHIGGINS
 upload = No
-
-[AUS-AST]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives
-# regular expression to match session name
-pattern = AUS-AST\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_24h
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans_per_type,n_scans_per_sta,sources_per_obs,sources_per_scans,sky-coverage_25_areas_60_min,time,dUT1,POL,NUT,COORD
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[IVS-R4]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives
-# regular expression to match session name
-pattern = IVS-R4\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_24h_focus_EOP
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[IVS-R1]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,adjust_R1_observing_mode
-# regular expression to match session name
-pattern = IVS-R1\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_24h_focus_EOP
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[IVS-CRF]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = update_source_list
-# regular expression to match session name
-pattern = IVS-CRF\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_CRF
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[IVS-CRDS]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives,prepare_source_list_crf
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = update_source_list
-# regular expression to match session name
-pattern = IVS-CRD\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_CRF
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,time_average_observation,time_average_slew,time_average_idle
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[VGOS-OPS]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YYYY.txt
-# special functions that have to run prior to scheduling (multiple functions can be separated with ",")
-pre_scheduling_functions = add_downtime_intensives
-# special functions that have to run after the scheduling (multiple functions can be separated with ",")
-post_scheduling_functions = VGOS_procs_block,VGOS_Broadband_block_512_8192_4096
-# regular expression to match session name
-pattern = VGOS-O\d{4}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_24h
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_25_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_average_3d_station_coord._[mm],sim_mean_formal_error_average_3d_station_coord._[mm],sim_mean_formal_error_dUT1_[mus],sim_mean_formal_error_x_pol_[muas],sim_mean_formal_error_y_pol_[muas],sim_mean_formal_error_x_nut_[muas],sim_mean_formal_error_y_nut_[muas],sim_repeatability_dUT1_[mus],sim_repeatability_x_pol_[muas],sim_repeatability_y_pol_[muas],sim_repeatability_x_nut_[muas],sim_repeatability_y_nut_[muas]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[INT9]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-GOW.txt
-# regular expression to match session name
-pattern = IN9\d{2}-\d{3}
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[GOW16]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-GOW.txt
-# regular expression to match session name
-pattern = GOW\d{5}16
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[GOW17]
-# session master file (use $YY as a template for the two-digit year)
-master = master$YY-GOW.txt
-# regular expression to match session name
-pattern = GOW\d{5}17
-# days prior to session start when scheduling should be started
-schedule_date = 12
-# days prior to session start when schedule should be uploaded
-upload_date = 9
-# contact information as list of email addresses (separated with ",")
-contact = mschartner@ethz.ch
-# define function that should be used to select best schedule
-function = select_best_intensives
-# key attributes to store and compare
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,time_average_observation,time_average_slew,time_average_idle,sim_repeatability_dUT1_[mus],sim_mean_formal_error_dUT1_[mus]
-# location to upload schedule: IVS, No, or list of email addresses (separated with ",")
-upload = No
-
-[GOW08]
-master = master$YY-GOW.txt
-pattern = GOW\d{5}08
-schedule_date = 12
-upload_date = 9
-contact = mschartner@ethz.ch
-function = select_best_local_tie
-statistics = n_stations,n_observations,n_scans,n_sources,sky-coverage_average_37_areas_60_min,sky-coverage_average_25_areas_30_min,sky-coverage_average_37_areas_30_min,time_average_observation,time_average_slew,time_average_idle
-upload = GOW
 

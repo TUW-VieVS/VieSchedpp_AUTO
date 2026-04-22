@@ -8,11 +8,10 @@ import shutil
 import subprocess
 import sys
 import traceback
-from string import Template
-
 import pandas as pd
 
 import Helper
+from Helper import Message
 import Plotting
 import SendMail
 import Transfer
@@ -20,9 +19,76 @@ import post_scheduling_functions
 import pre_scheduling_functions
 import select_best_functions
 import skd_parser.skd as skd_parser
-from Helper import Message
 from XML_manipulation import adjust_xml
 from check_uploads import check_uploads
+
+
+def find_session(master, settings):
+    """
+
+    Parameters
+    ----------
+    master list of all sessions in the master file
+    settings settings for the observing program (from settings.ini file)
+
+    Returns session(s) to be processed
+    -------
+
+    There are three options for settings.get("schedule_date"):
+        - integer: the session with this offset in days from today is selected (default for operational execution)
+        - "next": the next session in the master file is selected (e.g. when executing using test mode)
+        - date: the session with this start date is selected (e.g. when executing with a date flag)
+        - session code: the session with this session code is selected (e.g. when executing with a session flag)
+    """
+
+    target_session_string = settings.get("schedule_date", "10")
+
+    today = datetime.date.today()
+    sessions = []
+
+    # this searches a session with a specific offset in days from today (DEFAULT behaviour in operational execution)
+    if Helper.is_int(target_session_string):
+        session_date = today + datetime.timedelta(days=int(target_session_string))
+        sessions = [s for s in master if (s["type"] == settings.name) and s["date"].date() == session_date]
+
+    # This searches the next session in case the -t test flag is used
+    elif target_session_string == "next":
+        offset = 0
+        while not sessions:
+            if offset > 0:
+                Message.addMessage(f"no \"next\" schedule in master - checking {offset} days earlier", dump="program")
+            if offset > 360:
+                break
+            for s in master:
+                if s["date"].date() < today - datetime.timedelta(days=offset):
+                    continue
+                if s["type"] == settings.name:
+                    sessions.append(s)
+                    session_date = s["date"].date()
+                    break
+            offset += 30
+
+    # this searches a session with a specific start date (e.g. when executing with a -d date flag)
+    elif Helper.is_datetime(target_session_string):
+        session_date = datetime.datetime.fromisoformat(target_session_string).date()
+        sessions = [s for s in master if (s["type"] == settings.name) and s["date"].date() == session_date]
+
+    # this searches a session with a specific session code (e.g. when executing with -s session flag)
+    else:
+        for session in master:
+            if ((session["type"] == settings.name) and session["code"].upper() == target_session_string.upper()):
+                session_date = session["date"].date()
+                sessions.append(session)
+                break
+
+    # some logging about the found session(s)
+    if sessions:
+        Message.addMessage(f"target start time for {settings.name} session: {session_date:%B %d, %Y}", dump="program")
+        Message.addMessage(f"{len(sessions)} session(s) will be processed", dump="program")
+    else:
+        Message.addMessage(f"No valid session found for {settings.name}", dump="program")
+
+    return sessions
 
 
 def start_scheduling(settings):
@@ -31,21 +97,15 @@ def start_scheduling(settings):
 
     :return: None
     """
-    prefix = Path(settings["general"].get("prefix_output_folder", "Schedules"))
-    path_scheduler = settings["general"].get("path_to_scheduler")
 
-    if not Path("upload_scheduler.txt").is_file():
-        with open("upload_scheduler.txt", "w"):
-            pass
-
+    # some general logging about the execution environment
     Message.addMessage("VieSched++ AUTO report", dump="header")
-    today = datetime.date.today()
-    Message.addMessage(f"date: {today:%B %d, %Y}", dump="header")
+    Message.addMessage(f"date: {datetime.date.today():%B %d, %Y}", dump="header")
     Message.addMessage(f"computer: {platform.node()}, Python {platform.python_version()}", dump="header")
-    if settings["general"].get("institute") is not None:
-        Message.addMessage(f"institution: {settings['general'].get('institute')}", dump="header")
+    Message.addMessage(f"institution: {settings['general'].get('institute', 'unknown')}", dump="header")
     Message.addMessage("This is an automatically generated message. Do NOT reply to this email directly!",
                        dump="header")
+
     # download files
     if not args.no_download:
         Transfer.download_ftp()
@@ -53,6 +113,9 @@ def start_scheduling(settings):
         Helper.merge_flux_cat_vgos_sx()
     else:
         Message.addMessage("no downloads", dump="header")
+
+    # read all master files
+    master = Helper.read_master()
 
     # start processing all programs
     for program in settings.sections():
@@ -62,234 +125,159 @@ def start_scheduling(settings):
             print(f"skipping scheduling observing program: {program}")
             continue
 
-        s_program = settings[program]
-        emails = Helper.read_emails(s_program, args.fallback_email)
-        delta_days = s_program.get("schedule_date", "10")
-        if args.date is not None:
-            try:
-                target_day = datetime.datetime.strptime(args.date, '%Y-%m-%d')
-                delta_days = (target_day.date() - today).days
-                syear = target_day.year % 100
-                year = target_day.year
-            except ValueError:
-                print(f"ERROR while interpreting target date (-d option): {args.date}")
-                print("    must be in format \"yyyy-mm-dd\" (e.g.: 2020-01-31)")
-                return
-        else:
-            try:
-                target_day = datetime.datetime.strptime(delta_days, '%Y-%m-%d')
-                delta_days = (target_day.date() - today).days
-                syear = target_day.year % 100
-                year = target_day.year
-            except ValueError:
-                if delta_days.isnumeric():
-                    delta_days = int(delta_days)
-                    target_day = today + datetime.timedelta(days=delta_days)
-                    syear = target_day.year % 100
-                    year = target_day.year
-                else:
-                    delta_days = delta_days.lower()
-                    syear = today.year % 100
-                    year = today.year
-
-        delta_days_upload = s_program.getint("upload_date", 7)
-        statistic_field = s_program.get("statistics").split(",")
-        upload = True
-        if s_program.get("upload", "no").lower() == "no":
-            upload = False
-
-        # read master files
-        template_master = Template(s_program.get("master", "master$YYYY.txt"))
-        master = Path("MASTER") / template_master.substitute(YY=str(syear), YYYY=str(year))
-
-        sessions = Helper.read_master(master)
-
+        # look for relevant session(s) in master file based on settings and command line arguments
+        sessions = find_session(master, settings[program])
         try:
-            if sessions is None:
-                raise FileNotFoundError
-
-            pattern = s_program["pattern"]
-            f = Helper.find_function(select_best_functions, s_program["function"])[0]
-            f_pre = Helper.find_function(pre_scheduling_functions, s_program.get("pre_scheduling_functions", ""))
-            f_post = Helper.find_function(post_scheduling_functions, s_program.get("post_scheduling_functions", ""))
-
-            start(sessions, path_scheduler, program, pattern, f, emails, delta_days, delta_days_upload, statistic_field,
-                  prefix, upload, f_pre, f_post)
+            # process all sessions found for this program
+            for session in sessions:
+                start(session, settings)
 
         except:
             Message.addMessage("#### ERROR ####")
             Message.addMessage(traceback.format_exc())
+            emails = Helper.read_emails(settings[program], args.fallback_email)
             SendMail.writeErrorMail(emails)
 
 
-def start(master, path_scheduler, code, code_regex, select_best, emails, delta_days, delta_days_upload, statistic_field,
-          output_path=Path("./Schedules/"), upload=False, pre_fun=None, post_fun=None):
+def start(session, settings):
     """
     start auto processing for one observing program
 
-    :param master: list of dictionaries with session specific fields read from session master
-    :param path_scheduler: path to VieSched++ executable
-    :param code: observing program code
-    :param code_regex: regular expression to match session name
-    :param select_best: function to select best schedule from statistics dataframe
-    :param emails: list of email addresses
-    :param statistic_field: fields to be stored in statistics file
-    :param delta_days: time offset in days from where schedule should be generated
-    :param delta_days_upload: time offset in days when schedule should be updated
-    :param output_path: prefix for output path
-    :param upload: flag if session needs to be uploaded
-    :param pre_fun: list of functions executed prior to scheduling
-    :param post_fun: list of functions executed after to scheduling
+    :param session: session to be processed (dictionary with session specific fields)
+    :param settings: settings (from settings.ini file)
     :return: None
     """
+    # extract general settings
+    output_path = Path(settings["general"].get("prefix_output_folder", "Schedules"))
+    path_scheduler = settings["general"].get("path_to_scheduler")
 
+    program = session["type"]
+    settings_program = settings[program]
+    emails = Helper.read_emails(settings_program, args.fallback_email)
+    fun_select = Helper.find_function(select_best_functions, settings_program["function"])[0]
+    fun_pre = Helper.find_function(pre_scheduling_functions, settings_program.get("pre_scheduling_functions", ""))
+    fun_post = Helper.find_function(post_scheduling_functions, settings_program.get("post_scheduling_functions", ""))
+    upload_date = session["date"] + datetime.timedelta(settings_program.getint("delta_days_upload", 7))
+
+    # reset logging
     Message.clearMessage("program")
-    pattern = re.compile(code_regex)
+    Message.clearMessage("session")
+    Message.clearMessage("log")
 
-    Message.addMessage(f"=== {code} observing program ===", dump="program")
+    # add basic logging
+    Message.addMessage(f"=== {program} observing program ===", dump="program")
+    Message.addMessage("{code} start {date} duration {duration}h stations {stations}".format(**session))
     Message.addMessage("contact:", dump="program")
     for email in emails:
         Message.addMessage(f"    {email}", dump="program")
 
-    Message.addMessage(f"schedule master contained {len(master)} sessions", dump="program")
-    today = datetime.date.today()
-    sessions = []
-    if delta_days == "next":
-        offset = 0
-        while not sessions:
-            if offset > 0:
-                Message.addMessage(f"no \"next\" schedule in master - checking {offset} days earlier", dump="program")
-            if offset > 360:
-                return
-            for s in master:
-                if s["date"].date() < today - datetime.timedelta(days=offset):
-                    continue
-                if s["type"] == code or pattern.match(s["name"]):
-                    sessions.append(s)
-                    break
-            offset += 30
-        upload = False
+    # get list of templates and adjust them with session specific fields, also execute pre-scheduling functions
+    templates = list((Path("Templates") / program).glob("*.xml"))
+    xmls = adjust_template(output_path, session, templates, fun_pre)
+
+    # add post scheduling functions based on station network (for VLBA and DSS antennas)
+    flag_VLBA = any(["VLBA" in sta or "PIETOWN" in sta for sta in session["stations"]])
+    flag_DSS = any([sta.startswith("DSS") for sta in session["stations"]])
+    if flag_VLBA or flag_DSS:
+        fun_post.append(post_scheduling_functions._vex_in_sked_format)
+    if flag_VLBA:
+        fun_post.append(post_scheduling_functions._vlba_vex_adjustments)
+
+    # loop over all templates and execute scheduling with them
+    stats = []
+    for xml in xmls:
+        cwd = xml.parent
+        Message.addMessage(f"   processing file: {xml}")
+        p = subprocess.run([path_scheduler, str(xml.absolute())], cwd=cwd, capture_output=True, text=True)
+        log = p.stdout
+        if log:
+            Message.addMessage(log, dump="log")
+        errlog = p.stderr
+        if errlog:
+            Message.addMessage(errlog, dump="log")
+        p.check_returncode()
+
+        # rename statistics.csv and simulation_summary file to avoid name clashes
+        statistic_in = cwd / "statistics.csv"
+        statistic_out = cwd / f"statistics_{xml.name}.csv"
+        if statistic_out.is_file():
+            statistic_out.unlink()
+        statistic_in.rename(statistic_out)
+
+        simulation_summary_in = cwd / "simulation_summary.txt"
+        simulation_summary_out = cwd / f"simulation_summary_{xml.name}.txt"
+        if simulation_summary_out.is_file():
+            simulation_summary_out.unlink()
+        simulation_summary_in.rename(simulation_summary_out)
+
+        # read statistics.csv file
+        df = pd.read_csv(statistic_out, index_col=0)
+        stats.append(df)
+
+    # concatenate all statistics.csv files
+    stats = pd.concat(stats)
+    stats = stats.drop_duplicates()
+    stats.sort_index(inplace=True)
+
+    # find best schedule based on statistics
+    best_idx = fun_select(stats)
+    Message.addMessage(f"best version: v{int(best_idx):03d}")
+
+    # update summary file with statistics of best schedule
+    summary_file = cwd.parent / "summary.txt"
+    summary_df = Helper.addStatistics(stats.loc[best_idx], session["code"].upper(), summary_file)
+
+    # copy best schedule to "selected" folder
+    version_pattern = f"_v{best_idx:03d}"
+    version_pattern_regex = re.compile(version_pattern + r'[^\d]')
+    bestFiles = [f for f in cwd.glob(f"*{version_pattern}*") if version_pattern_regex.search(f.name)]
+    xml_dir_selected = cwd / "selected"
+    if xml_dir_selected.is_dir():
+        shutil.rmtree(xml_dir_selected)
+    xml_dir_selected.mkdir(exist_ok=True, parents=True)
+    for f in bestFiles:
+        fname = f.name.replace(version_pattern, "")
+        shutil.copy(f, xml_dir_selected / fname)
+    stats.to_csv(xml_dir_selected / "merged_statistics.csv")
+
+    # add session to the upload scheduler if upload is activated in settings.ini file
+    if settings_program.get("upload", "no").lower() != "no":
+        Message.addMessage(f"this session will be uploaded on: "
+                           f"{upload_date:%B %d, %Y}")
+        Helper.update_uploadScheduler(xml_dir_selected, upload_date)
+        if upload_date < datetime.date.today():
+            Message.addMessage("[WARNING]: upload date already passed!")
     else:
-        target_day = today + datetime.timedelta(days=delta_days)
-        Message.addMessage(f"date offset: {delta_days} days", dump="program")
-        Message.addMessage(f"target start time: {target_day:%B %d, %Y}", dump="program")
-        sessions = [s for s in master if (s["type"] == code or pattern.match(s["name"]))
-                    and s["date"].date() == target_day and s["scheduler"] == settings["general"].get("institute")]
-    Message.addMessage(f"{len(sessions)} session(s) will be processed", dump="program")
+        Message.addMessage("this session will NOT be uploaded!")
 
-    # get list of templates
-    templates = list((Path("Templates") / code).glob("*.xml"))
+    # start with some plotting based on the best schedule
+    try:
+        skdFile = xml_dir_selected / f"{session['code'].lower()}.skd"
+        skd = skd_parser.skdParser(skdFile)
+        skd.parse()
+        fields = settings_program.get("statistics").split(",")
+        Plotting.summary(summary_df, fields, xml_dir_selected)
+        Plotting.polar_plots(skd, xml_dir_selected, "duration")
+        Plotting.polar_plots(skd, xml_dir_selected, "start_time")
+        Plotting.close_all()
+    except:
+        Message.addMessage("#### ERROR ####")
+        Message.addMessage(traceback.format_exc())
 
-    # loop over all sessions
-    for session in sessions:
-        if Helper.skip_session(code, session):
-            continue
-        Message.clearMessage("session")
-        Message.clearMessage("log")
-        Message.addMessage(f"##### {session['code'].upper()} #####")
-        Message.addMessage("{name} ({code}) start {date} duration {duration}h stations {stations}".format(**session))
-        xmls = adjust_template(output_path, session, templates, pre_fun)
-        xml_dir = xmls[0].parent
-        df_list = []
+    # execute post scheduling functions (e.g. to adjust the VEX file for VLBA sessions)
+    for post_f in fun_post:
+        post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, program=program, version=best_idx)
 
-        flag_VLBA = any(["VLBA" in sta or "PIETOWN" in sta for sta in session["stations"]])
-        flag_DSS = any([sta.startswith("DSS") for sta in session["stations"]])
-        if flag_VLBA or flag_DSS:
-            post_fun.append(post_scheduling_functions._vex_in_sked_format)
-        if flag_VLBA:
-            post_fun.append(post_scheduling_functions._vlba_vex_adjustments)
+    # write email with best schedule attached
+    SendMail.writeMail(xml_dir_selected, emails, date=session["date"])
 
-        # loop over all templates
-        for xml in xmls:
-            Message.addMessage(f"   processing file: {xml}")
-            p = subprocess.run([path_scheduler, str(xml.absolute())], cwd=xml_dir, capture_output=True, text=True)
-            log = p.stdout
-            if log:
-                Message.addMessage(log, dump="log")
-            errlog = p.stderr
-            if errlog:
-                Message.addMessage(errlog, dump="log")
-            p.check_returncode()
-
-            # rename statistics.csv and simulation_summary file to avoid name clashes
-            statistic_in = xml_dir / "statistics.csv"
-            statistic_out = f"statistics_{xml.name}.csv"
-            statistic_out = xml_dir/ statistic_out
-            if statistic_out.is_file():
-                statistic_out.unlink()
-            statistic_in.rename(statistic_out)
-
-            simulation_summary_in = xml_dir / "simulation_summary.txt"
-            simulation_summary_out = f"simulation_summary_{xml.name}.txt"
-            simulation_summary_out = xml_dir / simulation_summary_out
-            if simulation_summary_out.is_file():
-                simulation_summary_out.unlink()
-            simulation_summary_in.rename(simulation_summary_out)
-
-            # read statistics.csv file
-            df = pd.read_csv(statistic_out, index_col=0)
-            df_list.append(df)
-
-        # concatenate all statistics.csv files
-        stats = pd.concat(df_list)
-        stats = stats.drop_duplicates()
-        stats.sort_index(inplace=True)
-
-        # find best schedule based on statistics
-        best_idx = select_best(stats, template_path=xml.parent)
-        Message.addMessage(f"best version: v{int(best_idx):03d}")
-        if upload:
-            Message.addMessage(f"this session will be uploaded on: {today + datetime.timedelta(days=delta_days - delta_days_upload):%B %d, %Y}")
-            if delta_days - delta_days_upload < 1:
-                Message.addMessage("[WARNING]: upload date already passed!")
-        else:
-            Message.addMessage("this session will NOT be uploaded!")
-
-        summary_file = xml_dir.parent / "summary.txt"
-        summary_df = Helper.addStatistics(stats, best_idx, session["code"].upper(), summary_file)
-
-        # copy best schedule to selected folder
-        version_pattern = f"_v{best_idx:03d}"
-        version_pattern_regex = re.compile(version_pattern + r'[^\d]')
-        bestFiles = [f for f in xml_dir.glob(f"*{version_pattern}*") if version_pattern_regex.search(f.name)]
-        xml_dir_selected = xml_dir / "selected"
-
-        if xml_dir_selected.is_dir():
-            shutil.rmtree(xml_dir_selected)
-
-        xml_dir_selected.mkdir(exist_ok=True, parents=True)
-        for f in bestFiles:
-            fname = f.name.replace(version_pattern, "")
-            destination = xml_dir_selected / fname
-            shutil.copy(f, destination)
-        stats.to_csv(xml_dir_selected / "merged_statistics.csv")
-
-        if upload:
-            Helper.update_uploadScheduler(xml_dir_selected, delta_days - delta_days_upload, upload)
-
-        try:
-            skdFile = xml_dir_selected / f"{session['code'].lower()}.skd"
-            skd = skd_parser.skdParser(skdFile)
-            skd.parse()
-            fields = settings[code].get("statistics").split(",")
-            Plotting.summary(summary_df, fields, xml_dir_selected)
-            Plotting.polar_plots(skd, xml_dir_selected, "duration")
-            Plotting.polar_plots(skd, xml_dir_selected, "start_time")
-            Plotting.close_all()
-        except:
-            Message.addMessage("#### ERROR ####")
-            Message.addMessage(traceback.format_exc())
-
-        for post_f in post_fun:
-            post_f(path=xml_dir_selected, ds=stats.loc[best_idx, :], session=session, program_code=code, version=best_idx)
-
-        SendMail.writeMail(xml_dir_selected, emails, date=session["date"])
-        delete_files(xml_dir)
+    # delete all files in the cwd except for the "selected" folder and some special files to save storage space
+    delete_files(cwd)
 
 
 def delete_files(folder):
     for f in folder.iterdir():
-        if "VieSchedpp" in f.name or f.is_dir() or f.suffix == ".csv" or f.suffix == ".tle":
+        if "VieSchedpp" in f.name or f.is_dir() or f.suffix == ".csv" or f.suffix == ".tle" or f.suffix == ".xml":
             continue
         else:
             f.unlink()
@@ -391,6 +379,10 @@ def setup():
         sys.exit(0)
     settings.read("settings.ini")
 
+    if not Path("upload_scheduler.txt").is_file():
+        with open("upload_scheduler.txt", "w"):
+            pass
+
     setup_mail(settings)
 
     if settings["general"].get("path_to_scheduler") is None:
@@ -413,6 +405,18 @@ def setup():
                 continue
             programs.append(group)
         args.observing_programs = programs
+
+    if args.date:
+        for group in settings:
+            if group == "general" or group == "DEFAULT":
+                continue
+            settings.set(group, "schedule_date", args.date)
+
+    if args.session:
+        for group in settings:
+            if group == "general" or group == "DEFAULT":
+                continue
+            settings.set(group, "schedule_date", args.session)
 
     if args.test_mode:
         programs = []
@@ -480,8 +484,10 @@ if __name__ == "__main__":
                         help="use this option if you do not want to do checks of changes in the master file")
     parser.add_argument("-t", "--test_mode", action="store_true",
                         help="use this option if you want to quickly process all templates with one schedule")
-    parser.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
                                              "If omitted (default), information is taken from settings.ini file")
+    group.add_argument("-s", "--session", help="Session name to be processed (from current year's master file).")
 
     args = parser.parse_args()
     try:
