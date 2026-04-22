@@ -182,19 +182,20 @@ def _vex_in_sked_format(**kwargs):
                            dump="session")
         return
 
-    Message.addMessage(f"    - copy {path_to_skd} to {Path(path_sked) / name_skd}", dump="session")
     if (Path(path_sked) / name_skd).is_file():
         Message.addMessage(f"    - delete existing .skd file {Path(path_sked) / name_skd}", dump="session")
         (Path(path_sked) / name_skd).unlink()
+    if (Path(path_sked) / name_vex).is_file():
+        Message.addMessage(f"    - delete existing .vex file {Path(path_sked) / name_vex}", dump="session")
+        (Path(path_sked) / name_vex).unlink()
+
+    Message.addMessage(f"    - copy {path_to_skd} to {Path(path_sked) / name_skd}", dump="session")
     shutil.copy(path_to_skd, Path(path_sked) / name_skd)
 
     cwd = Path.cwd()
     try:
         Message.addMessage(f"    - change dir to {path_sked}", dump="session")
         os.chdir(path_sked)
-        if Path(name_vex).is_file():
-            Message.addMessage(f"    - delete existing .vex file {name_vex}", dump="session")
-            Path(name_vex).unlink()
         Message.addMessage(f"    - execute sked to parse .vex file {path_sked}", dump="session")
         child = pexpect.spawn(sked_executable + " " + name_skd)
         child.expect(r'\?')
