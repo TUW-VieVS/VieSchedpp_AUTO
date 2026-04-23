@@ -107,9 +107,6 @@ class skdParser:
 
                                 eq = Equip_el(sefd_x, sefd_s, coef_x, coef_s)
                         except:
-                            print(f"error parsing EQUIP .cat")
-                            eq = Equip(1, 1)
-                        else:
                             eq = Equip(1, 1)
                             print("failed to parse equip block (not critical)")
 

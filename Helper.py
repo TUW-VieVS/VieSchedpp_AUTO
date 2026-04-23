@@ -349,11 +349,8 @@ def addStatistics(stats, code, summary_file):
             summary = pd.DataFrame()
 
     new = stats.to_frame().T
-    new.index = [code]
     new['stations'] = tlcs
-    if code in summary.index:
-        summary = summary.drop(code)
-    summary = summary.append(new)
+    summary.loc[code] = new.iloc[0]
     summary.to_csv(summary_file)
 
     # reverse and output
@@ -362,7 +359,7 @@ def addStatistics(stats, code, summary_file):
 
 def update_uploadScheduler(path, upload_date):
     path = path.parent
-    txt = f"{path} {upload_date.date()} pending\n"
+    txt = f"{path} {upload_date} pending\n"
     with open("upload_scheduler.txt", "r") as f:
         for l in f:
             if not l.strip():

@@ -492,6 +492,9 @@ def polar_plot_per_station(all_obs, station, ax, attribute_name):
 
     ax.set_yticks(np.arange(15, 91, 15))
     labels = ["", "NE", "E", "SE", "S", "SW", "W", "NW"]
+    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False)
+
+    ax.set_xticks(angles)
     ax.set_xticklabels(labels)
 
     ax.set_title(station)

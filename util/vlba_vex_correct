@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""
+=============================================================================
+This file was externally provided to me. I am not responsible for its content
+I had to make minor adjustments to migrate it from python 2.7 to 3.x
+It is not robust at all and does not follow the VEX format definition...
+DO NOT USE IT UNLESS YOU NEED TO!
+=============================================================================
+
+vlba_vex_correct will ingest a vex file and correct the $IF and $TRACKS
+sections to correspond to setups for the VLBA. Checks observation setup in
+$FREQ section.
+
+A temporary intermediate file is generated before the original vex file is
+overwritten at the end.
+
+Usage:  vlba_vex_correct <filename>.vex
+Output: <filename>.vex        (modified/corrected vex file)
+        <filename>.vex.orig   (original/input vex file)
+
+THIS IS NOT A ROBUST SCRIPT. THE USER SHOULD VERIFY ALL RESULTS ARE CORRECT
+BY VISUALLY INSPECTING THE ALTERED VEX FILE.
+"""
+import os
+import shutil
+import sys
+from tempfile import NamedTemporaryFile
+
+if len(sys.argv) > 2:
+    print('Only 1 vex filename may be entered at a time.\n Exiting Program.')
+    raise SystemExit
+
+filename = sys.argv[1]
+
+with open(filename) as fin, NamedTemporaryFile(mode="w", dir='..', delete=False) as fout:
+    for line in fin:
+        # set sample_rate to 16 Ms/sec in $FREQ section
+        if line.startswith('    sample_rate'):
+            if '16' not in line:
+                print('sample_rate is not set to 16 Ms/sec. Please look at '
+                      '$FREQ section of {} and corresponding skd file.\n'
+                      'Exiting Program.'.format(filename))
+                os.remove(fout.name)
+                raise SystemExit
+
+        # verify channels have been scheduled with 8 MHz/channel
+        # ('chan_def' string only occures in FREQ section)
+        if line.startswith('    chan_def ='):
+            # verify the channels are using 8 MHz
+            if not '8.000 MHz' in line.split(':')[3]:
+                print('Channels have not been scheduled using 8 MHz/channel--'
+                      'see $FREQ section of {} and corresponding skd.'
+                      '\nExiting Program.'.format(filename))
+                os.remove(fout.name)
+                raise SystemExit
+
+        # add comments to the $IF section
+        if line.startswith('$IF;'):
+            if_sec = [line]
+            line = next(fin, '').rstrip('\n')
+            if line.startswith('  def VGEOSX-SX01;'):
+                if_sec.append(line + '\n')
+                for linecount in range(10):
+                    line = next(fin, '').rstrip('\n')
+                    if line.startswith('    if_def = &IF_A'):
+                        line = '    if_def = &IF_A : A : R :  3100.0 MHz : L : 1 MHz : 0 Hz; *    7600.00   3100.00  13cm     0 NA\n'
+                        if_sec.append(line)
+                    elif line.startswith('    if_def = &IF_B'):
+                        line = '    if_def = &IF_B : B : R :  7600.0 MHz : U : 1 MHz : 0 Hz; *    7600.00   3100.00  4cm     0 NA\n'
+                        if_sec.append(line)
+                    elif line.startswith('    if_def = &IF_D'):
+                        line = '    if_def = &IF_D : D : R :  9600.0 MHz : L : 1 MHz : 0 Hz; *    7600.00   3100.00  4cm     0 NA\n'
+                        if_sec.append(line)
+                    elif line.startswith('  enddef;'):
+                        if_sec.append(line + '\n')
+                        break
+            line = ''.join(if_sec)
+
+        # replace def's in the $TRACKS section
+        if line.startswith('$TRACKS;'):
+            tracks_sec = [line]
+            for linecount in range(40):
+                line = next(fin, '').rstrip('\n')
+                if line.startswith('  def VLBA1_1f_2b-SX01;'):
+                    tracks_sec.append(line + '\n')
+                    line = \
+                        ('     track_frame_format = VDIF5032;\n'
+                         '     fanout_def =   : &CH01 : sign : 1:  1;\n'
+                         '     fanout_def =   : &CH01 :  mag : 1:  1;\n'
+                         '     fanout_def =   : &CH02 : sign : 1:  2;\n'
+                         '     fanout_def =   : &CH02 :  mag : 1:  2;\n'
+                         '     fanout_def =   : &CH03 : sign : 1:  3;\n'
+                         '     fanout_def =   : &CH03 :  mag : 1:  3;\n'
+                         '     fanout_def =   : &CH04 : sign : 1:  4;\n'
+                         '     fanout_def =   : &CH04 :  mag : 1:  4;\n'
+                         '     fanout_def =   : &CH05 : sign : 1:  5;\n'
+                         '     fanout_def =   : &CH05 :  mag : 1:  5;\n'
+                         '     fanout_def =   : &CH06 : sign : 1:  6;\n'
+                         '     fanout_def =   : &CH06 :  mag : 1:  6;\n'
+                         '     fanout_def =   : &CH07 : sign : 1:  7;\n'
+                         '     fanout_def =   : &CH07 :  mag : 1:  7;\n'
+                         '     fanout_def =   : &CH08 : sign : 1:  8;\n'
+                         '     fanout_def =   : &CH08 :  mag : 1:  8;\n'
+                         '  enddef;\n')
+                    tracks_sec.append(line)
+                elif line.startswith('  def Mk341_1f_2b-SX02;'):
+                    tracks_sec.append(line + '\n')
+                    for linecount in range(20):
+                        line = next(fin, '').rstrip('\n')
+                        if line.startswith('    fanout_def'):
+                            tracks_sec.append(line + '\n')
+                        elif line.startswith('  enddef;'):
+                            tracks_sec.append(line + '\n')
+                            break
+                elif line.startswith('  def Mark5B_format;'):
+                    tracks_sec.append(line + '\n')
+                    for linecount in range(5):
+                        line = next(fin, '').rstrip('\n')
+                        if line.startswith('  enddef;'):
+                            tracks_sec.append(line + '\n')
+                            break
+                        else:
+                            tracks_sec.append(line + '\n')
+                # replace "def VLBA_format" content
+                elif line.startswith('  def VLBA_format;'):
+                    line = ('  def VLBA_format;\n'
+                            '    track_frame_format = VLBA;\n'
+                            '    data_modulation = off;\n'
+                            '  enddef;\n')
+                    tracks_sec.append(line)
+                elif line.startswith('*-----------------------   end $TRACKS'):
+                    tracks_sec.append(line + '\n')
+                    break
+            line = ''.join(tracks_sec)
+
+        # write each line out to the temp <fout> file
+        fout.write(line)
+    # copy original vex file to have *.orig extention
+    shutil.copy2(filename, filename + '.orig')
+    # rename temp file <fout> to original vex filename <filename>
+    os.rename(fout.name, filename)
+
+    print('{} has been modified to comply with VLBA expectations.'
+          .format(filename))

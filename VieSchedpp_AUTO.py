@@ -157,7 +157,7 @@ def start(session, settings):
     fun_select = Helper.find_function(select_best_functions, settings_program["function"])[0]
     fun_pre = Helper.find_function(pre_scheduling_functions, settings_program.get("pre_scheduling_functions", ""))
     fun_post = Helper.find_function(post_scheduling_functions, settings_program.get("post_scheduling_functions", ""))
-    upload_date = session["date"] - datetime.timedelta(settings_program.getint("delta_days_upload", 7))
+    upload_date = session["date"].date() - datetime.timedelta(settings_program.getint("delta_days_upload", 7))
 
     # reset logging
     Message.clearMessage("program")
@@ -483,12 +483,12 @@ if __name__ == "__main__":
                         help="use this option if you do not want generate any schedules (upload only)")
     parser.add_argument("-nc", "--no_master_checks", action="store_true",
                         help="use this option if you do not want to do checks of changes in the master file")
-    parser.add_argument("-t", "--test_mode", action="store_true",
-                        help="use this option if you want to quickly process all templates with one schedule")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
                                              "If omitted (default), information is taken from settings.ini file")
     group.add_argument("-s", "--session", help="Session name to be processed (from current year's master file).")
+    group.add_argument("-t", "--test_mode", action="store_true",
+                       help="use this option if you want to quickly process all templates with one schedule")
 
     args = parser.parse_args()
     try:
