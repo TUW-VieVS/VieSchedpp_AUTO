@@ -196,13 +196,13 @@ def _vex_in_sked_format(**kwargs):
     try:
         Message.addMessage(f"    - change dir to {path_sked}", dump="session")
         os.chdir(path_sked)
-        Message.addMessage(f"    - execute sked to parse .vex file {path_sked}", dump="session")
+        Message.addMessage(f"    - execute sked to parse .vex file {sked_executable}", dump="session")
         child = pexpect.spawn(sked_executable + " " + name_skd)
-        child.expect(r'\?')
+        child.expect(r'\?', timeout=10)
         child.sendline("vwc " + name_vex)
         child.expect(r'\?')
-        child.sendline("q")
-        child.close()
+        child.sendline("q", timeout=10)
+        child.close(pexpect.EOF)
         Message.addMessage(f"    - finished with sked to parse .vex file", dump="session")
 
         newVex = Path(path_sked) / name_vex
