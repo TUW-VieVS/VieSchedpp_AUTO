@@ -200,8 +200,8 @@ def _vex_in_sked_format(**kwargs):
         child = pexpect.spawn(sked_executable + " " + name_skd)
         child.expect(r'\?', timeout=10)
         child.sendline("vwc " + name_vex)
-        child.expect(r'\?')
-        child.sendline("q", timeout=10)
+        child.expect(r'\?', timeout=10)
+        child.sendline("q")
         child.close(pexpect.EOF)
         Message.addMessage(f"    - finished with sked to parse .vex file", dump="session")
 
