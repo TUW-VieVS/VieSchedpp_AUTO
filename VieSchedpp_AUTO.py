@@ -157,7 +157,7 @@ def start(session, settings):
     fun_select = Helper.find_function(select_best_functions, settings_program["function"])[0]
     fun_pre = Helper.find_function(pre_scheduling_functions, settings_program.get("pre_scheduling_functions", ""))
     fun_post = Helper.find_function(post_scheduling_functions, settings_program.get("post_scheduling_functions", ""))
-    upload_date = session["date"] + datetime.timedelta(settings_program.getint("delta_days_upload", 7))
+    upload_date = session["date"] - datetime.timedelta(settings_program.getint("delta_days_upload", 7))
 
     # reset logging
     Message.clearMessage("program")

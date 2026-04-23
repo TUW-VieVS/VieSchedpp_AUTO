@@ -362,7 +362,7 @@ def addStatistics(stats, code, summary_file):
 
 def update_uploadScheduler(path, upload_date):
     path = path.parent
-    txt = f"{path} {upload_date} pending\n"
+    txt = f"{path} {upload_date.date()} pending\n"
     with open("upload_scheduler.txt", "r") as f:
         for l in f:
             if not l.strip():
