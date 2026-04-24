@@ -31,8 +31,11 @@ if len(sys.argv) > 2:
     raise SystemExit
 
 filename = sys.argv[1]
+backup = filename + '.orig'
+shutil.copy(filename, backup)
+os.remove(filename)
 
-with open(filename) as fin, NamedTemporaryFile(mode="w", dir='..', delete=False) as fout:
+with open(backup) as fin, open(filename, mode="w") as fout:
     for line in fin:
         # set sample_rate to 16 Ms/sec in $FREQ section
         if line.startswith('    sample_rate'):
@@ -135,10 +138,5 @@ with open(filename) as fin, NamedTemporaryFile(mode="w", dir='..', delete=False)
 
         # write each line out to the temp <fout> file
         fout.write(line)
-    # copy original vex file to have *.orig extention
-    shutil.copy2(filename, filename + '.orig')
-    # rename temp file <fout> to original vex filename <filename>
-    os.rename(fout.name, filename)
 
-    print('{} has been modified to comply with VLBA expectations.'
-          .format(filename))
+    print('{} has been modified to comply with VLBA expectations.'.format(filename))
