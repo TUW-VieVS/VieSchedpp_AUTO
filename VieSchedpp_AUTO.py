@@ -481,8 +481,8 @@ if __name__ == "__main__":
                         help="use this option if you do not want to upload any files (scheduling only)")
     parser.add_argument("-ns", "--no_scheduling", action="store_true",
                         help="use this option if you do not want generate any schedules (upload only)")
-    parser.add_argument("-nc", "--no_master_checks", action="store_true",
-                        help="use this option if you do not want to do checks of changes in the master file")
+    # parser.add_argument("-nc", "--no_master_checks", action="store_true",
+    #                     help="use this option if you do not want to do checks of changes in the master file")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
                                              "If omitted (default), information is taken from settings.ini file")
@@ -513,9 +513,9 @@ if __name__ == "__main__":
         if not args.no_upload:
             print("===== START UPLOADING =====")
             start_uploading(settings)
-        if not args.no_master_checks:
-            print("===== START CHECKING MASTER SCHEDULE =====")
-            check_uploads(settings)
+        # if not args.no_master_checks:
+        # print("===== START CHECKING MASTER SCHEDULE =====")
+        # check_uploads(settings)
         print("VieSched++ AUTO finished")
 
     except BaseException as err:

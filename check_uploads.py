@@ -24,25 +24,17 @@ def check_uploads(settings, fallback_email=""):
             continue
 
         s_program = settings[program]
-        pattern = re.compile(s_program["pattern"])
         emails = read_emails(s_program, fallback_email)
         delta_days = s_program.getint("upload_date", 10)
 
         for dt in range(delta_days):
             target_day = today + datetime.timedelta(days=dt)
             year = target_day.year % 100
-            year_long = target_day.year
-
-            # read master files
-            template_master = Template(s_program.get("master", "master$YY.txt"))
-            master = template_master.substitute(YY=str(year), YYYY=str(year_long))
-
-            master = Path("MASTER") / master
-            sessions = read_master(master)
+            sessions = read_master()
             if not sessions:
                 continue
 
-            sessions = [s for s in sessions if s["date"].date() == target_day and pattern.match(s["name"])]
+            sessions = [s for s in sessions if s["date"].date() == target_day]
 
             for s in sessions:
                 name = f"{s['code'].lower()}.skd"
