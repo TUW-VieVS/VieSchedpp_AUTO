@@ -278,10 +278,9 @@ def addStatistics(stats, code, summary_file):
     list statistics for best schedule
 
     :param stats: DataFrame for statistics.csv file
-    :param best_idx: version number of selected schedule
     :param code: session code
-    :param statistic_field: field names for summary file
     :param summary_file: path to summary file
+    :param statistic_field: field names for summary file
     :return: summary DataFrame
     """
 
@@ -346,7 +345,7 @@ def addStatistics(stats, code, summary_file):
         if f.read():
             summary = pd.read_csv(summary_file, index_col=0)
         else:
-            summary = pd.DataFrame()
+            summary = pd.DataFrame(columns=stats.index.to_list() + ["stations"])
 
     new = stats.to_frame().T
     new['stations'] = tlcs

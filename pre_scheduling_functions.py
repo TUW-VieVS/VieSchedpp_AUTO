@@ -912,3 +912,30 @@ def get_baseline_sensitivity_groups(stations, threshold=5000):
             high_low.append(f"{tlc1_c}-{tlc2_c}")
 
     return high_high, high_low, low_low
+
+
+def extract_scan_duration(**kwargs):
+    tree = kwargs["tree"]
+    folder = kwargs["folder"]
+
+    df = pd.read_csv(folder / "source.cat", header=None, dtype=str, comment="*", sep="\s+",
+                     names="name name2 ra_h ra_m ra_s de_d de_m de_s 2000.0 0.0 type".split(),
+                     index_col="name")
+    df = df["type"]
+    groups = dict()
+    for dur in range(10, 35, 5):
+        dur_str = f"{dur}sec"
+        sources = df.index[df.str.contains(dur_str, case=False)]
+        groups[dur_str] = sources.tolist()
+        pass
+
+    root = tree.getroot()
+    for group_elem in root.xpath(".//group"):
+        group_name = group_elem.get("name")
+
+        # Check whether this group exists in the dictionary
+        if group_name in groups:
+            for source_name in groups[group_name]:
+                member = etree.SubElement(group_elem, "member")
+                member.text = source_name
+    pass

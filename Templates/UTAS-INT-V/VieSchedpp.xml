@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VieSchedpp>
+    <software>
+        <name>VieSched++ GUI</name>
+        <GUI_version>v.2026-05-11</GUI_version>
+    </software>
+    <created>
+        <time>2026.05.13 11:56:09</time>
+        <name>unknown</name>
+        <email>unknown</email>
+    </created>
+    <general>
+        <experimentName>sv6124</experimentName>
+        <startTime>2026.05.13 00:00:00</startTime>
+        <endTime>2026.05.14 00:00:00</endTime>
+        <subnetting>false</subnetting>
+        <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
+        <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
+        <stations>
+            <station>HARTVGS</station>
+            <station>YARRA12M</station>
+        </stations>
+        <scanAlignment>start</scanAlignment>
+        <logSeverityConsole>info</logSeverityConsole>
+        <logSeverityFile>warning</logSeverityFile>
+        <doNotObserveSourcesWithinMinRepeat>true</doNotObserveSourcesWithinMinRepeat>
+        <ignore_successive_scans_same_source>true</ignore_successive_scans_same_source>
+    </general>
+    <output>
+        <experimentDescription>SOUTHERN_VGOS_INTENSIVES</experimentDescription>
+        <scheduler>unknown</scheduler>
+        <correlator>unknown</correlator>
+        <initializer_log>true</initializer_log>
+        <iteration_log>true</iteration_log>
+        <createSummary>false</createSummary>
+        <createNGS>false</createNGS>
+        <createSKD>true</createSKD>
+        <createVEX>true</createVEX>
+        <createVEX_satelliteTracking>false</createVEX_satelliteTracking>
+        <createVEX_satelliteTracking_deltaT>10</createVEX_satelliteTracking_deltaT>
+        <createSnrTable>true</createSnrTable>
+        <createOperationsNotes>true</createOperationsNotes>
+        <createSourceGroupStatistics>false</createSourceGroupStatistics>
+        <createSlewFile>false</createSlewFile>
+        <debugSkyCoverage>false</debugSkyCoverage>
+        <createTimeTable>false</createTimeTable>
+        <compress>false</compress>
+    </output>
+    <catalogs>
+        <antenna>../../CATALOGS_VieSchedpp/antenna.cat.vgos</antenna>
+        <equip>../../CATALOGS_VieSchedpp/equip.cat.vgos</equip>
+        <flux>../../CATALOGS_VieSchedpp/flux.cat.merged</flux>
+        <freq>../../CATALOGS/freq.cat</freq>
+        <hdpos>../../CATALOGS/hdpos.cat</hdpos>
+        <loif>../../CATALOGS/loif.cat</loif>
+        <mask>../../CATALOGS/mask.cat</mask>
+        <modes>../../CATALOGS/modes.cat</modes>
+        <position>../../CATALOGS/position.cat</position>
+        <rec>../../CATALOGS/rec.cat</rec>
+        <rx>../../CATALOGS/rx.cat</rx>
+        <satellite/>
+        <satellite_avoid/>
+        <source>./source.cat</source>
+        <tracks>../../CATALOGS/tracks.cat</tracks>
+        <procs>../../CATALOGS_VieSchedpp/procs.cat.vgos</procs>
+        <stp_dir/>
+    </catalogs>
+    <station>
+        <setup>
+            <member>__all__</member>
+            <parameter>default</parameter>
+            <transition>hard</transition>
+        </setup>
+        <parameters>
+            <parameter name="default">
+                <available>1</available>
+                <availableForFillinmode>1</availableForFillinmode>
+                <weight>1</weight>
+                <minScan>10</minScan>
+                <maxScan>30</maxScan>
+                <minSlewtime>0</minSlewtime>
+                <maxSlewtime>600</maxSlewtime>
+                <maxSlewDistance>175</maxSlewDistance>
+                <minSlewDistance>0</minSlewDistance>
+                <maxWait>600</maxWait>
+                <minElevation>5</minElevation>
+                <maxNumberOfScans>9999</maxNumberOfScans>
+                <maxNumberOfScansDist>9999</maxNumberOfScansDist>
+                <maxTotalObsTime>999999</maxTotalObsTime>
+                <preob>2</preob>
+                <midob>0</midob>
+                <systemDelay>2</systemDelay>
+            </parameter>
+            <parameter name="down">
+                <available>0</available>
+            </parameter>
+        </parameters>
+        <cableWrapBuffers>
+            <cableWrapBuffer member="__all__">
+                <axis1LowOffset>5</axis1LowOffset>
+                <axis1UpOffset>5</axis1UpOffset>
+                <axis2LowOffset>0</axis2LowOffset>
+                <axis2UpOffset>0</axis2UpOffset>
+            </cableWrapBuffer>
+        </cableWrapBuffers>
+    </station>
+    <source>
+        <setup>
+            <member>__all__</member>
+            <parameter>default</parameter>
+            <transition>hard</transition>
+        </setup>
+        <setup>
+            <member>30sec</member>
+            <parameter>30sec</parameter>
+            <transition>hard</transition>
+        </setup>
+        <setup>
+            <member>25sec</member>
+            <parameter>25sec</parameter>
+            <transition>hard</transition>
+        </setup>
+        <setup>
+            <member>20sec</member>
+            <parameter>20sec</parameter>
+            <transition>hard</transition>
+        </setup>
+        <setup>
+            <member>15sec</member>
+            <parameter>15sec</parameter>
+            <transition>hard</transition>
+        </setup>
+        <setup>
+            <member>10sec</member>
+            <parameter>10sec</parameter>
+            <transition>hard</transition>
+        </setup>
+        <parameters>
+            <parameter name="10sec">
+                <fixedScanDuration>10</fixedScanDuration>
+            </parameter>
+            <parameter name="15sec">
+                <fixedScanDuration>15</fixedScanDuration>
+            </parameter>
+            <parameter name="20sec">
+                <fixedScanDuration>20</fixedScanDuration>
+            </parameter>
+            <parameter name="25sec">
+                <fixedScanDuration>25</fixedScanDuration>
+            </parameter>
+            <parameter name="30sec">
+                <fixedScanDuration>30</fixedScanDuration>
+            </parameter>
+            <parameter name="default">
+                <available>1</available>
+                <availableForFillinmode>1</availableForFillinmode>
+                <weight>1</weight>
+                <minElevation>0</minElevation>
+                <minSunDistance>4</minSunDistance>
+                <minScan>0</minScan>
+                <maxScan>9999</maxScan>
+                <minNumberOfSites>3</minNumberOfSites>
+                <minRepeat>1200</minRepeat>
+                <minFlux>0.05</minFlux>
+                <maxNumberOfScans>999</maxNumberOfScans>
+            </parameter>
+        </parameters>
+        <groups>
+            <group name="10sec"></group>
+            <group name="15sec"></group>
+            <group name="20sec"></group>
+            <group name="25sec"></group>
+            <group name="30sec"></group>
+        </groups>
+    </source>
+    <baseline>
+        <setup>
+            <member>__all__</member>
+            <parameter>default</parameter>
+            <transition>hard</transition>
+        </setup>
+        <parameters>
+            <parameter name="default">
+                <ignore>0</ignore>
+                <minScan>0</minScan>
+                <maxScan>9999</maxScan>
+                <weight>1</weight>
+            </parameter>
+        </parameters>
+    </baseline>
+    <skyCoverage>
+        <influenceDistance>45</influenceDistance>
+        <influenceInterval>1200</influenceInterval>
+        <maxTwinTelecopeDistance>0</maxTwinTelecopeDistance>
+        <interpolationDistance>cosine</interpolationDistance>
+        <interpolationTime>cosine</interpolationTime>
+    </skyCoverage>
+    <weightFactor>
+        <skyCoverage>1</skyCoverage>
+        <duration>1</duration>
+        <averageSources>1</averageSources>
+    </weightFactor>
+    <multisched>
+        <weight_factor_sky-coverage>
+            <value>0.1</value>
+            <value>0.5</value>
+            <value>1</value>
+        </weight_factor_sky-coverage>
+        <weight_factor_duration>
+            <value>0.10000000000000001</value>
+            <value>0.20000000000000001</value>
+            <value>0.29999999999999999</value>
+            <value>0.40000000000000002</value>
+            <value>0.5</value>
+            <value>0.59999999999999998</value>
+            <value>0.69999999999999996</value>
+            <value>0.80000000000000004</value>
+            <value>0.90000000000000002</value>
+            <value>1</value>
+        </weight_factor_duration>
+        <weight_factor_average_sources>
+            <value>0.1</value>
+            <value>0.33000000000000002</value>
+            <value>0.67000000000000004</value>
+            <value>1</value>
+        </weight_factor_average_sources>
+    </multisched>
+    <multiCore>
+        <threads>manual</threads>
+        <nThreads>12</nThreads>
+        <jobScheduling>auto</jobScheduling>
+    </multiCore>
+    <mode>
+        <simple>
+            <sampleRate>1024</sampleRate>
+            <bits>2</bits>
+            <efficiencyFactor>0.60629999999999995</efficiencyFactor>
+            <bands>
+                <band name="A">
+                    <wavelength>0.092062540842648311</wavelength>
+                    <channels>1</channels>
+                </band>
+                <band name="B">
+                    <wavelength>0.054543420784513498</wavelength>
+                    <channels>1</channels>
+                </band>
+                <band name="C">
+                    <wavelength>0.045310509944985186</wavelength>
+                    <channels>1</channels>
+                </band>
+                <band name="D">
+                    <wavelength>0.028670714395011666</wavelength>
+                    <channels>1</channels>
+                </band>
+            </bands>
+        </simple>
+        <bandPolicies>
+            <bandPolicy name="A">
+                <minSNR>15</minSNR>
+                <station>
+                    <tag>required</tag>
+                    <backup_value>0</backup_value>
+                </station>
+                <source>
+                    <tag>optional</tag>
+                    <backup_value>0.25</backup_value>
+                </source>
+            </bandPolicy>
+            <bandPolicy name="B">
+                <minSNR>15</minSNR>
+                <station>
+                    <tag>required</tag>
+                    <backup_value>0</backup_value>
+                </station>
+                <source>
+                    <tag>optional</tag>
+                    <backup_value>0.25</backup_value>
+                </source>
+            </bandPolicy>
+            <bandPolicy name="C">
+                <minSNR>15</minSNR>
+                <station>
+                    <tag>required</tag>
+                    <backup_value>0</backup_value>
+                </station>
+                <source>
+                    <tag>optional</tag>
+                    <backup_value>0.25</backup_value>
+                </source>
+            </bandPolicy>
+            <bandPolicy name="D">
+                <minSNR>15</minSNR>
+                <station>
+                    <tag>required</tag>
+                    <backup_value>0</backup_value>
+                </station>
+                <source>
+                    <tag>optional</tag>
+                    <backup_value>0.25</backup_value>
+                </source>
+            </bandPolicy>
+        </bandPolicies>
+    </mode>
+    <simulator>
+        <number_of_simulations>1000</number_of_simulations>
+        <station name="__all__">
+            <wn>2.8300000000000001</wn>
+            <clockASD>1</clockASD>
+            <clockDur>50</clockDur>
+            <tropo_Cn>1.8</tropo_Cn>
+            <tropo_H>2000</tropo_H>
+            <tropo_dH>200</tropo_dH>
+            <tropo_dHseg>2</tropo_dHseg>
+            <tropo_ve>8</tropo_ve>
+            <tropo_vn>0</tropo_vn>
+            <tropo_wzd0>150</tropo_wzd0>
+        </station>
+        <output>
+            <obs_minus_comp>false</obs_minus_comp>
+        </output>
+    </simulator>
+    <solver>
+        <EOP>
+            <dUT1>
+                <interval>1</interval>
+                <constraint>0.0001</constraint>
+            </dUT1>
+        </EOP>
+        <station name="__all__">
+            <coordinates>false</coordinates>
+            <datum>false</datum>
+            <linear_clock>true</linear_clock>
+            <quadratic_clock>false</quadratic_clock>
+            <PWL_ZWD>
+                <interval>60</interval>
+                <constraint>1.5</constraint>
+            </PWL_ZWD>
+        </station>
+        <source>
+            <minScans>3</minScans>
+            <minObs>5</minObs>
+            <minObs_datum>25</minObs_datum>
+            <estimate>__none__</estimate>
+            <datum>__all__</datum>
+        </source>
+        <output>
+            <A>false</A>
+            <P>false</P>
+            <l>false</l>
+        </output>
+    </solver>
+    <priorities>
+        <fraction>70</fraction>
+        <percentile>0.75</percentile>
+        <variable name="#obs">0.5</variable>
+        <variable name="XPO">0</variable>
+        <variable name="YPO">0</variable>
+        <variable name="dUT1">1</variable>
+        <variable name="NUTX">0</variable>
+        <variable name="NUTY">0</variable>
+        <variable name="stations">0</variable>
+        <variable name="sources">0</variable>
+        <variable name="scale">0</variable>
+    </priorities>
+</VieSchedpp>
