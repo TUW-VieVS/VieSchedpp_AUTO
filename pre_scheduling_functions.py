@@ -925,7 +925,7 @@ def extract_scan_duration(**kwargs):
     groups = dict()
     for dur in range(10, 35, 5):
         dur_str = f"{dur}sec"
-        sources = df.index[df.str.contains(dur_str, case=False)]
+        sources = df.index[df.str.contains("_" + dur_str, case=False)]
         groups[dur_str] = sources.tolist()
         pass
 
