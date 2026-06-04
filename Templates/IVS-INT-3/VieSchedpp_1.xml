@@ -76,7 +76,7 @@
         <antenna>../../CATALOGS/antenna.cat</antenna>
         <equip>../../CATALOGS/equip.cat</equip>
         <flux>../../CATALOGS/flux.cat</flux>
-        <freq>./freq.cat</freq>
+        <freq>../../CATALOGS/freq.cat</freq>
         <hdpos>../../CATALOGS/hdpos.cat</hdpos>
         <loif>../../CATALOGS/loif.cat</loif>
         <mask>../../CATALOGS/mask.cat</mask>
@@ -197,7 +197,7 @@
 		<jobScheduling>auto</jobScheduling>
 	</multiCore>
 	<mode>
-		<skdMode>1024-16(AU)</skdMode>
+		<skdMode>1024-16(AU-WN)</skdMode>
 		<bandPolicies>
 			<bandPolicy name="X">
 				<minSNR>23</minSNR>

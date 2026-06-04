@@ -384,7 +384,8 @@ def setup():
         with open("upload_scheduler.txt", "w"):
             pass
 
-    setup_mail(settings)
+    if not (args.no_email or settings["general"].get("email_server","none").lower() != "none"):
+        setup_mail(settings)
 
     if settings["general"].get("path_to_scheduler") is None:
         print("Path to scheduler not defined in settings.ini file!")
