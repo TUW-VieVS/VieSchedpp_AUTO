@@ -16,7 +16,7 @@
         <subnetting>false</subnetting>
         <fillinmodeDuringScanSelection>true</fillinmodeDuringScanSelection>
         <fillinmodeInfluenceOnSchedule>true</fillinmodeInfluenceOnSchedule>
-        <idleToObservingTime>true</idleToObservingTime>
+        <idleToObservingTime>false</idleToObservingTime>
         <stations>
             <station>ISHIOKA</station>
             <station>WETTZELL</station>
@@ -138,6 +138,7 @@
                 <minRepeat>1080</minRepeat>
                 <minFlux>0.05</minFlux>
                 <maxNumberOfScans>999</maxNumberOfScans>
+				<forceSameObservingDuration>1</forceSameObservingDuration>
             </parameter>
         </parameters>
     </source>
@@ -146,6 +147,11 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
+			<setup>
+				<member>Wn-Wz</member>
+				<parameter>ignore</parameter>
+				<transition>hard</transition>
+			</setup>
         </setup>
         <parameters>
             <parameter name="default">
@@ -154,6 +160,9 @@
                 <maxScan>9999</maxScan>
                 <weight>1</weight>
             </parameter>
+            <parameter name="ignore">
+				<ignore>1</ignore>
+			</parameter>
         </parameters>
     </baseline>
     <skyCoverage>
