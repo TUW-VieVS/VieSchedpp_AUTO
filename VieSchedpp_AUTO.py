@@ -107,7 +107,11 @@ def start_scheduling(settings):
                        dump="header")
 
     # download files
-    if not args.no_download:
+    if args.force_download:
+        Transfer.download_ftp()
+        Transfer.download_http(force=True)
+        Helper.merge_flux_cat_vgos_sx()
+    elif not args.no_download:
         Transfer.download_ftp()
         Transfer.download_http()
         Helper.merge_flux_cat_vgos_sx()
@@ -478,18 +482,20 @@ if __name__ == "__main__":
                         help="use this option if you do not want to write any emails")
     parser.add_argument("-nd", "--no_download", action="store_true",
                         help="use this option if you do not want to download any catalogs or session masters")
+    parser.add_argument("-fd", "--force_download", action="store_true",
+                        help="use this option if you need to force downloading any catalogs")
     parser.add_argument("-nu", "--no_upload", action="store_true",
                         help="use this option if you do not want to upload any files (scheduling only)")
     parser.add_argument("-ns", "--no_scheduling", action="store_true",
                         help="use this option if you do not want generate any schedules (upload only)")
+    parser.add_argument("-t", "--test_mode", action="store_true",
+                        help="use this option if you want to quickly process all templates with one schedule")
     # parser.add_argument("-nc", "--no_master_checks", action="store_true",
     #                     help="use this option if you do not want to do checks of changes in the master file")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-d", "--date", help="target schedule start date in format yyyy-mm-dd (e.g.: 2020-01-31). "
                                              "If omitted (default), information is taken from settings.ini file")
     group.add_argument("-s", "--session", help="Session name to be processed (from current year's master file).")
-    group.add_argument("-t", "--test_mode", action="store_true",
-                       help="use this option if you want to quickly process all templates with one schedule")
 
     args = parser.parse_args()
     try:

@@ -44,24 +44,41 @@ def add_downtime_intensives(**kwargs):
     else:
         pad = 10
 
-    year = session["date"].year
-    if year < 2023:
-        master_ivs = Path("MASTER") / f"master{year % 100:02d}-int.txt"
-    else:
-        master_ivs = Path("MASTER") / f"master{year:04d}-int.txt"
+    # have a priority list ready in case there are overlapping 24-hour sessions
+    HIERARCHY = {
+        "INT": 100,
+        "VGOS-RD": 90,
+        "VGOS-R3": 80,
+        "VGOS-CRF": 70,
+        "VGOS-OPS": 60,
+        "IVS-R1": 50,
+        "IVS-R4": 40,
+    }
+    def priority(type_str: str) -> int:
+        return max(
+            (score for key, score in HIERARCHY.items() if key in type_str),
+            default=0,
+        )
 
-    intensives = read_master([master_ivs])
+    sessions = read_master()
+    session_priority = priority(session["type"])
+
     s_start = session["date"]
     s_end = session["date"] + datetime.timedelta(hours=session["duration"])
-    for int in intensives:
-        int_start = int["date"] - datetime.timedelta(minutes=pad)
-        int_end = int["date"] + datetime.timedelta(hours=int["duration"]) + datetime.timedelta(minutes=pad)
+    for other in sessions:
+        other_priority = priority(other["type"])
+        other_start = other["date"] - datetime.timedelta(minutes=pad)
+        other_end = other["date"] + datetime.timedelta(hours=other["duration"]) + datetime.timedelta(minutes=pad)
+        if other_priority < session_priority:
+            continue
+        if other["code"] == session["code"]:
+            continue
 
-        for sta in int["stations"]:
+        for sta in other["stations"]:
             if sta in session["stations"]:
-                insert_station_setup_with_time(int_start, int_end, s_start, s_end, session, tree, sta, "down",
-                                               int["code"])
-
+                insert_station_setup_with_time(other_start, other_end, s_start, s_end, session, tree, sta, "down",
+                                               other["code"])
+    pass
 
 def vgos_int_s(**kwargs):
     tree = kwargs["tree"]
@@ -425,7 +442,7 @@ def VGOS_calib(tree, session):
 
     # station positions
     stations = pd.read_csv("CATALOGS/position.cat", comment="*", header=None,
-                           usecols=[1, 6, 7], names=["name", "lon", "lat"], sep="\s+")
+                           usecols=[1, 6, 7], names=["name", "lon", "lat"], sep=r"\s+")
     stations["lon"] = 360 - stations["lon"]
     stations.set_index("name", inplace=True)
     stations = stations.loc[session["stations"]]
@@ -608,7 +625,7 @@ def VGOS_sites(tree, station_list):
 def VGOS_source(tree, folder, outdir, session, plot=True):
     # some helper functions:
     def read_srclist(path):
-        df = pd.read_csv(path, header=None, dtype=str, comment="*", sep="\s+",
+        df = pd.read_csv(path, header=None, dtype=str, comment="*", sep=r"\s+",
                          names="name name2 ra_h ra_m ra_s de_d de_m de_s 2000.0 0.0 type".split(),
                          index_col="name")
         df["sign_dec"] = df["de_d"].str.contains("-").replace({True: -1, False: 1})
@@ -617,6 +634,7 @@ def VGOS_source(tree, folder, outdir, session, plot=True):
         df["de_deg"] = df["sign_dec"] * (
                 abs(df["de_d"].astype(float)) + df["de_m"].astype(float) / 60 + df["de_s"].astype(
             float) / 3600)
+        df["de_deg"] = df["de_deg"].astype(float)
         df["ra"] = np.radians(df["ra_deg"])
         df['ra'] = np.where(df['ra'] > np.pi, df['ra'] - 2 * np.pi, df['ra'])
         df["de"] = np.radians(df["de_deg"])
@@ -918,7 +936,7 @@ def extract_scan_duration(**kwargs):
     tree = kwargs["tree"]
     folder = kwargs["folder"]
 
-    df = pd.read_csv(folder / "source.cat", header=None, dtype=str, comment="*", sep="\s+",
+    df = pd.read_csv(folder / "source.cat", header=None, dtype=str, comment="*", sep=r"\s+",
                      names="name name2 ra_h ra_m ra_s de_d de_m de_s 2000.0 0.0 type".split(),
                      index_col="name")
     df = df["type"]

@@ -305,10 +305,11 @@ def is_valid_root_setup(station, p_start, p_end, session_start, session_end, tre
     if not (p_start >= setup_start and p_end <= setup_end):
         flag = False
 
-    if setup_start < p_start < setup_end < p_end:
-        Message.addMessage("   ERROR: overlapping parameter setups!")
-    if p_start < setup_start < p_end < setup_end:
-        Message.addMessage("   ERROR: overlapping parameter setups!")
+    if member == "__all__" or member == station:
+        if setup_start < p_start < setup_end < p_end:
+            Message.addMessage("   ERROR: overlapping parameter setups!")
+        if p_start < setup_start < p_end < setup_end:
+            Message.addMessage("   ERROR: overlapping parameter setups!")
 
     return flag
 

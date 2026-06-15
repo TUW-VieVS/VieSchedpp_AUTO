@@ -68,7 +68,7 @@ def download_ftp():
         Message.addMessage(traceback.format_exc(), dump="download")
 
 
-def download_http():
+def download_http(force=False):
     """
     download most recent CATALOG files
 
@@ -122,10 +122,10 @@ def download_http():
     # ThreadPool(13).imap_unordered(url_response, catalogs)
 
     for cat in catalogs:
-        url_response(cat)
+        url_response(cat, force=force)
 
 
-def url_response(cat, message_flag=True, use_proxies=True):
+def url_response(cat, message_flag=True, use_proxies=True, force=False):
     """
     download a single file from https and store
 
@@ -148,7 +148,7 @@ def url_response(cat, message_flag=True, use_proxies=True):
         now = datetime.datetime.now()
         new_update = time.mktime(now.timetuple())
         diff = new_update - last_update
-        if diff < 23 * 3600:
+        if not force and diff < 23 * 3600:
             if message_flag:
                 Message.addMessage(f"up to date (last modified {diff / 3600.0:.2f} hours ago) -> no download",
                                    dump="download")
