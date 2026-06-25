@@ -144,6 +144,31 @@
                 <maxNumberOfScans>999</maxNumberOfScans>
             </parameter>
         </parameters>
+        <groups>
+            <group name="calib">
+                <member>0059+581</member>
+                <member>0202+319</member>
+                <member>0235+164</member>
+                <member>0355+508</member>
+                <member>0458-020</member>
+                <member>0537-441</member>
+                <member>0552+398</member>
+                <member>0607-157</member>
+                <member>0814+425</member>
+                <member>0851+202</member>
+                <member>0923+392</member>
+                <member>1144+402</member>
+                <member>1156+295</member>
+                <member>1334-127</member>
+                <member>1424-418</member>
+                <member>1741-038</member>
+                <member>1749+096</member>
+                <member>1751+288</member>
+                <member>1803+784</member>
+                <member>1921-293</member>
+                <member>2145+067</member>
+            </group>
+        </groups>
     </source>
     <baseline>
         <setup>
@@ -313,13 +338,13 @@
                 <startTime>900</startTime>
                 <scans>1</scans>
                 <duration>60</duration>
-                <sources>__all__</sources>
+                <sources>calib</sources>
             </block>
             <block>
                 <startTime>2700</startTime>
                 <scans>1</scans>
                 <duration>60</duration>
-                <sources>__all__</sources>
+                <sources>calib</sources>
             </block>
             <numberOfObservations_factor>1</numberOfObservations_factor>
             <numberOfObservations_offset>0</numberOfObservations_offset>
