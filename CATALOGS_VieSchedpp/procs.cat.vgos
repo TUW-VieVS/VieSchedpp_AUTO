@@ -163,9 +163,9 @@ lo=lod0,9672.4,usb,lcp,5
 lo=lod1,9672.4,usb,rcp,5
 "lo=4*luff-22500
 "luff=(lo+22500)/4
-sy=popen 'udceth0 udca 6243.1 20 20 2>&1' -n udcca &
+sy=popen 'udceth0 udca 6243.1 15 15 2>&1' -n udcca &
 sy=popen 'udceth0 udcb 6803.1 20 20 2>&1' -n udccb &
-sy=popen 'udceth0 udcc 7083.1 20 20 2>&1' -n udccc &
+sy=popen 'udceth0 udcc 7083.1 15 15 2>&1' -n udccc &
 sy=popen 'udceth0 udcd 8043.1 20 20 2>&1' -n udccd &
 enddef
 END GGAO12M
