@@ -388,7 +388,10 @@ def setup():
         with open("upload_scheduler.txt", "w"):
             pass
 
-    if not (args.no_email or settings["general"].get("email_server","none").lower() != "none"):
+    if  args.no_email or (settings["general"].get("email_server","none").lower() == "none"):
+        print(f"No Email setup required")
+    else:
+        print(f"Setting up Email")
         setup_mail(settings)
 
     if settings["general"].get("path_to_scheduler") is None:
