@@ -226,13 +226,16 @@ def send_bkg(message):
     """
     message['From'] = "vieschedpp.auto@wettzell.de"
     if SendMail.flag_sendMail:
-        print("Send email (BKG) to: " + message['To'], end="... ")
-        # server = smtplib.SMTP('localhost', 25)
-        server = smtplib.SMTP('141.74.2.3', 25)
-        server.ehlo()
-        server.send_message(message)
-        server.quit()
-        print("finished!")
+        try:
+            print("Send email (BKG) to: " + message['To'], end="... ")
+            # server = smtplib.SMTP('localhost', 25)
+            server = smtplib.SMTP('141.74.2.3', 25)
+            server.ehlo()
+            server.send_message(message)
+            server.quit()
+            print("finished!")#
+        except Exception as e:
+            print(f"Unable to send Email: {e}")
 
 
 def undefined():
