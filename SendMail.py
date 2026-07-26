@@ -51,7 +51,7 @@ def writeMail_upload(code, emails):
 
     if SendMail.flag_sendMail:
         msg = MIMEMultipart()
-        msg['From'] = "vieschedpp_auto"
+        msg['From'] = "vieschedpp.auto@wettzell.de"
         msg['To'] = ", ".join(emails)
         today = datetime.date.today()
         msg['Subject'] = f"[upload] [VieSched++ AUTO] {code} ({today:%B %d, %Y})"
@@ -62,7 +62,7 @@ def writeMail_upload(code, emails):
 def missing_schedule(session, program, to):
     if SendMail.flag_sendMail:
         msg = MIMEMultipart()
-        msg['From'] = "vieschedpp_auto"
+        msg['From'] = "vieschedpp.auto@wettzell.de"
         try:
             msg['To'] = ", ".join(to)
         except:
@@ -85,7 +85,7 @@ def network_changed(session, program, skd_network, to):
         master_network = session["stations"]
 
         msg = MIMEMultipart()
-        msg['From'] = "vieschedpp_auto"
+        msg['From'] = "vieschedpp.auto@wettzell.de"
         try:
             msg['To'] = ", ".join(to)
         except:
@@ -151,7 +151,7 @@ def writeMail(path_str, emails, body=None, date=None):
 
     if SendMail.flag_sendMail:
         msg = MIMEMultipart()
-        msg['From'] = "vieschedpp_auto"
+        msg['From'] = "vieschedpp.auto@wettzell.de"
         msg['To'] = ", ".join(emails)
         sessionCode = path.parent.name
         program = path.parents[1].name
@@ -181,7 +181,7 @@ def writeErrorMail(to):
     """
     if SendMail.flag_sendMail:
         msg = MIMEMultipart()
-        msg['From'] = "vieschedpp_auto"
+        msg['From'] = "vieschedpp.auto@wettzell.de"
         try:
             msg['To'] = ", ".join(to)
         except:
@@ -206,7 +206,7 @@ def send_gmail(message):
     :param message: email message
     :return: None
     """
-    message['From'] = "vieschedpp_auto"
+    message['From'] = "vieschedpp.auto@wettzell.de"
     if SendMail.flag_sendMail:
         print("Send email (Gmail) to: " + message['To'], end="... ")
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
