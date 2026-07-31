@@ -421,12 +421,6 @@ def setup():
                 continue
             settings.set(group, "schedule_date", args.date)
 
-    if args.session:
-        for group in settings:
-            if group == "general" or group == "DEFAULT":
-                continue
-            settings.set(group, "schedule_date", args.session)
-
     if args.test_mode:
         programs = []
         settings.set("general", "prefix_output_folder", "TEST")
@@ -450,6 +444,12 @@ def setup():
         if not args.observing_programs:
             args.observing_programs = programs
         args.no_upload = True
+
+    if args.session:
+        for group in settings:
+            if group == "general" or group == "DEFAULT":
+                continue
+            settings.set(group, "schedule_date", args.session)
 
     return settings
 
