@@ -400,7 +400,7 @@ def VGOS_src_groups(tree, sources):
 def VGOS_sta_setup(tree, session):
     stations = session["stations"]
     sta2equip = {}
-    slow = ["GGAO12M", "WESTFORD", "MACGO12M", "KOKEE12M"]
+    slow = ["GGAO12M", "WESTFORD", "MACGO12M", "KOKEE12M", "FORTZA12"]
 
     notes = tree.find("./output/notes")
     notes.text += f"The following stations require buffer-flush time (4 Gbps data write speed instead of 8 Gbps):\\n"
