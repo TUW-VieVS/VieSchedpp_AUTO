@@ -280,10 +280,9 @@ def _vlba_vex_adjustments(**kwargs):
 
 
 if __name__ == "__main__":
-    path = Path("/scratch/programming/out/20260206-000607_north/north.vex")
+    path = Path("/home/schartner/programming/schedules/VM6236/vm6236_v014.vex")
     session = {"code": path.stem.lower(),
-               "stations_tlc": ["Gs", "Is", "K2", "Mg", "Mb", "Nn", "Oe", "Ow", "Sa", "Yj", "S6", "T1", "Um", "Wf",
-                                "Wn", "Ws"],
+               "stations_tlc": ["Oe", "Ow", "Sa", "Wn", "Ws"],
                # "stations_tlc": ["Hv","Ke","Hb","Yg"],
                }
     vex_template_vgos_std(path=path.parent, session=session)
