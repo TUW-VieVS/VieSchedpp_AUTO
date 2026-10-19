@@ -89,8 +89,8 @@
                 <available>1</available>
                 <availableForFillinmode>1</availableForFillinmode>
                 <weight>1</weight>
-                <minScan>12</minScan>
-                <maxScan>30</maxScan>
+                <minScan>20</minScan>
+                <maxScan>45</maxScan>
                 <minSlewtime>0</minSlewtime>
                 <maxSlewtime>600</maxSlewtime>
                 <maxSlewDistance>175</maxSlewDistance>
@@ -149,11 +149,6 @@
             <member>__all__</member>
             <parameter>default</parameter>
             <transition>hard</transition>
-            <setup>
-                <member>Oe-Ow</member>
-                <parameter>ignore</parameter>
-                <transition>hard</transition>
-            </setup>
         </setup>
         <parameters>
             <parameter name="default">
@@ -252,7 +247,7 @@
         </simple>
         <bandPolicies>
             <bandPolicy name="A">
-                <minSNR>15</minSNR>
+                <minSNR>20</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -263,7 +258,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="B">
-                <minSNR>15</minSNR>
+                <minSNR>20</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -274,7 +269,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="C">
-                <minSNR>15</minSNR>
+                <minSNR>20</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
@@ -285,7 +280,7 @@
                 </source>
             </bandPolicy>
             <bandPolicy name="D">
-                <minSNR>15</minSNR>
+                <minSNR>20</minSNR>
                 <station>
                     <tag>required</tag>
                     <backup_value>0</backup_value>
